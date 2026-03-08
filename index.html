@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jaehong An | Media Artist</title>
+    <meta
+      name="description"
+      content="Jaehong An, Media Artist - immersive works across reality, virtuality, AI avatarity, and relational perception."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans+KR:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <canvas id="webgl" aria-hidden="true"></canvas>
+    <div class="depth-fog" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="logo" href="#hero">JAE_HONG__AN</a>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="menu">Menu</button>
+      <nav id="menu" class="menu" aria-label="Main navigation">
+        <a href="#hero">Intro</a>
+        <a href="#works">Works</a>
+        <a href="#statement">Statement</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="bgm-control">
+        <button id="bgm-toggle" type="button" aria-pressed="false">Play BGM</button>
+      </div>
+      <div class="scroll-meter" aria-hidden="true"><span></span></div>
+    </header>
+
+    <div class="smooth-scroll" id="smooth-scroll">
+      <main class="scroll-content" id="scroll-content">
+        <section id="hero" class="hero section">
+          <p class="tag">MEDIA ARTIST / XR / AI AVATAR NARRATIVE</p>
+          <h1>
+            JAEHONG<br />
+            AN
+          </h1>
+          <p class="subtitle">현실과 가상의 경계에서, 감각과 관계의 방식을 다시 설계합니다.</p>
+          <p class="intro">
+            Jaehong An explores how we accept images as truth. His practice moves from documentary gaze to XR space,
+            examining relational distance between viewer, avatar, and body.
+          </p>
+          <div class="hero-keywords">
+            <span>Reality / Virtuality</span>
+            <span>Relational Gaze</span>
+            <span>AI-Driven Persona</span>
+            <span>Embodied Interface</span>
+          </div>
+        </section>
+
+        <section id="works" class="works section" aria-label="Selected works">
+          <div class="section-head">
+            <p>Selected Works</p>
+            <h2>9:16 Vertical Motion Archive</h2>
+          </div>
+
+          <div class="work-carousel reveal" data-carousel>
+            <div class="work-track">
+              <article class="work-slide">
+                <div class="video-shell">
+                  <video
+                    class="work-video"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    preload="auto"
+                    poster="assets/posters/work-01.jpg"
+                  >
+                    <source src="media/work-01.mp4" type="video/mp4" />
+                  </video>
+                  <button class="fs-toggle" type="button" aria-label="Fullscreen video">Full</button>
+                </div>
+                <div class="work-meta">
+                  <span class="idx">#01</span>
+                  <h3>Threshold Body</h3>
+                  <p>
+                    도시의 물성 위에 아바타 감각을 겹쳐, 인간의 시선이 가상 객체를 실재로 수용하는 순간을 기록한 실험.
+                  </p>
+                  <div class="work-slide-hint" aria-hidden="true">
+                    <span class="hint-arrow left"></span>
+                    <span class="hint-line"></span>
+                    <span class="hint-arrow right"></span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="work-slide">
+                <div class="video-shell">
+                  <video
+                    class="work-video"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    preload="auto"
+                    poster="assets/posters/work-02.jpg"
+                  >
+                    <source src="media/work-02.mp4" type="video/mp4" />
+                  </video>
+                  <button class="fs-toggle" type="button" aria-label="Fullscreen video">Full</button>
+                </div>
+                <div class="work-meta">
+                  <span class="idx">#02</span>
+                  <h3>Distance of Faces</h3>
+                  <p>
+                    관객과 캐릭터의 정서적 거리를 조절하며, 대상이 관계로 전환되는 지점과 몰입의 리듬을 추적한다.
+                  </p>
+                  <div class="work-slide-hint" aria-hidden="true">
+                    <span class="hint-arrow left"></span>
+                    <span class="hint-line"></span>
+                    <span class="hint-arrow right"></span>
+                  </div>
+                </div>
+              </article>
+
+              <article class="work-slide">
+                <div class="video-shell">
+                  <video
+                    class="work-video"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    preload="auto"
+                    poster="assets/posters/work-03.jpg"
+                  >
+                    <source src="media/work-03.mp4" type="video/mp4" />
+                  </video>
+                  <button class="fs-toggle" type="button" aria-label="Fullscreen video">Full</button>
+                </div>
+                <div class="work-meta">
+                  <span class="idx">#03</span>
+                  <h3>Avatar Room</h3>
+                  <p>
+                    AI 인물과 상호작용하는 인터페이스를 통해, 몸의 위치가 곧 관계의 방식이 되는 구조를 설계한 작업.
+                  </p>
+                  <div class="work-slide-hint" aria-hidden="true">
+                    <span class="hint-arrow left"></span>
+                    <span class="hint-line"></span>
+                    <span class="hint-arrow right"></span>
+                  </div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="statement" class="statement section reveal">
+          <div class="section-head">
+            <p>Statement of Artist</p>
+            <h2>감각, 관계, 그리고 실재의 조건</h2>
+          </div>
+          <div class="statement-grid">
+            <p>
+              I have long explored the boundaries between reality and fiction. This pursuit wasn't driven merely by
+              conceptual curiosity. Though I was always the same person, others perceived me differently depending on my
+              geographical context: in Italy, I was seen as Korean; in Korea, I was seen as Italian. My identity was
+              never something fixed within me; it was instead a narrative continuously rewritten through others' eyes
+              and environmental contexts. Through this experience, I came to realize that reality is not a single fixed
+              truth, but rather a fluid state continuously formed by relationships and storytelling.
+            </p>
+            <p>
+              My work began with fake documentaries and expanded into XR and virtual spaces. In producing fake
+              documentaries, I tested the persuasive power embedded in their formal elements - the calm tone, specific
+              editing rhythms, and visual compositions that resemble archival recordings - which easily led viewers to
+              accept fictional narratives as truth. In XR, I more directly challenged the boundaries of belief. In
+              exhibitions, viewers interact with virtual objects that clearly do not exist, experiencing immediate
+              sensory confusion at the boundary between real and virtual. This moment prompts viewers to reconsider
+              their own beliefs and how these beliefs are formed.
+            </p>
+            <p>
+              My primary interest isn't in answering "What is true?" but rather in exploring why and how we come to
+              believe something is true. Images flood our daily lives, yet we rarely question the basis of our belief
+              in their authenticity. I am cautious of our indifference toward the mechanisms by which beliefs are
+              formed - beliefs that emerge easily and spread rapidly, often solidifying into unquestioned certainty. My
+              work aims to reveal these mechanisms, encouraging viewers to consciously reflect on what they believe and
+              why.
+            </p>
+            <p>
+              This motivation led me to generative AI. Initially, I used AI to produce a vast number of technically
+              impressive yet random images, but found it challenging to feel any emotional connection or meaningful
+              dialogue with my creations. By chance, I incorporated the image of my spouse, someone with whom I share
+              an authentic emotional bond, into my work. For the first time, I experienced a profound personal
+              connection with the resulting piece. Since then, I have consistently used this approach.
+            </p>
+            <p>
+              To the audience, the face in my work may appear simply as an unfamiliar person, but to me, it embodies
+              traces of my closest emotional connection. This discrepancy creates distinct viewing experiences for
+              myself and my audience. Though I never explicitly disclose this personal dimension within the work, I have
+              often witnessed viewers significantly narrowing their emotional distance upon learning this background
+              later on. In these moments, the artwork transitions from an object of interpretation to an experience
+              rooted in relationships and emotions.
+            </p>
+            <p>
+              In my works, I emphasize human figures and the gaze. The figures consistently look directly at the
+              audience. Humans instinctively respond more strongly to living beings than objects, more so to humans
+              among all beings, and most intensely to the eyes among all human features. This gaze transforms the
+              audience from active observers to passive recipients of being watched. This shift is communicated not
+              through explanation but through an immediate, bodily experience. I believe this visceral response forms
+              the foundation of our judgments about authenticity.
+            </p>
+            <p>
+              I have repeatedly observed audiences lingering even in front of nearly motionless screens. During an
+              outdoor LED exhibition, preschool children showed little interest in visually elaborate works nearby but
+              would pull their parents toward my piece, pointing at it intently. They responded not to explicit
+              narrative or explanation, but to the primal stimulus of contrast and direct gaze - precisely the intended
+              effect of my work.
+            </p>
+            <p>
+              Finally, I recall Diego Velazquez's Las Meninas. The painting captures a scene from the perspective of
+              King Philip IV, depicting his daughter, her attendants, and the painter himself - a scene undeniably real
+              for the king. Similarly, my sense of authenticity in my work arises from the personal memory of the
+              figure being my spouse. Ultimately, truth changes according to the viewer's position and memories.
+            </p>
+            <p>
+              This is the question I continuously pose through my practice:<br />
+              What are we looking at, and on what grounds do we believe it to be real?
+            </p>
+          </div>
+        </section>
+
+        <section id="contact" class="contact section reveal">
+          <div class="section-head">
+            <p>Contact / Collaboration</p>
+            <h2>Open for commissions, XR exhibitions, and narrative installations.</h2>
+          </div>
+          <div class="contact-grid">
+            <article>
+              <h3>Studio</h3>
+              <p>Seoul-based media art practice focusing on immersive visual narratives.</p>
+            </article>
+            <article>
+              <h3>Available Formats</h3>
+              <p>9:16 short-form films, projection mapping, generative avatar performance, XR story spaces.</p>
+            </article>
+            <article>
+              <h3>Collaboration</h3>
+              <p>Brand films, installation partnerships, gallery-led commissions, and experimental music visuals.</p>
+            </article>
+          </div>
+          <div class="contact-links">
+            <a href="https://instagram.com/jae_hong__an" target="_blank" rel="noreferrer">Instagram</a>
+            <a href="https://www.youtube.com/@%EC%95%88%EC%9E%AC%ED%99%8D-p2y/videos" target="_blank" rel="noreferrer"
+              >YouTube</a
+            >
+            <a href="mailto:creative@secondbrush.co.kr">creative@secondbrush.co.kr</a>
+          </div>
+        </section>
+
+        <footer class="site-footer section">
+          <p>Jaehong An, Media Artist</p>
+        </footer>
+      </main>
+    </div>
+
+    <audio id="bgm-audio" loop preload="auto" autoplay>
+      <source src="media/bgm.mp3" type="audio/mpeg" />
+    </audio>
+
+      <div class="video-overlay" id="video-overlay" aria-hidden="true">
+      <div class="overlay-stage" id="overlay-stage">
+        <video class="overlay-video-layer active" id="overlay-video-a" autoplay muted loop playsinline preload="auto"></video>
+        <video class="overlay-video-layer" id="overlay-video-b" autoplay muted loop playsinline preload="auto"></video>
+      </div>
+      <div class="overlay-meta">
+        <span id="overlay-idx"></span>
+        <h3 id="overlay-title"></h3>
+        <p id="overlay-desc"></p>
+      </div>
+      <button id="overlay-exit" type="button" aria-label="Exit fullscreen">Exit</button>
+      <button id="overlay-audio-toggle" type="button" aria-label="Toggle audio">Sound On</button>
+      <div class="overlay-hint-arrows" aria-hidden="true">
+        <span class="hint-arrow left"></span>
+        <span class="hint-line"></span>
+        <span class="hint-arrow right"></span>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/three@0.161.0/build/three.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
