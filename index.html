@@ -322,7 +322,7 @@
     position: absolute; inset: 0;
     width: 100%; height: 100%;
     object-fit: cover;
-    filter: contrast(1.02) saturate(1.04);
+    filter: none;
     opacity: 0.72;
     transform: scale(1.01);
   }
@@ -1573,7 +1573,7 @@ camera.innerHTML = works.map((w, i) => `
   <div class="tunnel-frame" data-frame="${i}" style="--zbase: ${-i * Z_SPACING}px">
     <div class="frame-card">
       <div class="poster" style="background-image:${w.poster}"></div>
-      <video class="frame-video" src="${w.video}" poster="${w.videoPoster}" muted loop playsinline preload="metadata"></video>
+      <video class="frame-video" data-src="${w.video}" poster="${w.videoPoster}" muted loop playsinline preload="none"></video>
       <div class="frame-overlay"></div>
       <div class="frame-idx">N° ${w.idx}</div>
       <div class="frame-caption">${w.caption}</div>
@@ -1614,13 +1614,28 @@ let userHasScrolled = false;
 
 let currentRoom = -1;
 
+function ensureFrameVideoLoaded(i) {
+  const frame = tunnelFrames[i];
+  if (!frame) return null;
+  const video = frame.querySelector(".frame-video");
+  if (!video) return null;
+  if (!video.getAttribute("src")) {
+    video.src = video.dataset.src;
+    video.load();
+  }
+  return video;
+}
 
 function updateTunnelVideoPlayback(bestIdx) {
   tunnelFrames.forEach((f, i) => {
     const video = f.querySelector(".frame-video");
     if (!video) return;
-    if (Math.abs(i - bestIdx) <= 1) video.play().catch(() => {});
-    else video.pause();
+    if (i === bestIdx) {
+      const activeVideo = ensureFrameVideoLoaded(i);
+      if (activeVideo) activeVideo.play().catch(() => {});
+    } else {
+      video.pause();
+    }
   });
 }
 
