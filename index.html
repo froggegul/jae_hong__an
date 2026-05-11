@@ -67,9 +67,8 @@
     position: fixed; inset: 0; z-index: 60;
     pointer-events: none;
     background-image: radial-gradient(rgba(255,255,255,0.07) 0.5px, transparent 0.5px);
-    background-size: 3px 3px;
-    opacity: 0.5;
-    mix-blend-mode: screen;
+    background-size: 4px 4px;
+    opacity: 0.18;
   }
   /* vignette */
   body::after {
@@ -276,8 +275,8 @@
     margin-left: calc(min(46vh, 380px) / -2);
     margin-top: calc(min(46vh, 380px) * 16 / 9 / -2);
     transform-style: preserve-3d;
-    will-change: transform, opacity, filter;
-    transition: filter 480ms var(--ease), opacity 480ms var(--ease);
+    will-change: transform, opacity;
+    transition: opacity 320ms var(--ease);
     pointer-events: none; /* far frames not clickable */
   }
   .tunnel-frame.focus { pointer-events: auto; }
@@ -1636,9 +1635,6 @@ function updateTunnel() {
     // focus = 1 at the snap, falls off to ~0 by |d| > 0.6
     const focus = Math.exp(-(d * d) / 0.10); // sharp bell, half-width ~0.22
 
-    // Blur: 0 at peak, ramps to 14 as focus drops
-    const blur = (1 - focus) * 14;
-
     // Opacity: sharp peak — frame is invisible far from its reading plane,
     // crisp at the snap. Hard floor on the trailing (past-camera) side so prior
     // rooms don't ghost the current one.
@@ -1648,18 +1644,12 @@ function updateTunnel() {
 
     // Special case for the FIRST frame during entry: when the camera is still
     // in front of room 0 (camZ negative, d negative), we want a faint but
-    // legible silhouette so the user has something to walk *toward* — not just
-    // an empty blurred void. Lift the floor and soften the blur in that window.
+    // legible silhouette so the user has something to walk toward.
     if (i === 0 && d < 0) {
       const entryT = Math.min(1, -d / 0.61); // 0 at room 0, 1 at extreme entry
       // floor opacity ramps 0.42 → 0.22 as we sit further away
       const floor = 0.42 - 0.20 * entryT;
       op = Math.max(op, floor);
-      // blur ceiling drops so the silhouette has shape
-      const blurCap = 6 + 6 * entryT; // 6px near, 12px far
-      f.style.filter  = `blur(${Math.min(blur, blurCap).toFixed(2)}px)`;
-    } else {
-      f.style.filter  = `blur(${blur.toFixed(2)}px)`;
     }
     f.style.opacity = op.toFixed(3);
   });
