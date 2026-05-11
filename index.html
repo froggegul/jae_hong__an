@@ -316,17 +316,10 @@
     background-size: cover;
     background-position: center;
     filter: none;
-    opacity: 0.12;
-  }
-  .tunnel-frame .frame-video {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    filter: none;
-    opacity: 0.72;
+    opacity: 0.76;
     transform: scale(1.01);
   }
-  .tunnel-frame.focus .frame-video { opacity: 1; }
+  .tunnel-frame.focus .poster { opacity: 1; }
   .tunnel-frame .frame-overlay {
     position: absolute; inset: 0;
     background:
@@ -1573,7 +1566,6 @@ camera.innerHTML = works.map((w, i) => `
   <div class="tunnel-frame" data-frame="${i}" style="--zbase: ${-i * Z_SPACING}px">
     <div class="frame-card">
       <div class="poster" style="background-image:${w.poster}"></div>
-      <video class="frame-video" data-src="${w.video}" poster="${w.videoPoster}" muted loop playsinline preload="none"></video>
       <div class="frame-overlay"></div>
       <div class="frame-idx">N° ${w.idx}</div>
       <div class="frame-caption">${w.caption}</div>
@@ -1613,31 +1605,6 @@ const approachAura = document.getElementById("approach-aura");
 let userHasScrolled = false;
 
 let currentRoom = -1;
-
-function ensureFrameVideoLoaded(i) {
-  const frame = tunnelFrames[i];
-  if (!frame) return null;
-  const video = frame.querySelector(".frame-video");
-  if (!video) return null;
-  if (!video.getAttribute("src")) {
-    video.src = video.dataset.src;
-    video.load();
-  }
-  return video;
-}
-
-function updateTunnelVideoPlayback(bestIdx) {
-  tunnelFrames.forEach((f, i) => {
-    const video = f.querySelector(".frame-video");
-    if (!video) return;
-    if (i === bestIdx) {
-      const activeVideo = ensureFrameVideoLoaded(i);
-      if (activeVideo) activeVideo.play().catch(() => {});
-    } else {
-      video.pause();
-    }
-  });
-}
 
 function updateTunnel() {
   const tunnel = document.getElementById("tunnel");
@@ -1732,7 +1699,6 @@ function updateTunnel() {
       th.classList.toggle("passed", i < bestIdx);
     });
     tunnelFrames.forEach((f, i) => f.classList.toggle("focus", i === bestIdx));
-    updateTunnelVideoPlayback(bestIdx);
   }
 
   // depth meter readout — distance still ahead until the last room
