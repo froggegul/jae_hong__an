@@ -1,0 +1,15 @@
+# macOS / local metadata
+.DS_Store
+*/.DS_Store
+.swift-module-cache/
+
+# Local server runtime
+.local-server.log
+.local-server.pid
+
+# Temporary extraction / handoff artifacts
+tmp_statement/
+handoff/
+
+# Dependency folders if added later
+node_modules/

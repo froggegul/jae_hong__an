@@ -1,292 +1,2386 @@
 <!doctype html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jaehong An | Media Artist</title>
-    <meta
-      name="description"
-      content="Jaehong An, Media Artist - immersive works across reality, virtuality, AI avatarity, and relational perception."
-    />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=IBM+Plex+Sans+KR:wght@300;400;500;700&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <canvas id="webgl" aria-hidden="true"></canvas>
-    <div class="depth-fog" aria-hidden="true"></div>
-    <div class="grain" aria-hidden="true"></div>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Jaehong An — Media Artist</title>
 
-    <header class="site-header">
-      <a class="logo" href="#hero">JAE_HONG__AN</a>
-      <button class="menu-toggle" aria-expanded="false" aria-controls="menu">Menu</button>
-      <nav id="menu" class="menu" aria-label="Main navigation">
-        <a href="#hero">Intro</a>
-        <a href="#works">Works</a>
-        <a href="#statement">Statement</a>
-        <a href="#contact">Contact</a>
-      </nav>
-      <div class="bgm-control">
-        <button id="bgm-toggle" type="button" aria-pressed="false">Play BGM</button>
+<template id="__bundler_thumbnail">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+    <rect width="400" height="400" fill="#050505"/>
+    <text x="200" y="200" text-anchor="middle" dominant-baseline="central"
+          font-family="Archivo Black, sans-serif" font-size="96" fill="#F2F0EC"
+          letter-spacing="-2">JA</text>
+    <text x="200" y="310" text-anchor="middle"
+          font-family="IBM Plex Mono, monospace" font-size="11" fill="#F2F0EC"
+          letter-spacing="3" opacity="0.5">JAEHONG  AN · MEDIA ARTIST</text>
+  </svg>
+</template>
+
+<style>
+  /* ── Tokens (refined) ───────────────────────────────────────────
+     No cyan glow. Depth comes only from blur + opacity + scale. */
+  :root {
+    --bg:        #050505;
+    --bg-soft:   #0B0B0B;
+    --ink:       #F2F0EC;
+    --ink-70:    rgba(242, 240, 236, 0.72);
+    --ink-50:    rgba(242, 240, 236, 0.50);
+    --ink-30:    rgba(242, 240, 236, 0.30);
+    --ink-15:    rgba(242, 240, 236, 0.15);
+    --ink-08:    rgba(242, 240, 236, 0.08);
+    --line:      rgba(242, 240, 236, 0.12);
+    --line-soft: rgba(242, 240, 236, 0.06);
+
+    --font-display: "Inter Tight", "SF Pro Display", "Helvetica Neue", system-ui, sans-serif;
+    --font-body:    Inter, "Apple SD Gothic Neo", "Noto Sans KR", "Helvetica Neue", system-ui, sans-serif;
+    --font-mono:    "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+
+    --r-frame:  10px;     /* video frames only */
+    --r-square: 0px;      /* everything else */
+
+    --ease:     cubic-bezier(0.22, 0.61, 0.36, 1);
+    --dur-fast: 240ms;
+    --dur-mid:  640ms;
+    --dur-slow: 1400ms;
+
+    --pad-x:    clamp(20px, 4vw, 56px);
+    --max-w:    1280px;
+    --gutter:   clamp(20px, 5vw, 64px);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); }
+  body {
+    font-family: var(--font-body);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    line-height: 1.6;
+  }
+  ::selection { background: var(--ink); color: var(--bg); }
+  a { color: inherit; }
+
+  /* film grain — single quiet layer */
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 60;
+    pointer-events: none;
+    background-image: radial-gradient(rgba(255,255,255,0.07) 0.5px, transparent 0.5px);
+    background-size: 3px 3px;
+    opacity: 0.5;
+    mix-blend-mode: screen;
+  }
+  /* vignette */
+  body::after {
+    content: "";
+    position: fixed; inset: 0; z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%);
+  }
+
+  .wrap { width: min(var(--max-w), calc(100% - var(--gutter) * 2)); margin: 0 auto; }
+
+  /* ── Header ──────────────────────────────────────────────────── */
+  header.top {
+    position: fixed; inset: 0 0 auto 0;
+    z-index: 30;
+    padding: 18px 0;
+    background: linear-gradient(to bottom, rgba(5,5,5,0.92), rgba(5,5,5,0.55) 70%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .top-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: baseline;
+    gap: 32px;
+  }
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo b { font-weight: 500; }
+  nav.menu {
+    display: flex; gap: 28px; justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  nav.menu a {
+    color: var(--ink-50);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease);
+    position: relative;
+    padding-bottom: 2px;
+  }
+  nav.menu a:hover, nav.menu a.active { color: var(--ink); }
+  nav.menu a.active::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: -3px;
+    height: 1px; background: var(--ink);
+  }
+  .meta-clock {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-30);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-align: right;
+  }
+  .scroll-meter {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    height: 1px; background: var(--ink-08);
+  }
+  .scroll-meter span {
+    display: block; height: 100%; width: 0;
+    background: var(--ink);
+    transition: width 80ms linear;
+  }
+
+  /* ── Sections (depth via blur+opacity+scale only) ───────────── */
+  main { padding-top: 0; }
+  .section {
+    padding: clamp(96px, 18vh, 200px) 0;
+    position: relative;
+    transition:
+      opacity var(--dur-mid) var(--ease),
+      filter  var(--dur-mid) var(--ease),
+      transform var(--dur-mid) var(--ease);
+    will-change: opacity, filter, transform;
+  }
+  .section.recede {
+    opacity: 0.55;
+    filter: blur(2px);
+    transform: scale(0.992);
+  }
+
+  /* ── Hero ─────────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    padding-top: clamp(140px, 22vh, 240px);
+    display: grid;
+    align-content: end;
+    padding-bottom: clamp(72px, 10vh, 128px);
+  }
+  .hero .caption {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-50);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0 0 28px;
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .hero .caption .dot {
+    width: 6px; height: 6px; border-radius: 99px;
+    background: var(--ink-50);
+    display: inline-block;
+    align-self: center;
+  }
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(56px, 11vw, 156px);
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    margin: 0;
+    font-weight: 900;
+  }
+  .hero h1 .light {
+    font-family: var(--font-body);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--ink-50);
+  }
+  .hero-grid {
+    margin-top: clamp(40px, 6vh, 72px);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 96px);
+    border-top: 1px solid var(--line);
+    padding-top: 28px;
+  }
+  @media (max-width: 820px) { .hero-grid { grid-template-columns: 1fr; gap: 24px; } }
+  .hero-grid p {
+    margin: 0;
+    color: var(--ink-70);
+    font-size: 15px;
+    line-height: 1.7;
+    max-width: 52ch;
+  }
+  .hero-grid .label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-30);
+    margin-bottom: 12px;
+  }
+
+  /* ── Section head ──────────────────────────────────────────── */
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: baseline;
+    border-top: 1px solid var(--line);
+    padding-top: 20px;
+    margin-bottom: clamp(48px, 8vh, 96px);
+  }
+  .section-head .num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ink-50);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .section-head h2 {
+    grid-column: 1 / -1;
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 52px);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    margin: 16px 0 0;
+    max-width: 22ch;
+    font-weight: 900;
+  }
+
+  /* ── Works — Depth Tunnel + Approach ──────────────── */
+  .tunnel {
+    position: relative;
+    height: 640vh;
+  }
+  .tunnel-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    perspective: 1400px;
+    perspective-origin: 50% 45%;
+    overflow: hidden;
+  }
+  .tunnel-camera {
+    position: absolute; inset: 0;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .tunnel-frame {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: min(46vh, 380px);
+    aspect-ratio: 9 / 16;
+    margin-left: calc(min(46vh, 380px) / -2);
+    margin-top: calc(min(46vh, 380px) * 16 / 9 / -2);
+    transform-style: preserve-3d;
+    will-change: transform, opacity, filter;
+    transition: filter 480ms var(--ease), opacity 480ms var(--ease);
+    pointer-events: none; /* far frames not clickable */
+  }
+  .tunnel-frame.focus { pointer-events: auto; }
+  .tunnel-frame.focus .frame-card {
+    transition: border-color 280ms var(--ease), box-shadow 280ms var(--ease);
+  }
+  .tunnel-frame.focus:hover .frame-card {
+    border-color: var(--ink-70);
+    box-shadow: 0 0 0 1px var(--ink-30) inset, 0 24px 80px -32px rgba(0,0,0,0.7);
+  }
+  .tunnel-frame.focus::after {
+    content: "Click to enter →";
+    position: absolute;
+    left: 50%; bottom: -32px;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-50);
+    text-transform: uppercase;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 320ms var(--ease) 200ms;
+    pointer-events: none;
+  }
+  .tunnel-frame.focus:hover::after { opacity: 1; }
+  .tunnel-frame .frame-card {
+    position: absolute; inset: 0;
+    background: #0A0A0A;
+    border: 1px solid var(--line);
+    border-radius: var(--r-frame);
+    overflow: hidden;
+  }
+  .tunnel-frame .poster {
+    position: absolute; inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: none;
+    opacity: 0.12;
+  }
+  .tunnel-frame .frame-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: contrast(1.02) saturate(1.04);
+    opacity: 0.72;
+    transform: scale(1.01);
+  }
+  .tunnel-frame.focus .frame-video { opacity: 1; }
+  .tunnel-frame .frame-overlay {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(to bottom, transparent 55%, rgba(0,0,0,0.75) 100%),
+      radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+  }
+  .tunnel-frame .frame-caption {
+    position: absolute;
+    left: 14px; right: 14px; bottom: 36px;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(236, 234, 227, 0.55);
+    text-align: center;
+  }
+  .tunnel-frame .frame-idx {
+    position: absolute; top: 12px; left: 14px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; color: var(--ink-50);
+  }
+  .tunnel-frame .frame-title {
+    position: absolute; bottom: 14px; left: 14px; right: 14px;
+    font-family: var(--font-display);
+    font-size: 16px; line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .tunnel-hud {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .tunnel-notes {
+    position: absolute;
+    top: 50%; right: clamp(20px, 5vw, 64px);
+    transform: translateY(-50%);
+    width: min(34vw, 380px);
+    height: min(72vh, 520px);
+    pointer-events: none;
+  }
+  @media (max-width: 900px) {
+    .tunnel-notes { right: 16px; left: 16px; width: auto; bottom: 80px; top: auto; transform: none; height: auto; }
+  }
+  .tunnel-note {
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 520ms var(--ease), transform 520ms var(--ease);
+    position: absolute; inset: 0;
+    pointer-events: none;
+  }
+  .tunnel-note.in { opacity: 1; transform: translateY(0); }
+  .tunnel-note .num {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-50);
+    margin-bottom: 12px;
+    display: flex; gap: 14px;
+  }
+  .tunnel-note h3 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 3.4vw, 42px);
+    line-height: 1.02;
+    letter-spacing: -0.015em;
+    margin: 0 0 14px;
+    font-weight: 900;
+  }
+  .tunnel-note p { margin: 0 0 0.7em; font-size: 15px; line-height: 1.7; color: var(--ink); }
+  .tunnel-note p.kr { color: var(--ink-70); font-size: 13.5px; line-height: 1.8; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: 12px; }
+  .tunnel-note .specs {
+    margin-top: 20px; padding-top: 14px;
+    border-top: 1px solid var(--line);
+    display: flex; gap: 24px; flex-wrap: wrap;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink-50);
+  }
+  .tunnel-note .specs b { color: var(--ink); font-weight: 500; }
+
+  .depth-meter {
+    position: absolute;
+    left: clamp(20px, 5vw, 64px); top: 50%;
+    transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 8px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink-50);
+    pointer-events: auto;
+  }
+  @media (max-width: 900px) { .depth-meter { display: none; } }
+  .depth-meter .num { color: var(--ink); font-size: 14px; letter-spacing: 0.04em; }
+  .depth-meter .ladder {
+    width: 1px; height: 36vh;
+    background: var(--ink-08);
+    position: relative;
+    margin: 8px 0;
+  }
+  .depth-meter .ladder span {
+    position: absolute; left: -3px; right: -3px;
+    height: 1px; background: var(--ink);
+    top: 0; transition: top 200ms var(--ease);
+  }
+  .depth-meter .archive {
+    display: flex; flex-direction: column; gap: 6px;
+    margin-top: 4px;
+  }
+  .depth-meter .archive .thumb {
+    width: 28px; height: 50px;
+    border: 1px solid var(--line);
+    background: #0A0A0A;
+    background-size: cover; background-position: center;
+    filter: opacity(0.4);
+    transition: filter 240ms var(--ease), border-color 240ms var(--ease);
+    cursor: pointer;
+  }
+  .depth-meter .archive .thumb.passed { filter: opacity(0.85); border-color: var(--ink-30); }
+  .depth-meter .archive .thumb.current { filter: opacity(1); border-color: var(--ink); }
+
+  .approach-label {
+    position: absolute;
+    top: clamp(80px, 14vh, 130px);
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-50);
+    transition: color 240ms var(--ease);
+  }
+  .approach-label.now { color: var(--ink); }
+
+  /* ── Scroll nudge: only visible during the first approach ─────
+     Sits at bottom-center. Three states: 'in' (fade up), 'dim'
+     (user has started scrolling but not yet reached room 0), and
+     hidden (room 0 is in focus or past). The chevron pulses
+     downward to indicate direction. */
+  .scroll-nudge {
+    position: absolute;
+    left: 50%;
+    bottom: clamp(72px, 12vh, 120px);
+    transform: translate(-50%, 0);
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+    pointer-events: none;
+    opacity: 0;
+    /* No CSS transition on opacity — JS writes it every scroll tick. */
+    z-index: 6;
+  }
+  .scroll-nudge .nudge-label {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--ink-70);
+    text-align: center;
+    line-height: 1.6;
+  }
+  .scroll-nudge .nudge-label .kr {
+    display: block;
+    color: var(--ink-50);
+    font-family: var(--font-body);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: none;
+    margin-top: 4px;
+  }
+  .scroll-nudge .nudge-track {
+    width: 1px; height: 56px;
+    background: linear-gradient(to bottom, transparent, var(--ink-30) 30%, var(--ink) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-nudge .nudge-track::after {
+    content: "";
+    position: absolute; left: -1px; right: -1px;
+    top: -40%; height: 40%;
+    background: linear-gradient(to bottom, transparent, var(--ink));
+    animation: nudgeFlow 1.8s var(--ease) infinite;
+  }
+  @keyframes nudgeFlow {
+    0%   { top: -40%; opacity: 0; }
+    20%  { opacity: 1; }
+    80%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+  }
+  .scroll-nudge .nudge-chev {
+    width: 14px; height: 14px;
+    border-right: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    transform: rotate(45deg);
+    margin-top: -4px;
+    animation: nudgeChev 1.8s var(--ease) infinite;
+  }
+  @keyframes nudgeChev {
+    0%, 100% { transform: rotate(45deg) translate(-2px, -2px); opacity: 0.4; }
+    50%      { transform: rotate(45deg) translate(2px, 2px); opacity: 1; }
+  }
+
+  /* Subtle "approach silhouette" — a faint ring that pulses inward
+     during the first approach, suggesting depth before the first
+     frame has resolved. Hidden once frame 0 is near focus. */
+  .approach-aura {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: min(70vw, 720px);
+    aspect-ratio: 9 / 16;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    /* No CSS transition — JS-driven inline opacity each frame. */
+    z-index: 2;
+  }
+  .approach-aura::before,
+  .approach-aura::after {
+    content: "";
+    position: absolute; inset: 0;
+    border: 1px solid var(--ink-15);
+    border-radius: var(--r-frame);
+    animation: auraPulse 3.4s var(--ease) infinite;
+  }
+  .approach-aura::after { animation-delay: 1.7s; }
+  @keyframes auraPulse {
+    0%   { transform: scale(0.55); opacity: 0; }
+    25%  { opacity: 0.6; }
+    100% { transform: scale(1.0); opacity: 0; }
+  }
+
+  .open-fs {
+    position: absolute;
+    bottom: clamp(40px, 8vh, 80px);
+    right: clamp(20px, 5vw, 64px);
+    pointer-events: auto;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--ink-30);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: border-color 240ms var(--ease), background 240ms var(--ease);
+  }
+  .open-fs:hover { border-color: var(--ink); background: rgba(255,255,255,0.04); }
+
+  /* ── Statement (7 scenes) ──────────────────────────────── */
+  .statement-stage {
+    display: grid;
+    grid-template-columns: minmax(360px, 5fr) minmax(0, 7fr);
+    gap: clamp(40px, 6vw, 96px);
+    align-items: start;
+  }
+  @media (max-width: 900px) { .statement-stage { grid-template-columns: 1fr; gap: 32px; } }
+
+  .stage-rail {
+    position: sticky;
+    top: clamp(110px, 16vh, 160px);
+    display: flex; flex-direction: column; gap: 18px;
+    height: fit-content;
+  }
+  @media (max-width: 900px) { .stage-rail { position: relative; top: 0; } }
+
+  .stage-frame {
+    aspect-ratio: 4 / 5;
+    width: 100%;
+    background: #0A0A0A;
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  .stage-frame .scene {
+    position: absolute; inset: 0;
+    opacity: 0;
+    transition: opacity 600ms var(--ease);
+  }
+  .stage-frame .scene.active { opacity: 1; }
+
+  /* scene 1: split context */
+  .scene-split { display: grid; grid-template-columns: 1fr 1fr; }
+  .scene-split .half {
+    display: grid; place-items: center;
+    border-right: 1px solid var(--line);
+    position: relative;
+  }
+  .scene-split .half:last-child { border-right: 0; }
+  .scene-split .silhouette {
+    width: 50%; aspect-ratio: 3/5;
+    background: radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.08), transparent 60%),
+                #161616;
+    border-radius: 40% 40% 8% 8%;
+  }
+  .scene-split .ctx-label {
+    position: absolute; top: 14px; left: 14px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-50);
+  }
+  .scene-split .seen-as {
+    position: absolute; bottom: 14px; left: 14px; right: 14px;
+    font-family: var(--font-mono); font-size: 11px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  /* scene 2: doc bars */
+  .scene-doc { display: grid; place-items: center; background: #0A0A0A; }
+  .scene-doc .doc-bars {
+    position: absolute; left: 0; right: 0;
+    height: 14%; background: rgba(0,0,0,0.85);
+  }
+  .scene-doc .doc-bars.top { top: 0; }
+  .scene-doc .doc-bars.bot { bottom: 0; }
+  .scene-doc .timecode {
+    position: absolute; top: 18px; left: 18px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; color: var(--ink-70);
+  }
+  .scene-doc .rec {
+    position: absolute; top: 18px; right: 18px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; color: var(--ink);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .scene-doc .rec::before {
+    content: ""; width: 8px; height: 8px; background: #C44;
+    border-radius: 99px;
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .scene-doc .subtitle {
+    position: absolute; bottom: 19%; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--font-body); font-size: 14px;
+    color: var(--ink); letter-spacing: 0.02em;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+    padding: 0 24px;
+  }
+  .scene-doc .figure {
+    width: 38%; aspect-ratio: 3/5;
+    background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
+    border-radius: 50% 50% 12% 12%;
+  }
+
+  /* scene 3: question collision */
+  .scene-question { display: grid; place-items: center; padding: 32px; text-align: center; }
+  .scene-question .q1 {
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2.6vw, 32px);
+    color: var(--ink-30);
+    text-decoration: line-through;
+    text-decoration-color: var(--ink-50);
+    margin-bottom: 18px;
+    line-height: 1.1;
+  }
+  .scene-question .q2 {
+    font-family: var(--font-display);
+    font-size: clamp(22px, 3vw, 38px);
+    color: var(--ink);
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+  }
+  .scene-question .q2 em { font-style: italic; }
+
+  /* scene 4: face grid → one face */
+  .scene-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    gap: 2px;
+    padding: 8px;
+    background: #050505;
+  }
+  .scene-grid .cell {
+    background: radial-gradient(ellipse at 50% 35%, rgba(255,255,255,0.06), transparent 60%), #141414;
+    transition: opacity 800ms var(--ease), filter 800ms var(--ease);
+  }
+  .scene-grid .cell.dim { opacity: 0.18; filter: blur(2px); }
+  .scene-grid .cell.one {
+    grid-column: 2 / span 2;
+    grid-row: 2 / span 3;
+    background:
+      radial-gradient(ellipse at 50% 35%, rgba(255,255,255,0.18), transparent 65%),
+      radial-gradient(ellipse at 45% 30%, rgba(255,255,255,0.5) 0 2px, transparent 3px),
+      radial-gradient(ellipse at 55% 30%, rgba(255,255,255,0.5) 0 2px, transparent 3px),
+      #1a1a1a;
+    z-index: 2;
+    opacity: 1; filter: none;
+  }
+
+  /* scene 5: same face, two captions */
+  .scene-double { display: grid; place-items: center; padding: 24px; }
+  .scene-double .face {
+    width: 36%; aspect-ratio: 3/4;
+    background: radial-gradient(ellipse at 50% 35%, rgba(255,255,255,0.14), transparent 60%),
+                radial-gradient(ellipse at 45% 30%, rgba(255,255,255,0.55) 0 2px, transparent 3px),
+                radial-gradient(ellipse at 55% 30%, rgba(255,255,255,0.55) 0 2px, transparent 3px),
+                #161616;
+    border-radius: 48% 48% 18% 18%;
+  }
+  .scene-double .cap {
+    position: absolute;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--ink);
+    max-width: 30%;
+  }
+  .scene-double .cap.audience { left: 14px; bottom: 18px; color: var(--ink-50); }
+  .scene-double .cap.artist   { right: 14px; top: 18px; }
+  .scene-double .arrow {
+    position: absolute;
+    height: 1px; background: var(--ink-30);
+  }
+  .scene-double .arrow.a { left: 14px; bottom: 38px; width: 30%; }
+  .scene-double .arrow.b { right: 14px; top: 38px; width: 30%; }
+
+  /* scene 6: gaze close-up */
+  .scene-gaze { display: grid; place-items: center; background: #050505; }
+  .scene-gaze .eyes {
+    position: relative; width: 70%; aspect-ratio: 5/2;
+  }
+  .scene-gaze .eye {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 38%; aspect-ratio: 1;
+    background: radial-gradient(circle at 50% 50%, #fff 0 8%, #d8d8d8 8% 26%, #1a1a1a 26% 38%, #ECEAE3 38% 100%);
+    border-radius: 50%;
+    filter: contrast(1.05);
+  }
+  .scene-gaze .eye.l { left: 0; }
+  .scene-gaze .eye.r { right: 0; }
+  .scene-gaze .gaze-label {
+    position: absolute; bottom: 18px; left: 18px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  /* scene 7: meninas seal */
+  .scene-seal { display: grid; place-items: center; padding: 32px; text-align: center; }
+  .scene-seal .seal-frame {
+    border: 1px solid var(--ink-30);
+    padding: 28px 32px;
+    max-width: 80%;
+  }
+  .scene-seal .seal-kicker {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-50);
+    margin-bottom: 18px;
+  }
+  .scene-seal .seal-line {
+    font-family: var(--font-display);
+    font-size: clamp(18px, 2.2vw, 26px);
+    color: var(--ink);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .scene-seal .seal-foot {
+    margin-top: 18px;
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-50);
+  }
+
+  /* belief lens (smaller, under stage) */
+  .belief-lens {
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    background: rgba(11,11,11,0.6);
+  }
+  .belief-lens .kicker {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    display: block;
+    margin-bottom: 14px;
+  }
+  .belief-lens .word {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 14px;
+    font-weight: 900;
+    transition: opacity var(--dur-fast) var(--ease);
+  }
+  .belief-lens .word.flip { opacity: 0.2; }
+  .belief-lens .track {
+    height: 1px;
+    background: var(--ink-08);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .belief-lens .track span {
+    display: block; height: 100%;
+    background: var(--ink);
+    width: 0;
+    transition: width 100ms linear;
+  }
+  .belief-lens small {
+    font-family: var(--font-body);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink-50);
+    display: block;
+  }
+
+  .statement-body { max-width: 64ch; }
+  .scene-block {
+    padding: clamp(48px, 8vh, 96px) 0 clamp(48px, 8vh, 96px) clamp(20px, 3vw, 36px);
+    border-left: 1px solid var(--line);
+    margin-left: 0;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .scene-block.active { border-left-color: var(--ink); }
+  .scene-block:not(.active) p { color: var(--ink-70); }
+  .scene-block:not(.active) p.kr { color: var(--ink-50); }
+  .scene-block:first-child { padding-top: 0; }
+  .scene-block:last-child { padding-bottom: 0; }
+  .scene-block .scene-num {
+    font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--ink-50);
+    margin-bottom: 14px;
+    display: flex; gap: 14px;
+  }
+  .scene-block.active .scene-num { color: var(--ink); }
+  .scene-block p {
+    margin: 0 0 0.9em;
+    font-size: 16px;
+    line-height: 1.78;
+    color: var(--ink);
+  }
+  .scene-block p.kr {
+    color: var(--ink-70);
+    font-size: 14.5px;
+    line-height: 1.85;
+    margin-bottom: 0;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+    margin-top: 14px;
+  }
+  .scene-block p em {
+    font-style: italic;
+    background: linear-gradient(transparent 70%, var(--ink-08) 70%);
+  }
+  .scene-block .strike { text-decoration: line-through; text-decoration-color: var(--ink-30); color: var(--ink-50); }
+  .statement-coda {
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-size: clamp(22px, 2.6vw, 32px);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  /* ── Contact ──────────────────────────────────────────────── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 720px) { .contact-grid { grid-template-columns: 1fr; } }
+  .contact-grid article {
+    background: var(--bg);
+    padding: 32px 28px;
+  }
+  .contact-grid h3 {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    margin: 0 0 14px;
+    font-weight: 500;
+  }
+  .contact-grid p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    max-width: 32ch;
+  }
+  .contact-links {
+    margin-top: 56px;
+    display: flex; gap: 32px; flex-wrap: wrap;
+    border-top: 1px solid var(--line);
+    padding-top: 28px;
+  }
+  .contact-links a {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid var(--ink-30);
+    padding-bottom: 4px;
+    transition: border-color var(--dur-fast) var(--ease);
+  }
+  .contact-links a:hover { border-color: var(--ink); }
+
+  /* ── Footer ────────────────────────────────────────────── */
+  footer.foot {
+    border-top: 1px solid var(--line);
+    padding: 40px 0 64px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 24px;
+    color: var(--ink-50);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  footer.foot .right { text-align: right; }
+
+  /* ── Persistent main sound toggle ─────────────────────────── */
+  #main-sound {
+    position: fixed;
+    left: 24px; bottom: 24px;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px 10px 12px;
+    background: rgba(10, 10, 10, 0.72);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: var(--ink-70);
+    cursor: pointer;
+    transition: color var(--dur-fast) var(--ease),
+                border-color var(--dur-fast) var(--ease),
+                background var(--dur-fast) var(--ease),
+                opacity var(--dur-fast) var(--ease);
+  }
+  #main-sound:hover { color: var(--ink); border-color: var(--ink-30); }
+  #main-sound .ms-glyph {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+  }
+  #main-sound .ms-glyph .bar {
+    display: inline-block;
+    width: 2px;
+    background: currentColor;
+    border-radius: 1px;
+    animation: ms-bars 1.2s ease-in-out infinite;
+  }
+  #main-sound .ms-glyph .bar:nth-child(1) { height: 6px;  animation-delay: 0s; }
+  #main-sound .ms-glyph .bar:nth-child(2) { height: 10px; animation-delay: 0.15s; }
+  #main-sound .ms-glyph .bar:nth-child(3) { height: 14px; animation-delay: 0.3s; }
+  #main-sound .ms-glyph .bar:nth-child(4) { height: 8px;  animation-delay: 0.45s; }
+  @keyframes ms-bars {
+    0%, 100% { transform: scaleY(0.45); }
+    50%      { transform: scaleY(1.0); }
+    transform-origin: bottom;
+  }
+  #main-sound[aria-pressed="false"] .ms-glyph .bar { animation: none; transform: scaleY(0.35); }
+  #main-sound[aria-pressed="false"] {
+    color: var(--ink-50);
+  }
+  /* Hide while a piece is in fullscreen */
+  body.in-overlay #main-sound { opacity: 0; pointer-events: none; }
+
+  /* ── Fullscreen overlay ───────────────────────────────────── */
+  .overlay {
+    position: fixed; inset: 0;
+    z-index: 80;
+    background: #000;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    justify-items: center;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 620ms var(--ease),
+      visibility 0ms linear 620ms;
+  }
+  .overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+      opacity 620ms var(--ease),
+      visibility 0ms linear 0ms;
+  }
+  .overlay-stage {
+    position: relative;
+    width: min(56vh, 88vw);
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: var(--r-frame);
+    background: #050505;
+    opacity: 0;
+    filter: blur(18px);
+    transform: perspective(1200px) translateZ(-180px) scale(0.86);
+    transform-origin: 50% 50%;
+    transition:
+      opacity 720ms var(--ease),
+      filter 920ms var(--ease),
+      transform 920ms var(--ease);
+  }
+  .overlay.active .overlay-stage {
+    opacity: 1;
+    filter: blur(0);
+    transform: perspective(1200px) translateZ(0) scale(1);
+  }
+  .overlay-poster {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    background-size: cover;
+    background-position: center;
+    filter: none;
+    opacity: 0;
+    transform: scale(0.96);
+    transition:
+      opacity 480ms var(--ease),
+      transform 720ms var(--ease),
+      filter 720ms var(--ease);
+  }
+  .overlay-poster.active { opacity: 1; transform: scale(1); }
+  .overlay-poster.exit-left  { opacity: 0; transform: translateX(-8%) scale(0.96); filter: blur(8px); }
+  .overlay-poster.exit-right { opacity: 0; transform: translateX( 8%) scale(0.96); filter: blur(8px); }
+
+  .overlay-meta {
+    position: absolute;
+    left: max(20px, calc(50% + min(56vh, 88vw) * 0.56));
+    top: 50%;
+    transform: translateY(calc(-50% + 14px));
+    width: min(34vw, 460px);
+    color: var(--ink);
+    opacity: 0;
+    filter: blur(10px);
+    transition:
+      opacity 620ms var(--ease) 220ms,
+      filter 780ms var(--ease) 220ms,
+      transform 780ms var(--ease) 220ms;
+  }
+  .overlay.active .overlay-meta {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(-50%);
+  }
+  @media (max-width: 900px) {
+    .overlay-meta {
+      left: 20px; right: 20px; top: auto; bottom: 80px;
+      transform: translateY(14px); width: auto;
+    }
+    .overlay.active .overlay-meta {
+      transform: translateY(0);
+    }
+  }
+  .overlay-meta .num {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-50);
+    margin-bottom: 12px;
+  }
+  .overlay-meta h3 {
+    font-family: var(--font-display);
+    font-size: clamp(24px, 3vw, 36px);
+    line-height: 1.04;
+    margin: 0 0 16px;
+    letter-spacing: -0.01em;
+    font-weight: 900;
+  }
+  .overlay-meta p {
+    margin: 0;
+    color: var(--ink-70);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 38ch;
+  }
+
+  .overlay-controls {
+    position: absolute;
+    top: 24px; right: 24px;
+    display: flex; gap: 12px;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 480ms var(--ease) 360ms, transform 480ms var(--ease) 360ms;
+  }
+  .overlay.active .overlay-controls {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .overlay-controls button,
+  .overlay-nav button {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--ink-30);
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+  }
+  .overlay-controls button:hover,
+  .overlay-nav button:hover { border-color: var(--ink); background: rgba(255,255,255,0.04); }
+  .overlay-nav {
+    position: absolute;
+    bottom: 24px; left: 50%;
+    transform: translate(-50%, 8px);
+    display: flex; gap: 16px;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 480ms var(--ease) 420ms, transform 480ms var(--ease) 420ms;
+  }
+  .overlay.active .overlay-nav {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .overlay-nav .count {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: var(--ink-50);
+  }
+
+  /* reveal */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 800ms var(--ease), transform 800ms var(--ease); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .section, .reveal { transition: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-row">
+    <a href="#hero" class="logo">JAEHONG&nbsp;<b>AN</b></a>
+    <nav class="menu" id="menu">
+      <a href="#hero" data-link="hero" class="active">Intro</a>
+      <a href="#works" data-link="works">Works</a>
+      <a href="#statement" data-link="statement">Statement</a>
+      <a href="#contact" data-link="contact">Contact</a>
+    </nav>
+    <div class="meta-clock" id="clock">SEOUL · KST</div>
+  </div>
+  <div class="scroll-meter"><span id="scrollbar"></span></div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="section hero" id="hero" data-screen-label="01 Hero">
+    <div class="wrap">
+      <p class="caption">
+        <span class="dot"></span>
+        Media Artist
+        <span>·</span>
+        XR / AI Avatar Narrative
+        <span>·</span>
+        Selected Works 2021—2026
+      </p>
+      <h1>
+        Jaehong&nbsp;An,<br/>
+        <span class="light">looking back<br/>at the gaze.</span>
+      </h1>
+      <div class="hero-grid">
+        <div>
+          <div class="label">Practice</div>
+          <p>현실과 가상의 경계에서 감각과 관계의 방식을 다시 설계합니다. 페이크 다큐멘터리에서 출발해 XR과 가상공간을 통과하며, 보는 자와 보이는 것 사이의 거리를 측정해 왔습니다.</p>
+        </div>
+        <div>
+          <div class="label">Subject</div>
+          <p>An explores how images become beliefs — how a calm tone, a still face, an unwavering gaze can persuade us that something is true. The work returns the audience’s gaze to itself.</p>
+        </div>
       </div>
-      <div class="scroll-meter" aria-hidden="true"><span></span></div>
-    </header>
+    </div>
+  </section>
 
-    <div class="smooth-scroll" id="smooth-scroll">
-      <main class="scroll-content" id="scroll-content">
-        <section id="hero" class="hero section">
-          <p class="tag">MEDIA ARTIST / XR / AI AVATAR NARRATIVE</p>
-          <h1>
-            JAEHONG<br />
-            AN
-          </h1>
-          <p class="subtitle">현실과 가상의 경계에서, 감각과 관계의 방식을 다시 설계합니다.</p>
-          <p class="intro">
-            Jaehong An explores how we accept images as truth. His practice moves from documentary gaze to XR space,
-            examining relational distance between viewer, avatar, and body.
-          </p>
-          <div class="hero-keywords">
-            <span>Reality / Virtuality</span>
-            <span>Relational Gaze</span>
-            <span>AI-Driven Persona</span>
-            <span>Embodied Interface</span>
+  <!-- WORKS — Depth Tunnel + Approach -->
+  <section class="section" id="works" data-screen-label="02 Works" style="padding: 0;">
+    <div class="wrap" style="padding-top: clamp(96px, 16vh, 180px); padding-bottom: 48px;">
+      <div class="section-head">
+        <span class="num">§ 01 / Selected Works</span>
+        <span class="num" style="text-align:right">depth tunnel · 9:16</span>
+        <h2>Three rooms, in a line.<br/>Each one walks toward you.</h2>
+      </div>
+    </div>
+
+    <div class="tunnel" id="tunnel">
+      <div class="tunnel-stage">
+        <div class="tunnel-camera" id="camera">
+          <!-- frames injected by JS -->
+        </div>
+
+        <div class="approach-aura" id="approach-aura"></div>
+
+        <div class="tunnel-hud">
+          <div class="approach-label" id="approach">Approaching N° 01</div>
+
+          <div class="scroll-nudge" id="scroll-nudge">
+            <div class="nudge-label">
+              Scroll · 작품을 향해 걸어가세요
+              <span class="kr">첫 번째 방까지 약 1,100m</span>
+            </div>
+            <div class="nudge-track"></div>
+            <div class="nudge-chev"></div>
           </div>
-        </section>
 
-        <section id="works" class="works section" aria-label="Selected works">
-          <div class="section-head">
-            <p>Selected Works</p>
-            <h2>9:16 Vertical Motion Archive</h2>
+          <div class="depth-meter">
+            <span>Depth</span>
+            <span class="num" id="depth-num">−2800m</span>
+            <div class="ladder"><span id="ladder-mark"></span></div>
+            <span style="margin-top: 12px;">Archive</span>
+            <div class="archive" id="archive"></div>
           </div>
 
-          <div class="work-carousel reveal" data-carousel>
-            <div class="work-track">
-              <article class="work-slide">
-                <div class="video-shell">
-                  <video
-                    class="work-video"
-                    autoplay
-                    muted
-                    loop
-                    playsinline
-                    preload="auto"
-                    poster="assets/posters/work-01.jpg"
-                  >
-                    <source src="media/work-01.mp4" type="video/mp4" />
-                  </video>
-                  <button class="fs-toggle" type="button" aria-label="Fullscreen video">Full</button>
-                </div>
-                <div class="work-meta">
-                  <span class="idx">#01</span>
-                  <h3>Threshold Body</h3>
-                  <p>
-                    도시의 물성 위에 아바타 감각을 겹쳐, 인간의 시선이 가상 객체를 실재로 수용하는 순간을 기록한 실험.
-                  </p>
-                  <div class="work-slide-hint" aria-hidden="true">
-                    <span class="hint-arrow left"></span>
-                    <span class="hint-line"></span>
-                    <span class="hint-arrow right"></span>
-                  </div>
-                </div>
-              </article>
+          <div class="tunnel-notes" id="notes">
+            <!-- notes injected -->
+          </div>
 
-              <article class="work-slide">
-                <div class="video-shell">
-                  <video
-                    class="work-video"
-                    autoplay
-                    muted
-                    loop
-                    playsinline
-                    preload="auto"
-                    poster="assets/posters/work-02.jpg"
-                  >
-                    <source src="media/work-02.mp4" type="video/mp4" />
-                  </video>
-                  <button class="fs-toggle" type="button" aria-label="Fullscreen video">Full</button>
-                </div>
-                <div class="work-meta">
-                  <span class="idx">#02</span>
-                  <h3>Distance of Faces</h3>
-                  <p>
-                    관객과 캐릭터의 정서적 거리를 조절하며, 대상이 관계로 전환되는 지점과 몰입의 리듬을 추적한다.
-                  </p>
-                  <div class="work-slide-hint" aria-hidden="true">
-                    <span class="hint-arrow left"></span>
-                    <span class="hint-line"></span>
-                    <span class="hint-arrow right"></span>
-                  </div>
-                </div>
-              </article>
+          <button class="open-fs" id="tunnel-fs" type="button">Enter current room →</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-              <article class="work-slide">
-                <div class="video-shell">
-                  <video
-                    class="work-video"
-                    autoplay
-                    muted
-                    loop
-                    playsinline
-                    preload="auto"
-                    poster="assets/posters/work-03.jpg"
-                  >
-                    <source src="media/work-03.mp4" type="video/mp4" />
-                  </video>
-                  <button class="fs-toggle" type="button" aria-label="Fullscreen video">Full</button>
-                </div>
-                <div class="work-meta">
-                  <span class="idx">#03</span>
-                  <h3>Avatar Room</h3>
-                  <p>
-                    AI 인물과 상호작용하는 인터페이스를 통해, 몸의 위치가 곧 관계의 방식이 되는 구조를 설계한 작업.
-                  </p>
-                  <div class="work-slide-hint" aria-hidden="true">
-                    <span class="hint-arrow left"></span>
-                    <span class="hint-line"></span>
-                    <span class="hint-arrow right"></span>
-                  </div>
-                </div>
-              </article>
+  <!-- STATEMENT -->
+  <section class="section" id="statement" data-screen-label="03 Statement">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="num">§ 02 / Statement</span>
+        <span class="num" style="text-align:right">감각 · 관계 · 실재</span>
+        <h2>What are we looking at, and why do we believe it?</h2>
+      </div>
+
+      <div class="statement-stage">
+        <aside class="stage-rail">
+          <div class="stage-frame" id="stage-frame">
+            <!-- scene 1 -->
+            <div class="scene scene-split active" data-scene="0">
+              <div class="half">
+                <span class="ctx-label">Italy · 2014</span>
+                <div class="silhouette"></div>
+                <span class="seen-as">seen as → Korean</span>
+              </div>
+              <div class="half">
+                <span class="ctx-label">Korea · 2018</span>
+                <div class="silhouette"></div>
+                <span class="seen-as">seen as → Italian</span>
+              </div>
+            </div>
+            <!-- scene 2 -->
+            <div class="scene scene-doc" data-scene="1">
+              <div class="doc-bars top"></div>
+              <div class="figure"></div>
+              <span class="timecode">REC · 00:14:22:08</span>
+              <span class="rec">FAKE / DOC</span>
+              <div class="subtitle">“—the calm tone makes it impossible to disbelieve.”</div>
+              <div class="doc-bars bot"></div>
+            </div>
+            <!-- scene 3 -->
+            <div class="scene scene-question" data-scene="2">
+              <div class="q1">What is true?</div>
+              <div class="q2"><em>Why</em> do we<br/>believe it to be?</div>
+            </div>
+            <!-- scene 4 -->
+            <div class="scene scene-grid" data-scene="3" id="scene-grid">
+              <!-- 20 cells minus the 6 covered by .one -->
+              <div class="cell dim"></div><div class="cell dim"></div><div class="cell dim"></div><div class="cell dim"></div>
+              <div class="cell dim"></div><div class="cell one"></div><div class="cell dim"></div>
+              <div class="cell dim"></div><div class="cell dim"></div>
+              <div class="cell dim"></div><div class="cell dim"></div>
+              <div class="cell dim"></div><div class="cell dim"></div><div class="cell dim"></div><div class="cell dim"></div>
+            </div>
+            <!-- scene 5 -->
+            <div class="scene scene-double" data-scene="4">
+              <span class="cap artist">To the artist:<br/>my spouse</span>
+              <span class="arrow b"></span>
+              <div class="face"></div>
+              <span class="arrow a"></span>
+              <span class="cap audience">To the audience:<br/>a stranger</span>
+            </div>
+            <!-- scene 6 -->
+            <div class="scene scene-gaze" data-scene="5">
+              <div class="eyes">
+                <div class="eye l"></div>
+                <div class="eye r"></div>
+              </div>
+              <span class="gaze-label">You are now being watched.</span>
+            </div>
+            <!-- scene 7 -->
+            <div class="scene scene-seal" data-scene="6">
+              <div class="seal-frame">
+                <div class="seal-kicker">After Velázquez · Las Meninas</div>
+                <div class="seal-line">From this position,<br/>this is real.</div>
+                <div class="seal-foot">— the viewer’s memory</div>
+              </div>
             </div>
           </div>
-        </section>
 
-        <section id="statement" class="statement section reveal">
-          <div class="section-head">
-            <p>Statement of Artist</p>
-            <h2>감각, 관계, 그리고 실재의 조건</h2>
+          <div class="belief-lens" id="belief-lens">
+            <span class="kicker">Position of Belief</span>
+            <strong class="word" id="belief-word">CONTEXT</strong>
+            <span class="track"><span id="belief-progress"></span></span>
+            <small id="belief-sub">Identity is rewritten by who is looking.</small>
           </div>
-          <div class="statement-grid">
-            <p>
-              I have long explored the boundaries between reality and fiction. This pursuit wasn't driven merely by
-              conceptual curiosity. Though I was always the same person, others perceived me differently depending on my
-              geographical context: in Italy, I was seen as Korean; in Korea, I was seen as Italian. My identity was
-              never something fixed within me; it was instead a narrative continuously rewritten through others' eyes
-              and environmental contexts. Through this experience, I came to realize that reality is not a single fixed
-              truth, but rather a fluid state continuously formed by relationships and storytelling.
-            </p>
-            <p>
-              My work began with fake documentaries and expanded into XR and virtual spaces. In producing fake
-              documentaries, I tested the persuasive power embedded in their formal elements - the calm tone, specific
-              editing rhythms, and visual compositions that resemble archival recordings - which easily led viewers to
-              accept fictional narratives as truth. In XR, I more directly challenged the boundaries of belief. In
-              exhibitions, viewers interact with virtual objects that clearly do not exist, experiencing immediate
-              sensory confusion at the boundary between real and virtual. This moment prompts viewers to reconsider
-              their own beliefs and how these beliefs are formed.
-            </p>
-            <p>
-              My primary interest isn't in answering "What is true?" but rather in exploring why and how we come to
-              believe something is true. Images flood our daily lives, yet we rarely question the basis of our belief
-              in their authenticity. I am cautious of our indifference toward the mechanisms by which beliefs are
-              formed - beliefs that emerge easily and spread rapidly, often solidifying into unquestioned certainty. My
-              work aims to reveal these mechanisms, encouraging viewers to consciously reflect on what they believe and
-              why.
-            </p>
-            <p>
-              This motivation led me to generative AI. Initially, I used AI to produce a vast number of technically
-              impressive yet random images, but found it challenging to feel any emotional connection or meaningful
-              dialogue with my creations. By chance, I incorporated the image of my spouse, someone with whom I share
-              an authentic emotional bond, into my work. For the first time, I experienced a profound personal
-              connection with the resulting piece. Since then, I have consistently used this approach.
-            </p>
-            <p>
-              To the audience, the face in my work may appear simply as an unfamiliar person, but to me, it embodies
-              traces of my closest emotional connection. This discrepancy creates distinct viewing experiences for
-              myself and my audience. Though I never explicitly disclose this personal dimension within the work, I have
-              often witnessed viewers significantly narrowing their emotional distance upon learning this background
-              later on. In these moments, the artwork transitions from an object of interpretation to an experience
-              rooted in relationships and emotions.
-            </p>
-            <p>
-              In my works, I emphasize human figures and the gaze. The figures consistently look directly at the
-              audience. Humans instinctively respond more strongly to living beings than objects, more so to humans
-              among all beings, and most intensely to the eyes among all human features. This gaze transforms the
-              audience from active observers to passive recipients of being watched. This shift is communicated not
-              through explanation but through an immediate, bodily experience. I believe this visceral response forms
-              the foundation of our judgments about authenticity.
-            </p>
-            <p>
-              I have repeatedly observed audiences lingering even in front of nearly motionless screens. During an
-              outdoor LED exhibition, preschool children showed little interest in visually elaborate works nearby but
-              would pull their parents toward my piece, pointing at it intently. They responded not to explicit
-              narrative or explanation, but to the primal stimulus of contrast and direct gaze - precisely the intended
-              effect of my work.
-            </p>
-            <p>
-              Finally, I recall Diego Velazquez's Las Meninas. The painting captures a scene from the perspective of
-              King Philip IV, depicting his daughter, her attendants, and the painter himself - a scene undeniably real
-              for the king. Similarly, my sense of authenticity in my work arises from the personal memory of the
-              figure being my spouse. Ultimately, truth changes according to the viewer's position and memories.
-            </p>
-            <p>
-              This is the question I continuously pose through my practice:<br />
-              What are we looking at, and on what grounds do we believe it to be real?
-            </p>
-          </div>
-        </section>
+        </aside>
 
-        <section id="contact" class="contact section reveal">
-          <div class="section-head">
-            <p>Contact / Collaboration</p>
-            <h2>Open for commissions, XR exhibitions, and narrative installations.</h2>
-          </div>
-          <div class="contact-grid">
-            <article>
-              <h3>Studio</h3>
-              <p>Seoul-based media art practice focusing on immersive visual narratives.</p>
-            </article>
-            <article>
-              <h3>Available Formats</h3>
-              <p>9:16 short-form films, projection mapping, generative avatar performance, XR story spaces.</p>
-            </article>
-            <article>
-              <h3>Collaboration</h3>
-              <p>Brand films, installation partnerships, gallery-led commissions, and experimental music visuals.</p>
-            </article>
-          </div>
-          <div class="contact-links">
-            <a href="https://instagram.com/jae_hong__an" target="_blank" rel="noreferrer">Instagram</a>
-            <a href="https://www.youtube.com/@%EC%95%88%EC%9E%AC%ED%99%8D-p2y/videos" target="_blank" rel="noreferrer"
-              >YouTube</a
-            >
-            <a href="mailto:creative@secondbrush.co.kr">creative@secondbrush.co.kr</a>
-          </div>
-        </section>
+        <div class="statement-body" id="statement-body">
 
-        <footer class="site-footer section">
-          <p>Jaehong An, Media Artist</p>
-        </footer>
-      </main>
-    </div>
+          <article class="scene-block" data-block="0">
+            <div class="scene-num"><span>§ 01</span><span>IDENTITY · CONTEXT</span></div>
+            <p>I have long explored the boundaries between reality and fiction. This pursuit wasn’t driven merely by conceptual curiosity. Though I was always the same person, others perceived me differently depending on my geographical context: in Italy, I was seen as Korean; in Korea, I was seen as Italian. My identity was never something fixed within me; it was instead a narrative continuously rewritten through others’ eyes and environmental contexts.</p>
+            <p class="kr">나는 늘 같은 사람이었지만, 이탈리아에서는 한국인으로, 한국에서는 이탈리아인으로 읽혔다. 정체성은 내 안에 고정된 것이 아니라, 타인의 시선과 환경 속에서 끊임없이 다시 쓰여지는 서사였다.</p>
+          </article>
 
-    <audio id="bgm-audio" loop preload="auto" autoplay>
-      <source src="media/bgm.mp3" type="audio/mpeg" />
-    </audio>
+          <article class="scene-block" data-block="1">
+            <div class="scene-num"><span>§ 02</span><span>FORM · PERSUASION</span></div>
+            <p>My work began with fake documentaries and expanded into XR and virtual spaces. In producing fake documentaries, I tested the persuasive power embedded in their formal elements — <em>the calm tone, specific editing rhythms, and visual compositions that resemble archival recordings</em> — which easily led viewers to accept fictional narratives as truth.</p>
+            <p class="kr">차분한 톤, 특정한 편집 리듬, 아카이브를 닮은 화면 구성. 이 형식적 요소들이 가진 설득의 힘을 페이크 다큐멘터리로 시험했다. 사람들은 형식이 주는 신뢰만으로 허구를 진실로 받아들였다.</p>
+          </article>
 
-      <div class="video-overlay" id="video-overlay" aria-hidden="true">
-      <div class="overlay-stage" id="overlay-stage">
-        <video class="overlay-video-layer active" id="overlay-video-a" autoplay muted loop playsinline preload="auto"></video>
-        <video class="overlay-video-layer" id="overlay-video-b" autoplay muted loop playsinline preload="auto"></video>
-      </div>
-      <div class="overlay-meta">
-        <span id="overlay-idx"></span>
-        <h3 id="overlay-title"></h3>
-        <p id="overlay-desc"></p>
-      </div>
-      <button id="overlay-exit" type="button" aria-label="Exit fullscreen">Exit</button>
-      <button id="overlay-audio-toggle" type="button" aria-label="Toggle audio">Sound On</button>
-      <div class="overlay-hint-arrows" aria-hidden="true">
-        <span class="hint-arrow left"></span>
-        <span class="hint-line"></span>
-        <span class="hint-arrow right"></span>
+          <article class="scene-block" data-block="2">
+            <div class="scene-num"><span>§ 03</span><span>QUESTION · DOUBT</span></div>
+            <p><span class="strike">My primary interest isn’t in answering “What is true?”</span><br/>but rather in exploring <em>why and how</em> we come to believe something is true. Images flood our daily lives, yet we rarely question the basis of our belief in their authenticity.</p>
+            <p class="kr">나의 관심은 “무엇이 진실인가”가 아니라, “우리는 왜, 어떻게 어떤 것을 진실이라 믿게 되는가”에 있다. 이미지가 일상을 덮고 있지만, 우리는 그 진위의 근거를 거의 묻지 않는다.</p>
+          </article>
+
+          <article class="scene-block" data-block="3">
+            <div class="scene-num"><span>§ 04</span><span>RANDOM · CONNECTION</span></div>
+            <p>This motivation led me to generative AI. Initially, I produced a vast number of technically impressive yet random images, but found it challenging to feel any emotional connection with them. By chance, I incorporated the image of my spouse — <em>someone with whom I share an authentic emotional bond</em> — into my work. For the first time, I experienced a profound personal connection with the resulting piece.</p>
+            <p class="kr">처음에는 기술적으로 인상적이지만 무관한 이미지들을 양산했다. 어느 날 우연히, 나와 정서적으로 진실한 관계인 아내의 이미지를 작업에 들였다. 그 순간 비로소 작품과 나 사이에 깊은 연결이 생겨났다.</p>
+          </article>
+
+          <article class="scene-block" data-block="4">
+            <div class="scene-num"><span>§ 05</span><span>SAME FACE · DIFFERENT DISTANCE</span></div>
+            <p>To the audience, the face in my work may appear simply as an unfamiliar person, but to me, it embodies traces of my closest emotional connection. This discrepancy creates distinct viewing experiences for myself and my audience. I have often witnessed viewers significantly narrowing their emotional distance upon learning this background.</p>
+            <p class="kr">관객에게 그 얼굴은 낯선 타인이지만, 나에게는 가장 가까운 관계의 흔적이다. 같은 이미지가 두 개의 거리감으로 동시에 존재한다. 관객이 이 사실을 알게 되는 순간, 그들의 정서적 거리는 눈에 띄게 좁아진다.</p>
+          </article>
+
+          <article class="scene-block" data-block="5">
+            <div class="scene-num"><span>§ 06</span><span>GAZE · REVERSAL</span></div>
+            <p>In my works, I emphasize human figures and the gaze. The figures consistently look directly at the audience. Humans instinctively respond more strongly to living beings than objects, more so to humans among all beings, and most intensely to the eyes among all human features. <em>This gaze transforms the audience from active observers to passive recipients of being watched.</em></p>
+            <p class="kr">인물은 늘 정면을 바라본다. 사물보다 생명체에, 생명체 중에서도 인간에, 인간의 얼굴 중에서도 눈에 가장 강하게 반응한다. 이 시선은 관객을 ‘보는 자’에서 ‘보이는 자’로 뒤집는다.</p>
+          </article>
+
+          <article class="scene-block" data-block="6">
+            <div class="scene-num"><span>§ 07</span><span>POSITION · MEMORY</span></div>
+            <p>I recall Velázquez’s <em>Las Meninas</em>. The painting captures a scene from the perspective of King Philip IV — a scene undeniably real for the king. Similarly, my sense of authenticity in my work arises from the personal memory of the figure being my spouse. <em>Ultimately, truth changes according to the viewer’s position and memories.</em></p>
+            <p class="kr">벨라스케스의 〈라스 메니나스〉를 떠올린다. 이 그림은 왕 펠리페 4세의 시점에서 본 장면이며, 왕에게는 의심할 수 없이 실재였다. 마찬가지로, 내 작품의 진실성은 그 인물이 나의 아내라는 사적인 기억에서 비롯된다. 결국 진실은 보는 자의 위치와 기억에 따라 달라진다.</p>
+            <div class="statement-coda">
+              What are we looking at,<br/>and on what grounds<br/>do we believe it to be real?
+            </div>
+          </article>
+
+        </div>
       </div>
     </div>
+  </section>
 
-    <script src="https://unpkg.com/three@0.161.0/build/three.min.js"></script>
-    <script src="script.js"></script>
-  </body>
+  <!-- CONTACT -->
+  <section class="section" id="contact" data-screen-label="04 Contact">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="num">§ 03 / Contact</span>
+        <span class="num" style="text-align:right">Open studio · Seoul</span>
+        <h2>Open for commissions, XR exhibitions, and narrative installations.</h2>
+      </div>
+
+      <div class="contact-grid">
+        <article>
+          <h3>Studio</h3>
+          <p>Seoul-based media art practice focused on immersive visual narratives across XR, AI avatar, and projected environments.</p>
+        </article>
+        <article>
+          <h3>Available Formats</h3>
+          <p>9:16 short-form films · projection mapping · generative avatar performance · XR story spaces.</p>
+        </article>
+        <article>
+          <h3>Collaboration</h3>
+          <p>Brand films · installation partnerships · gallery-led commissions · experimental music visuals.</p>
+        </article>
+      </div>
+
+      <div class="contact-links">
+        <a href="mailto:creative@secondbrush.co.kr">creative@secondbrush.co.kr</a>
+        <a href="https://instagram.com/jae_hong__an" target="_blank" rel="noreferrer">Instagram → @jae_hong__an</a>
+        <a href="https://www.youtube.com/@%EC%95%88%EC%9E%AC%ED%99%8D-p2y/videos" target="_blank" rel="noreferrer">YouTube → 안재홍</a>
+      </div>
+
+      <footer class="foot">
+        <div>© 2026 · Jaehong An</div>
+        <div class="right">Color video works / quiet rooms</div>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<!-- Persistent ambient sound toggle (main site bed) -->
+<button id="main-sound" type="button" aria-pressed="true" aria-label="Toggle ambient sound">
+  <span class="ms-glyph" aria-hidden="true">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </span>
+  <span class="ms-label">SOUND ON</span>
+</button>
+
+<audio id="bgm-audio" loop preload="auto">
+  <source src="media/bgm.mp3" type="audio/mpeg" />
+</audio>
+
+<!-- Fullscreen overlay -->
+<div class="overlay" id="overlay" aria-hidden="true">
+  <div class="overlay-stage" id="overlay-stage">
+    <video class="overlay-poster active" id="poster-a" autoplay muted loop playsinline preload="auto"></video>
+    <video class="overlay-poster" id="poster-b" autoplay muted loop playsinline preload="auto"></video>
+  </div>
+  <div class="overlay-meta">
+    <div class="num" id="ov-num">#01</div>
+    <h3 id="ov-title">Threshold Body</h3>
+    <p id="ov-desc"></p>
+  </div>
+  <div class="overlay-controls">
+    <button id="ov-sound" type="button">Sound On</button>
+    <button id="ov-exit" type="button">Close</button>
+  </div>
+  <div class="overlay-nav">
+    <button id="ov-prev" type="button">← Prev</button>
+    <span class="count" id="ov-count">01 / 03</span>
+    <button id="ov-next" type="button">Next →</button>
+  </div>
+</div>
+
+<script src="content/works.js"></script>
+<script>
+/* ────────────────────────────────────────────────
+   Data — loaded from content/works.js.
+   Edit that local manifest to add portfolio works.
+───────────────────────────────────────────────── */
+const fallbackWorks = [
+  {
+    idx: "01",
+    title: "Threshold Body",
+    desc: "도시의 물성 위에 아바타 감각을 겹쳐, 인간의 시선이 가상 객체를 실재로 수용하는 순간을 기록한 실험.",
+    descEn: "Avatar sensation layered onto the materiality of the city — recording the instant a viewer accepts a virtual object as real.",
+    year: "2024",
+    medium: "XR · 9:16",
+    duration: "07′12″",
+    caption: "Body × City — gaze record",
+    poster: "url(assets/posters/work-01.jpg)",
+    video: "media/work-01.mp4",
+    videoPoster: "assets/posters/work-01.jpg"
+  },
+  {
+    idx: "02",
+    title: "Distance of Faces",
+    desc: "관객과 캐릭터의 정서적 거리를 조절하며, 대상이 관계로 전환되는 지점과 몰입의 리듬을 추적한다.",
+    descEn: "Modulating emotional distance between audience and character — tracking the rhythm at which an object becomes a relation.",
+    year: "2025",
+    medium: "AI Avatar · LED",
+    duration: "11′40″",
+    caption: "A · proximity study · B",
+    poster: "url(assets/posters/work-02.jpg)",
+    video: "media/work-02.mp4",
+    videoPoster: "assets/posters/work-02.jpg"
+  },
+  {
+    idx: "03",
+    title: "Avatar Room",
+    desc: "AI 인물과 상호작용하는 인터페이스를 통해, 몸의 위치가 곧 관계의 방식이 되는 구조를 설계한 작업.",
+    descEn: "An interface for interacting with an AI persona — designing a structure in which the body’s position becomes its mode of relation.",
+    year: "2026",
+    medium: "Installation · XR",
+    duration: "looped",
+    caption: "Installation view — XR, looped",
+    poster: "url(assets/posters/work-03.jpg)",
+    video: "media/work-03.mp4",
+    videoPoster: "assets/posters/work-03.jpg"
+  }
+];
+
+function normalizeWork(work, i) {
+  const idx = work.idx || String(i + 1).padStart(2, "0");
+  const posterPath = work.videoPoster || work.poster || `assets/posters/work-${idx}.jpg`;
+  const videoPath = work.video || `media/work-${idx}.mp4`;
+  return {
+    ...work,
+    idx,
+    title: work.title || `Work ${idx}`,
+    desc: work.desc || "",
+    descEn: work.descEn || work.desc || "",
+    year: work.year || "",
+    medium: work.medium || "9:16 Video",
+    duration: work.duration || "looped",
+    caption: work.caption || work.title || `Work ${idx}`,
+    video: videoPath,
+    videoPoster: work.videoPoster || posterPath,
+    poster: String(posterPath).startsWith("url(") ? posterPath : `url(${posterPath})`
+  };
+}
+const works = (Array.isArray(window.JAEHONG_WORKS) && window.JAEHONG_WORKS.length
+  ? window.JAEHONG_WORKS
+  : fallbackWorks
+).map(normalizeWork);
+
+// Keep the scroll tunnel breathable as the archive grows.
+const tunnelRoot = document.getElementById("tunnel");
+if (tunnelRoot) {
+  tunnelRoot.style.height = `${640 + Math.max(0, works.length - 3) * 160}vh`;
+}
+
+/* ── Render Depth Tunnel ─────────────────────────── */
+const camera  = document.getElementById("camera");
+const notes   = document.getElementById("notes");
+const archive = document.getElementById("archive");
+
+// each room sits at z = -i * spacing
+const Z_SPACING = 1800;
+const TUNNEL_DEPTH = (works.length - 1) * Z_SPACING;
+// camera starts ENTRY_DEPTH IN FRONT of room 0 so room 0 has a real approach
+// and ends EXIT_DEPTH past the last room so room 2 has a real exit
+const ENTRY_DEPTH = 1100;
+const EXIT_DEPTH  = 900;
+const CAM_TRAVEL  = ENTRY_DEPTH + TUNNEL_DEPTH + EXIT_DEPTH;
+// scroll t at which room i sits exactly at the reading plane (relZ = 0)
+function roomT(i) {
+  return (ENTRY_DEPTH + i * Z_SPACING) / CAM_TRAVEL;
+}
+
+// Frames
+camera.innerHTML = works.map((w, i) => `
+  <div class="tunnel-frame" data-frame="${i}" style="--zbase: ${-i * Z_SPACING}px">
+    <div class="frame-card">
+      <div class="poster" style="background-image:${w.poster}"></div>
+      <video class="frame-video" src="${w.video}" poster="${w.videoPoster}" muted loop playsinline preload="metadata"></video>
+      <div class="frame-overlay"></div>
+      <div class="frame-idx">N° ${w.idx}</div>
+      <div class="frame-caption">${w.caption}</div>
+      <div class="frame-title">${w.title}</div>
+    </div>
+  </div>
+`).join("");
+
+// Notes
+notes.innerHTML = works.map((w, i) => `
+  <article class="tunnel-note" data-note="${i}">
+    <div class="num"><span>N° ${w.idx}</span><span>${w.year}</span><span>${w.medium}</span></div>
+    <h3>${w.title}</h3>
+    <p>${w.descEn}</p>
+    <p class="kr">${w.desc}</p>
+    <div class="specs">
+      <span>Aspect <b>9 : 16</b></span>
+      <span>Run <b>${w.duration}</b></span>
+      <span>Year <b>${w.year}</b></span>
+    </div>
+  </article>
+`).join("");
+
+// Archive thumbs
+archive.innerHTML = works.map((w, i) => `
+  <div class="thumb" data-thumb="${i}" style="background-image:${w.poster}" title="N° ${w.idx} — ${w.title}"></div>
+`).join("");
+
+const tunnelFrames = Array.from(camera.querySelectorAll(".tunnel-frame"));
+const tunnelNotes  = Array.from(notes.querySelectorAll(".tunnel-note"));
+const archiveThumbs = Array.from(archive.querySelectorAll(".thumb"));
+const approachEl = document.getElementById("approach");
+const depthNumEl = document.getElementById("depth-num");
+const ladderMark = document.getElementById("ladder-mark");
+const scrollNudge = document.getElementById("scroll-nudge");
+const approachAura = document.getElementById("approach-aura");
+let userHasScrolled = false;
+
+let currentRoom = -1;
+
+
+function updateTunnelVideoPlayback(bestIdx) {
+  tunnelFrames.forEach((f, i) => {
+    const video = f.querySelector(".frame-video");
+    if (!video) return;
+    if (Math.abs(i - bestIdx) <= 1) video.play().catch(() => {});
+    else video.pause();
+  });
+}
+
+function updateTunnel() {
+  const tunnel = document.getElementById("tunnel");
+  const r = tunnel.getBoundingClientRect();
+  const total = tunnel.offsetHeight - window.innerHeight;
+  const t = Math.max(0, Math.min(1, -r.top / Math.max(1, total)));
+
+  // camera travels from -ENTRY_DEPTH (in front of room 0) past room (N-1) to +EXIT_DEPTH
+  const camZ = -ENTRY_DEPTH + t * CAM_TRAVEL;
+
+  // Reading plane = relZ 0. Each room "lives" in a narrow window around it,
+  // peaks crisply at the snap, then dissolves quickly so the next/prev room
+  // doesn't bleed into focus.
+  tunnelFrames.forEach((f, i) => {
+    const frameZ = -i * Z_SPACING;
+    const relZ   = camZ + frameZ;
+
+    // d = signed distance from reading plane in units of Z_SPACING (-1..1 spans the
+    // entire approach-and-departure window around this room)
+    const d = relZ / Z_SPACING;
+
+    // No bump — it was creating a soft halo around the snap point. Just clean
+    // z-translation. The frame moves linearly along the tunnel axis.
+    const finalZ = relZ;
+
+    f.style.transform = `translateZ(${finalZ.toFixed(2)}px)`;
+
+    // Focus profile: a Gaussian-like bell centered on d=0.
+    // focus = 1 at the snap, falls off to ~0 by |d| > 0.6
+    const focus = Math.exp(-(d * d) / 0.10); // sharp bell, half-width ~0.22
+
+    // Blur: 0 at peak, ramps to 14 as focus drops
+    const blur = (1 - focus) * 14;
+
+    // Opacity: sharp peak — frame is invisible far from its reading plane,
+    // crisp at the snap. Hard floor on the trailing (past-camera) side so prior
+    // rooms don't ghost the current one.
+    let op;
+    if (d > 0)       op = focus;             // past camera — fade out fast
+    else             op = 0.18 + 0.82 * focus; // approaching — emerge from dim dust
+
+    // Special case for the FIRST frame during entry: when the camera is still
+    // in front of room 0 (camZ negative, d negative), we want a faint but
+    // legible silhouette so the user has something to walk *toward* — not just
+    // an empty blurred void. Lift the floor and soften the blur in that window.
+    if (i === 0 && d < 0) {
+      const entryT = Math.min(1, -d / 0.61); // 0 at room 0, 1 at extreme entry
+      // floor opacity ramps 0.42 → 0.22 as we sit further away
+      const floor = 0.42 - 0.20 * entryT;
+      op = Math.max(op, floor);
+      // blur ceiling drops so the silhouette has shape
+      const blurCap = 6 + 6 * entryT; // 6px near, 12px far
+      f.style.filter  = `blur(${Math.min(blur, blurCap).toFixed(2)}px)`;
+    } else {
+      f.style.filter  = `blur(${blur.toFixed(2)}px)`;
+    }
+    f.style.opacity = op.toFixed(3);
+  });
+
+  // Entry nudge + aura: only during the first approach (camZ still negative
+  // and frame 0 not yet at the reading plane). Fades out smoothly as the
+  // first room comes into focus. JS-driven inline opacity (no CSS transition)
+  // because updateTunnel runs every scroll tick.
+  const camNorm = (camZ + ENTRY_DEPTH) / ENTRY_DEPTH; // 0 at very start, 1 when room 0 is in focus
+  if (camNorm < 0.85) {
+    let nudgeOp = 1 - Math.max(0, (camNorm - 0.15) / 0.70);
+    // Once user has actually scrolled, dim to 45% so it doesn't keep shouting.
+    if (userHasScrolled) nudgeOp *= 0.55;
+    scrollNudge.style.opacity = nudgeOp.toFixed(3);
+    approachAura.style.opacity = (0.55 * (1 - camNorm * 0.7)).toFixed(3);
+  } else {
+    scrollNudge.style.opacity = "0";
+    approachAura.style.opacity = "0";
+  }
+
+  // current room = the frame closest to the reading plane (relZ near 0)
+  let bestIdx = 0, bestScore = -Infinity;
+  tunnelFrames.forEach((f, i) => {
+    const frameZ = -i * Z_SPACING;
+    const relZ   = camZ + frameZ;
+    const score = -Math.abs(relZ);
+    if (score > bestScore) { bestScore = score; bestIdx = i; }
+  });
+
+  if (bestIdx !== currentRoom) {
+    currentRoom = bestIdx;
+    tunnelNotes.forEach((n, i) => n.classList.toggle("in", i === bestIdx));
+    approachEl.textContent = "Now showing · N° " + works[bestIdx].idx;
+    approachEl.classList.add("now");
+    archiveThumbs.forEach((th, i) => {
+      th.classList.toggle("current", i === bestIdx);
+      th.classList.toggle("passed", i < bestIdx);
+    });
+    tunnelFrames.forEach((f, i) => f.classList.toggle("focus", i === bestIdx));
+    updateTunnelVideoPlayback(bestIdx);
+  }
+
+  // depth meter readout — distance still ahead until the last room
+  const depth = Math.round(-(TUNNEL_DEPTH - camZ));
+  depthNumEl.textContent = (depth >= 0 ? "+" : "") + depth + "m";
+  // ladder mark position 0..1
+  ladderMark.style.top = (t * 100).toFixed(1) + "%";
+}
+
+// click archive thumb → scroll to that room
+archiveThumbs.forEach((th, i) => {
+  th.addEventListener("click", () => {
+    const tunnel = document.getElementById("tunnel");
+    const total = tunnel.offsetHeight - window.innerHeight;
+    const docTop = tunnel.getBoundingClientRect().top + window.scrollY;
+    const targetY = docTop + roomT(i) * total;
+    window.scrollTo({ top: targetY, behavior: "smooth" });
+  });
+});
+
+// open fullscreen for current room
+document.getElementById("tunnel-fs").addEventListener("click", () => {
+  if (currentRoom >= 0) openOverlay(currentRoom);
+});
+
+// Click on the closest tunnel frame to open it. Far/blurred frames are
+// not clickable — pointer-events is gated by .focus class set in updateTunnel.
+tunnelFrames.forEach((f, i) => {
+  f.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openOverlay(i);
+  });
+  f.style.cursor = "pointer";
+});
+
+// Fallback hit-test: transformed 3D frames can occasionally miss pointer
+// events near the final room/exit zone, so the stage itself opens the frame
+// visually under the click point.
+const tunnelStage = document.querySelector(".tunnel-stage");
+function frameIndexFromPoint(e) {
+  let best = -1;
+  let bestScore = -Infinity;
+  tunnelFrames.forEach((f, i) => {
+    const r = f.getBoundingClientRect();
+    const margin = 28;
+    const inside =
+      e.clientX >= r.left - margin &&
+      e.clientX <= r.right + margin &&
+      e.clientY >= r.top - margin &&
+      e.clientY <= r.bottom + margin;
+    if (!inside) return;
+    const opacity = parseFloat(getComputedStyle(f).opacity || "0");
+    const cx = r.left + r.width / 2;
+    const cy = r.top + r.height / 2;
+    const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+    const score = opacity * 1000 - dist;
+    if (score > bestScore) {
+      bestScore = score;
+      best = i;
+    }
+  });
+  return best;
+}
+if (tunnelStage) {
+  tunnelStage.addEventListener("mousemove", (e) => {
+    if (overlay.classList.contains("active")) {
+      tunnelStage.style.cursor = "";
+      return;
+    }
+    if (e.target.closest("button, a, .depth-meter")) {
+      tunnelStage.style.cursor = "";
+      return;
+    }
+    tunnelStage.style.cursor = frameIndexFromPoint(e) >= 0 ? "pointer" : "";
+  });
+  tunnelStage.addEventListener("mouseleave", () => {
+    tunnelStage.style.cursor = "";
+  });
+  tunnelStage.addEventListener("click", (e) => {
+    if (overlay.classList.contains("active")) return;
+    if (e.target.closest("button, a, .tunnel-note, .depth-meter")) return;
+    const idx = frameIndexFromPoint(e);
+    if (idx >= 0) openOverlay(idx);
+  });
+}
+
+window.addEventListener("scroll", updateTunnel, { passive: true });
+window.addEventListener("resize", updateTunnel);
+updateTunnel();
+
+// Mark that the user has actually started scrolling — once true, the nudge
+// dims (still visible, but no longer demanding attention).
+window.addEventListener("scroll", () => {
+  if (!userHasScrolled && window.scrollY > 4) userHasScrolled = true;
+}, { passive: true, once: false });
+
+// rAF safety net: keep tunnel in sync even if scroll events are throttled
+let _lastTunnelY = -1;
+function tunnelTick() {
+  if (window.scrollY !== _lastTunnelY) {
+    _lastTunnelY = window.scrollY;
+    updateTunnel();
+  }
+  requestAnimationFrame(tunnelTick);
+}
+requestAnimationFrame(tunnelTick);
+
+/* ── Snap-to-room: when scroll settles inside the tunnel, ease to the nearest reading position ── */
+let snapTimer = null;
+let lastWheelTs = 0;
+let isProgrammaticScroll = false;
+let lastScrollY = 0;
+let scrollDir = 0; // +1 down, -1 up, 0 idle
+let scrollAnim = null;
+
+/* Inertial auto-advance state. */
+let autoTarget = null;
+let autoAnchorIdx = -1;
+let autoBoost = 1;
+let autoStartT = 0;
+let autoStartY = 0;
+let autoLatchUntil = 0;     // wall-clock ms until which boost is hard-capped low
+let autoArrivedAt = 0;      // wall-clock ms of last arrival (commit cooldown source)
+const AUTO_BASE_DUR = 1100;
+const DEPART_THRESHOLD = 0.12;
+const ROOM_LATCH_MS = 520;
+const BOOST_CAP_LATCHED = 1.0;  // NO boost during latch — hard floor
+const BOOST_CAP_FREE = 1.8;     // gentle ceiling overall
+const ARRIVAL_COOLDOWN_MS = 1200; // user MUST pause at each room — no through-scroll
+
+function tunnelStops() {
+  const tunnel = document.getElementById("tunnel");
+  const total = tunnel.offsetHeight - window.innerHeight;
+  const docTop = tunnel.getBoundingClientRect().top + window.scrollY;
+  return works.map((_, i) => docTop + roomT(i) * total);
+}
+function tunnelExitY() {
+  const tunnel = document.getElementById("tunnel");
+  const total = tunnel.offsetHeight - window.innerHeight;
+  const docTop = tunnel.getBoundingClientRect().top + window.scrollY;
+  return docTop + total + 8;
+}
+function cancelAuto() { autoTarget = null; autoBoost = 1; }
+
+function smoothScrollTo(targetY, duration) {
+  if (scrollAnim) cancelAnimationFrame(scrollAnim);
+  const startY = window.scrollY;
+  const delta = targetY - startY;
+  const startT = performance.now();
+  function tick(now) {
+    const e = (now - startT) / duration;
+    if (e >= 1) {
+      window.scrollTo(0, targetY);
+      isProgrammaticScroll = false;
+      scrollAnim = null;
+      return;
+    }
+    const eased = 1 - Math.pow(1 - e, 3);
+    const expected = startY + delta * eased;
+    if (Math.abs(window.scrollY - expected) > 80 && now - startT > 60) {
+      isProgrammaticScroll = false;
+      scrollAnim = null;
+      return;
+    }
+    window.scrollTo(0, expected);
+    scrollAnim = requestAnimationFrame(tick);
+  }
+  scrollAnim = requestAnimationFrame(tick);
+}
+
+function maybeSnap() {
+  if (isProgrammaticScroll) return;
+  if (autoTarget != null) return;
+  const tunnel = document.getElementById("tunnel");
+  const r = tunnel.getBoundingClientRect();
+  const inRange = r.top < window.innerHeight * 0.4 && r.bottom > window.innerHeight * 0.6;
+  if (!inRange) return;
+
+  const stops = tunnelStops();
+  const y = window.scrollY;
+  const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+
+  let target = null;
+  if (scrollDir > 0) {
+    for (const s of stops) if (s <= y + spacing * 0.10) target = s;
+  } else if (scrollDir < 0) {
+    for (let i = stops.length - 1; i >= 0; i--) {
+      if (stops[i] >= y - spacing * 0.10) target = stops[i];
+    }
+  } else {
+    let best = stops[0], dist = Math.abs(y - stops[0]);
+    for (const s of stops) {
+      const d = Math.abs(y - s);
+      if (d < dist) { dist = d; best = s; }
+    }
+    if (dist < spacing * 0.18) target = best;
+  }
+  if (target == null) return;
+  if (Math.abs(y - target) < 8) return;
+  if (Math.abs(y - target) > spacing * 0.35) return;
+
+  isProgrammaticScroll = true;
+  smoothScrollTo(target, 560);
+}
+
+function scheduleSnap() {
+  if (snapTimer) clearTimeout(snapTimer);
+  snapTimer = setTimeout(() => {
+    if (performance.now() - lastWheelTs < 220) { scheduleSnap(); return; }
+    maybeSnap();
+  }, 320);
+}
+
+function maybeCommitAutoAdvance() {
+  if (autoTarget != null) return;
+  if (isProgrammaticScroll) return;
+  if (autoAnchorIdx < 0) return;
+  if (scrollDir <= 0) return;
+  // Arrival cooldown — give the user a moment to actually see the room
+  // before momentum carries them onward.
+  if (performance.now() - autoArrivedAt < ARRIVAL_COOLDOWN_MS) return;
+  const tunnel = document.getElementById("tunnel");
+  const r = tunnel.getBoundingClientRect();
+  const inRange = r.top < window.innerHeight * 0.4 && r.bottom > window.innerHeight * 0.6;
+  if (!inRange) return;
+  const stops = tunnelStops();
+  const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+  const anchorY = stops[autoAnchorIdx];
+  const departure = window.scrollY - anchorY;
+  if (departure < spacing * DEPART_THRESHOLD) return;
+  if (autoAnchorIdx < works.length - 1) {
+    autoTarget = stops[autoAnchorIdx + 1];
+  } else {
+    autoTarget = tunnelExitY();
+  }
+  autoStartT = performance.now();
+  autoStartY = window.scrollY;
+  autoBoost = 1;
+  autoLatchUntil = performance.now() + ROOM_LATCH_MS; // brake until past midpoint
+}
+
+function autoTick(now) {
+  if (autoTarget == null) return;
+  const y = window.scrollY;
+  const remaining = autoTarget - y;
+  if (remaining <= 1) {
+    const stops = tunnelStops();
+    const arrivedIdx = stops.findIndex(s => Math.abs(s - autoTarget) < 2);
+    autoAnchorIdx = arrivedIdx;
+    autoArrivedAt = performance.now();   // start cooldown
+    cancelAuto();
+    return;
+  }
+  const stops = tunnelStops();
+  const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+  const baseSpeed = spacing / AUTO_BASE_DUR;
+  const dt = Math.min(50, now - (autoTick._last || now));
+  autoTick._last = now;
+  autoBoost = 1 + (autoBoost - 1) * Math.pow(0.5, dt / 600);
+  const closeness = Math.min(1, remaining / (spacing * 0.6));
+  const speed = baseSpeed * autoBoost * (0.35 + 0.65 * closeness);
+  const step = Math.min(remaining, speed * dt);
+  window.scrollTo(0, y + step);
+}
+function autoLoop(now) { autoTick(now); requestAnimationFrame(autoLoop); }
+requestAnimationFrame(autoLoop);
+
+function setAnchorFromCurrentY() {
+  const stops = tunnelStops();
+  const tunnel = document.getElementById("tunnel");
+  const r = tunnel.getBoundingClientRect();
+  const inRange = r.top < window.innerHeight * 0.4 && r.bottom > window.innerHeight * 0.6;
+  if (!inRange) { autoAnchorIdx = -1; return; }
+  const y = window.scrollY;
+  const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+  let nearest = -1, dist = Infinity;
+  stops.forEach((s, i) => {
+    const d = Math.abs(s - y);
+    if (d < dist) { dist = d; nearest = i; }
+  });
+  if (dist < spacing * 0.08) autoAnchorIdx = nearest;
+}
+let anchorTimer = null;
+window.addEventListener("scroll", () => {
+  if (anchorTimer) clearTimeout(anchorTimer);
+  anchorTimer = setTimeout(setAnchorFromCurrentY, 280);
+}, { passive: true });
+setTimeout(setAnchorFromCurrentY, 200);
+
+window.addEventListener("scroll", () => {
+  const y = window.scrollY;
+  if (Math.abs(y - lastScrollY) > 1) {
+    scrollDir = y > lastScrollY ? 1 : -1;
+    lastScrollY = y;
+  }
+  if (scrollDir < 0 && autoTarget != null) cancelAuto();
+}, { passive: true });
+
+window.addEventListener("wheel", (e) => {
+  lastWheelTs = performance.now();
+  if (Math.abs(e.deltaY) > 4) scrollDir = e.deltaY > 0 ? 1 : -1;
+
+  // HARD LOCK: just arrived at a room? Ignore downward input completely
+  // for ARRIVAL_COOLDOWN_MS so the user is forced to pause and see it.
+  // Upward scroll always honored (escape hatch).
+  const sinceArrival = performance.now() - autoArrivedAt;
+  const inCooldown = sinceArrival < ARRIVAL_COOLDOWN_MS;
+
+  if (scrollDir < 0) {
+    cancelAuto();
+  } else if (inCooldown) {
+    // Drop the input on the floor. No boost accumulation, no commit.
+    e.preventDefault();
+    return;
+  } else if (autoTarget != null) {
+    e.preventDefault();
+    const now = performance.now();
+    const cap = now < autoLatchUntil ? BOOST_CAP_LATCHED : BOOST_CAP_FREE;
+    const bump = Math.min(0.4, Math.abs(e.deltaY) / 200);
+    autoBoost = Math.min(cap, autoBoost + bump);
+  }
+  scheduleSnap();
+  maybeCommitAutoAdvance();
+}, { passive: false });
+window.addEventListener("touchend", () => {
+  scheduleSnap();
+  maybeCommitAutoAdvance();
+}, { passive: true });
+window.addEventListener("touchmove", (e) => {
+  if (scrollDir < 0) cancelAuto();
+}, { passive: true });
+window.addEventListener("keyup", (e) => {
+  if (["ArrowUp","ArrowDown","PageUp","PageDown","Space"," "].includes(e.key)) {
+    const dir = (e.key === "ArrowUp" || e.key === "PageUp") ? -1 : 1;
+    scrollDir = dir;
+    if (dir < 0) cancelAuto();
+    scheduleSnap();
+    if (dir > 0) maybeCommitAutoAdvance();
+  }
+}, { passive: true });
+let idleTimer = null;
+window.addEventListener("scroll", () => {
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => { scrollDir = 0; }, 900);
+}, { passive: true });
+
+/* ── Header active link + scrollbar ──────────────── */
+const sections = ["hero","works","statement","contact"].map(id => document.getElementById(id));
+const links = Array.from(document.querySelectorAll("[data-link]"));
+const scrollbar = document.getElementById("scrollbar");
+
+function onScroll() {
+  const y = window.scrollY;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  scrollbar.style.width = (Math.min(1, y/Math.max(1,max)) * 100) + "%";
+
+  let active = sections[0].id;
+  const probe = y + window.innerHeight * 0.34;
+  for (const s of sections) if (s.offsetTop <= probe) active = s.id;
+  links.forEach(a => a.classList.toggle("active", a.dataset.link === active));
+
+  // depth recede — only when a section is fully off-screen,
+  // never while any part of it is in the viewport.
+  sections.forEach(s => {
+    const r = s.getBoundingClientRect();
+    const offscreen = r.bottom < -200 || r.top > window.innerHeight + 200;
+    s.classList.toggle("recede", offscreen);
+  });
+
+  // belief lens
+  updateBelief(y);
+  pickActiveScene();
+}
+window.addEventListener("scroll", onScroll, { passive: true });
+window.addEventListener("resize", onScroll);
+
+/* ── Belief lens / scene switcher ─────────────────── */
+const SCENES = [
+  { word: "CONTEXT",    sub: "Identity is rewritten by who is looking." },
+  { word: "FORM",       sub: "Calm tone. Steady cuts. We mistake form for fact." },
+  { word: "DOUBT",      sub: "Not what is true — but why we believe it." },
+  { word: "CONNECTION", sub: "An image becomes meaningful only when something is at stake." },
+  { word: "DISTANCE",   sub: "The same face, two different distances." },
+  { word: "GAZE",       sub: "You stop being the one who watches." },
+  { word: "POSITION",   sub: "Truth is a function of where you stand." },
+];
+
+const wordEl  = document.getElementById("belief-word");
+const subEl   = document.getElementById("belief-sub");
+const progEl  = document.getElementById("belief-progress");
+const scenes  = Array.from(document.querySelectorAll(".scene-frame .scene, .stage-frame .scene"));
+const blocks  = Array.from(document.querySelectorAll(".scene-block"));
+let activeScene = 0;
+
+function setScene(i) {
+  if (i === activeScene) return;
+  activeScene = i;
+  scenes.forEach(s => s.classList.toggle("active", +s.dataset.scene === i));
+  blocks.forEach(b => b.classList.toggle("active", +b.dataset.block === i));
+  // belief word flip
+  wordEl.classList.add("flip");
+  setTimeout(() => {
+    wordEl.textContent = SCENES[i].word;
+    subEl.textContent  = SCENES[i].sub;
+    wordEl.classList.remove("flip");
+  }, 180);
+}
+
+function updateBelief(y) {
+  const stmt = document.getElementById("statement");
+  if (!stmt) return;
+  const start = stmt.offsetTop - window.innerHeight * 0.4;
+  const end   = stmt.offsetTop + stmt.offsetHeight - window.innerHeight * 0.6;
+  const span  = Math.max(1, end - start);
+  const p     = Math.min(1, Math.max(0, (y - start) / span));
+  progEl.style.width = (p * 100) + "%";
+}
+
+/* observe each scene-block via scroll position — pick the block whose top
+   has crossed the reading line (40% from top of viewport). */
+function pickActiveScene() {
+  const line = window.innerHeight * 0.4;
+  let current = 0;
+  for (let i = 0; i < blocks.length; i++) {
+    const r = blocks[i].getBoundingClientRect();
+    if (r.top <= line) current = i;
+    else break;
+  }
+  setScene(current);
+}
+
+/* ── Clock ──────────────────────────────────────── */
+function tick() {
+  const d = new Date();
+  const t = d.toLocaleTimeString("en-GB", { hour12: false, timeZone: "Asia/Seoul" });
+  document.getElementById("clock").textContent = "Seoul · " + t.slice(0,5) + " KST";
+}
+tick();
+setInterval(tick, 30000);
+
+/* ── Reveal on scroll ───────────────────────────── */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("in"); });
+}, { threshold: 0.12 });
+document.querySelectorAll(".section, .work").forEach(el => {
+  el.classList.add("reveal");
+  io.observe(el);
+});
+
+/* ── Fullscreen overlay ─────────────────────────── */
+const overlay   = document.getElementById("overlay");
+const posterA   = document.getElementById("poster-a");
+const posterB   = document.getElementById("poster-b");
+const ovNum     = document.getElementById("ov-num");
+const ovTitle   = document.getElementById("ov-title");
+const ovDesc    = document.getElementById("ov-desc");
+const ovCount   = document.getElementById("ov-count");
+const ovExit    = document.getElementById("ov-exit");
+const ovSound   = document.getElementById("ov-sound");
+const ovPrev    = document.getElementById("ov-prev");
+const ovNext    = document.getElementById("ov-next");
+
+let ovIndex = 0;
+let ovActive = "a";
+let ovBusy = false;
+let ovSoundOn = false;
+
+/* ── Local media audio: existing BGM + active work video ──────────────
+   The downloaded design used generated WebAudio. This project instead uses
+   the original local assets: media/bgm.mp3 and the audio tracks inside the
+   active fullscreen video. */
+const bgmAudio = document.getElementById("bgm-audio");
+let mainSoundOn = true;
+let mainArmed = false;
+let mainFadeToken = 0;
+
+function activePoster() {
+  return ovActive === "a" ? posterA : posterB;
+}
+
+function stopAmbient() {
+  [posterA, posterB].forEach(video => {
+    if (!video) return;
+    video.muted = true;
+  });
+}
+
+function startAmbient() {
+  stopMainAmbient(140);
+  const video = activePoster();
+  if (!video) return;
+  video.muted = false;
+  video.volume = 1;
+  video.play().catch(() => {});
+}
+
+function stopMainAmbient(fadeMs = 320) {
+  if (!bgmAudio || bgmAudio.paused) return;
+  const token = ++mainFadeToken;
+  const startVolume = bgmAudio.volume || 0.42;
+  const startTime = performance.now();
+  function fade(now) {
+    if (token !== mainFadeToken) return;
+    const t = Math.min(1, (now - startTime) / Math.max(1, fadeMs));
+    bgmAudio.volume = startVolume * (1 - t);
+    if (t < 1) requestAnimationFrame(fade);
+    else {
+      bgmAudio.pause();
+      bgmAudio.volume = 0.42;
+    }
+  }
+  requestAnimationFrame(fade);
+}
+
+function startMainAmbient() {
+  if (!mainSoundOn || !bgmAudio) return;
+  mainFadeToken++;
+  bgmAudio.volume = 0.42;
+  bgmAudio.play().then(() => {
+    mainArmed = true;
+  }).catch(() => {});
+}
+
+function armMainAudio() {
+  if (mainArmed) return;
+  mainArmed = true;
+  if (mainSoundOn && !ovSoundOn) startMainAmbient();
+}
+["pointerdown", "keydown", "wheel", "touchstart"].forEach(ev => {
+  window.addEventListener(ev, armMainAudio, { once: false, passive: true });
+});
+
+/* Main sound toggle button */
+const mainSoundBtn = document.getElementById("main-sound");
+if (mainSoundBtn) {
+  const label = mainSoundBtn.querySelector(".ms-label");
+  mainSoundBtn.addEventListener("click", () => {
+    mainSoundOn = !mainSoundOn;
+    mainSoundBtn.setAttribute("aria-pressed", mainSoundOn ? "true" : "false");
+    if (label) label.textContent = mainSoundOn ? "SOUND ON" : "SOUND OFF";
+    if (mainSoundOn) {
+      mainArmed = true;
+      if (!ovSoundOn) startMainAmbient();
+    } else {
+      stopMainAmbient(320);
+    }
+  });
+}
+
+
+function setPosterVideo(layer, work, audible) {
+  if (!layer) return;
+  if (!layer.src.endsWith(work.video)) layer.src = work.video;
+  layer.poster = work.videoPoster;
+  layer.loop = true;
+  layer.muted = !audible;
+  layer.playsInline = true;
+  layer.play().catch(() => {});
+}
+
+function paintMeta(i) {
+  const w = works[i];
+  ovNum.textContent = "N° " + w.idx;
+  ovTitle.textContent = w.title;
+  ovDesc.textContent = w.descEn;
+  ovCount.textContent = String(i+1).padStart(2,"0") + " / " + String(works.length).padStart(2,"0");
+}
+
+function openOverlay(i) {
+  ovIndex = i;
+  ovActive = "a";
+  ovSoundOn = false;
+  ovSound.textContent = "Sound On";
+  setPosterVideo(posterA, works[i], false);
+  posterB.removeAttribute("src");
+  posterB.muted = true;
+  [posterA, posterB].forEach(video => {
+    video.classList.remove("active", "exit-left", "exit-right");
+    video.style.transform = "";
+    video.style.opacity = "";
+    video.style.filter = "";
+  });
+  posterA.classList.add("active");
+  paintMeta(i);
+  overlay.classList.add("active");
+  overlay.setAttribute("aria-hidden", "false");
+  document.body.classList.add("in-overlay");
+  document.body.style.overflow = "hidden";
+  if (mainSoundOn && mainArmed) startMainAmbient();
+}
+function closeOverlay() {
+  overlay.classList.remove("active");
+  overlay.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("in-overlay");
+  document.body.style.overflow = "";
+  stopAmbient();
+  [posterA, posterB].forEach(video => { try { video.pause(); } catch (e) {} });
+  ovSoundOn = false;
+  ovSound.textContent = "Sound On";
+  if (mainSoundOn && mainArmed) {
+    setTimeout(() => startMainAmbient(), 260);
+  }
+}
+function transition(dir) {
+  if (ovBusy) return;
+  const next = (ovIndex + dir + works.length) % works.length;
+  if (next === ovIndex) return;
+  ovBusy = true;
+  const cur  = ovActive === "a" ? posterA : posterB;
+  const nxt  = ovActive === "a" ? posterB : posterA;
+  setPosterVideo(nxt, works[next], ovSoundOn);
+  cur.muted = true;
+  nxt.classList.remove("active","exit-left","exit-right");
+  // initial state for next layer
+  nxt.style.transform = (dir > 0 ? "translateX(8%)" : "translateX(-8%)") + " scale(0.96)";
+  nxt.style.opacity = "0";
+  // force layout
+  void nxt.offsetWidth;
+  nxt.style.transform = "";
+  nxt.style.opacity = "";
+  nxt.classList.add("active");
+  cur.classList.remove("active");
+  cur.classList.add(dir > 0 ? "exit-left" : "exit-right");
+  ovIndex = next;
+  paintMeta(next);
+  if (ovSoundOn) {
+    startAmbient();
+  } else if (mainSoundOn && mainArmed) {
+    startMainAmbient();
+  }
+  setTimeout(() => {
+    cur.classList.remove("exit-left","exit-right");
+    try { cur.pause(); } catch (e) {}
+    ovActive = ovActive === "a" ? "b" : "a";
+    ovBusy = false;
+  }, 720);
+}
+
+// (tunnel uses Enter button + archive thumbs; old works-list handler removed)
+ovExit.addEventListener("click", closeOverlay);
+ovPrev.addEventListener("click", () => transition(-1));
+ovNext.addEventListener("click", () => transition( 1));
+ovSound.addEventListener("click", () => {
+  ovSoundOn = !ovSoundOn;
+  ovSound.textContent = ovSoundOn ? "Sound Off" : "Sound On";
+  if (ovSoundOn) {
+    startAmbient();
+  } else {
+    stopAmbient();
+    if (mainSoundOn && mainArmed) startMainAmbient();
+  }
+});
+overlay.addEventListener("click", (e) => { if (e.target === overlay) closeOverlay(); });
+window.addEventListener("keydown", (e) => {
+  if (!overlay.classList.contains("active")) return;
+  if (e.key === "Escape") closeOverlay();
+  if (e.key === "ArrowRight") transition( 1);
+  if (e.key === "ArrowLeft")  transition(-1);
+});
+
+onScroll();
+</script>
+
+</body>
 </html>

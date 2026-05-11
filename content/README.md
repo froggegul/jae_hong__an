@@ -1,0 +1,42 @@
+# Adding portfolio works locally
+
+You do not need to edit `index.html`.
+
+## Easiest method
+
+1. Double-click `Add New Work.command` in this folder.
+2. Drag your `.mp4` file into the Terminal window when it asks for `Video file path`.
+3. Drag a poster image (`.jpg` or `.png`) when it asks for `Poster image path`.
+4. Fill in title/year/description prompts.
+5. Refresh the portfolio page.
+
+The script copies files into:
+
+- `media/work-04.mp4`, `media/work-05.mp4`, ...
+- `assets/posters/work-04.jpg`, `assets/posters/work-05.jpg`, ...
+
+Then it updates `content/works.js` automatically.
+
+## Manual method
+
+1. Put the video in `media/`, for example `media/work-04.mp4`.
+2. Put the poster in `assets/posters/`, for example `assets/posters/work-04.jpg`.
+3. Open `content/works.js`.
+4. Copy the last `{ ... }` block, paste it below, and change:
+
+```js
+{
+  idx: "04",
+  title: "New Work Title",
+  desc: "Korean description",
+  descEn: "English description",
+  year: "2026",
+  medium: "9:16 Video",
+  duration: "looped",
+  caption: "Short caption",
+  video: "media/work-04.mp4",
+  poster: "assets/posters/work-04.jpg"
+}
+```
+
+Important: put a comma between work blocks, but not after the final `]`.
