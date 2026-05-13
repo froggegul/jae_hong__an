@@ -1438,8 +1438,8 @@
 <!-- Fullscreen overlay -->
 <div class="overlay" id="overlay" aria-hidden="true">
   <div class="overlay-stage" id="overlay-stage">
-    <video class="overlay-poster active" id="poster-a" autoplay muted loop playsinline preload="auto"></video>
-    <video class="overlay-poster" id="poster-b" autoplay muted loop playsinline preload="auto"></video>
+    <video class="overlay-poster active" id="poster-a" autoplay muted loop playsinline preload="metadata"></video>
+    <video class="overlay-poster" id="poster-b" autoplay muted loop playsinline preload="metadata"></video>
   </div>
   <div class="overlay-meta">
     <div class="num" id="ov-num">#01</div>
@@ -2234,12 +2234,20 @@ if (mainSoundBtn) {
 
 function setPosterVideo(layer, work, audible) {
   if (!layer) return;
-  if (!layer.src.endsWith(work.video)) layer.src = work.video;
+  const nextSrc = new URL(work.video, window.location.href).href;
+  if (layer.src !== nextSrc) {
+    layer.src = work.video;
+    layer.load();
+  }
   layer.poster = work.videoPoster;
   layer.loop = true;
   layer.muted = !audible;
+  layer.volume = audible ? 1 : 0;
   layer.playsInline = true;
-  layer.play().catch(() => {});
+  const playRequest = layer.play();
+  if (playRequest && typeof playRequest.catch === "function") {
+    playRequest.catch(() => {});
+  }
 }
 
 function paintMeta(i) {
@@ -2256,7 +2264,10 @@ function openOverlay(i) {
   ovSoundOn = false;
   ovSound.textContent = "Sound On";
   setPosterVideo(posterA, works[i], false);
+  try { posterA.currentTime = 0; } catch (e) {}
+  try { posterB.pause(); } catch (e) {}
   posterB.removeAttribute("src");
+  posterB.load();
   posterB.muted = true;
   [posterA, posterB].forEach(video => {
     video.classList.remove("active", "exit-left", "exit-right");
