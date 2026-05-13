@@ -13,13 +13,17 @@ You do not need to edit `index.html`.
 The script copies files into:
 
 - `media/work-04.mp4`, `media/work-05.mp4`, ...
+- `media/web/work-04-web.mp4`, `media/web/work-05-web.mp4`, ... when `ffmpeg` is available
 - `assets/posters/work-04.jpg`, `assets/posters/work-05.jpg`, ...
 
 Then it updates `content/works.js` automatically.
 
+For smooth loading, the page should reference the lightweight `media/web/*-web.mp4`
+file. The original `media/work-XX.mp4` can stay in the folder as a source archive.
+
 ## Manual method
 
-1. Put the video in `media/`, for example `media/work-04.mp4`.
+1. Put the optimized web video in `media/web/`, for example `media/web/work-04-web.mp4`.
 2. Put the poster in `assets/posters/`, for example `assets/posters/work-04.jpg`.
 3. Open `content/works.js`.
 4. Copy the last `{ ... }` block, paste it below, and change:
@@ -34,7 +38,7 @@ Then it updates `content/works.js` automatically.
   medium: "9:16 Video",
   duration: "looped",
   caption: "Short caption",
-  video: "media/work-04.mp4",
+  video: "media/web/work-04-web.mp4",
   poster: "assets/posters/work-04.jpg"
 }
 ```

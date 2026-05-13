@@ -1474,7 +1474,7 @@ const fallbackWorks = [
     duration: "07′12″",
     caption: "Body × City — gaze record",
     poster: "url(assets/posters/work-01.jpg)",
-    video: "media/work-01.mp4",
+    video: "media/web/work-01-web.mp4",
     videoPoster: "assets/posters/work-01.jpg"
   },
   {
@@ -1487,7 +1487,7 @@ const fallbackWorks = [
     duration: "11′40″",
     caption: "A · proximity study · B",
     poster: "url(assets/posters/work-02.jpg)",
-    video: "media/work-02.mp4",
+    video: "media/web/work-02-web.mp4",
     videoPoster: "assets/posters/work-02.jpg"
   },
   {
@@ -1500,7 +1500,7 @@ const fallbackWorks = [
     duration: "looped",
     caption: "Installation view — XR, looped",
     poster: "url(assets/posters/work-03.jpg)",
-    video: "media/work-03.mp4",
+    video: "media/web/work-03-web.mp4",
     videoPoster: "assets/posters/work-03.jpg"
   }
 ];
@@ -1597,6 +1597,51 @@ const approachAura = document.getElementById("approach-aura");
 let userHasScrolled = false;
 
 let currentRoom = -1;
+const warmedVideos = new Map();
+
+function warmVideo(i) {
+  const work = works[i];
+  if (!work || warmedVideos.has(i)) return;
+
+  const video = document.createElement("video");
+  video.preload = "auto";
+  video.muted = true;
+  video.playsInline = true;
+  video.src = work.video;
+  video.setAttribute("aria-hidden", "true");
+  video.style.cssText = "position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;left:-9999px;top:-9999px;";
+  document.body.appendChild(video);
+  video.load();
+  warmedVideos.set(i, video);
+}
+
+function trimWarmedVideos(center) {
+  warmedVideos.forEach((video, i) => {
+    if (Math.abs(i - center) <= 1) return;
+    try { video.pause(); } catch (e) {}
+    video.removeAttribute("src");
+    video.load();
+    video.remove();
+    warmedVideos.delete(i);
+  });
+}
+
+function scheduleVideoWarm(center, urgent = false) {
+  const run = () => {
+    warmVideo(center);
+    warmVideo(center + 1);
+    warmVideo(center - 1);
+    trimWarmedVideos(center);
+  };
+
+  if (urgent) {
+    run();
+  } else if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(run, { timeout: 900 });
+  } else {
+    window.setTimeout(run, 180);
+  }
+}
 
 function updateTunnel() {
   const tunnel = document.getElementById("tunnel");
@@ -1680,6 +1725,7 @@ function updateTunnel() {
       th.classList.toggle("passed", i < bestIdx);
     });
     tunnelFrames.forEach((f, i) => f.classList.toggle("focus", i === bestIdx));
+    scheduleVideoWarm(bestIdx);
   }
 
   // depth meter readout — distance still ahead until the last room
@@ -1691,7 +1737,10 @@ function updateTunnel() {
 
 // click archive thumb → scroll to that room
 archiveThumbs.forEach((th, i) => {
+  th.addEventListener("pointerenter", () => scheduleVideoWarm(i, true));
+  th.addEventListener("focus", () => scheduleVideoWarm(i, true));
   th.addEventListener("click", () => {
+    scheduleVideoWarm(i, true);
     const tunnel = document.getElementById("tunnel");
     const total = tunnel.offsetHeight - window.innerHeight;
     const docTop = tunnel.getBoundingClientRect().top + window.scrollY;
@@ -1708,9 +1757,12 @@ document.getElementById("tunnel-fs").addEventListener("click", () => {
 // Click on the closest tunnel frame to open it. Far/blurred frames are
 // not clickable — pointer-events is gated by .focus class set in updateTunnel.
 tunnelFrames.forEach((f, i) => {
+  f.addEventListener("pointerenter", () => scheduleVideoWarm(i, true));
+  f.addEventListener("focus", () => scheduleVideoWarm(i, true));
   f.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+    scheduleVideoWarm(i, true);
     openOverlay(i);
   });
   f.style.cursor = "pointer";

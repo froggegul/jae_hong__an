@@ -10,7 +10,7 @@ window.JAEHONG_WORKS = [
     medium: "XR · 9:16",
     duration: "07′12″",
     caption: "Body × City — gaze record",
-    video: "media/work-01.mp4",
+    video: "media/web/work-01-web.mp4",
     poster: "assets/posters/work-01.jpg"
   },
   {
@@ -22,7 +22,7 @@ window.JAEHONG_WORKS = [
     medium: "AI Avatar · LED",
     duration: "11′40″",
     caption: "A · proximity study · B",
-    video: "media/work-02.mp4",
+    video: "media/web/work-02-web.mp4",
     poster: "assets/posters/work-02.jpg"
   },
   {
@@ -34,7 +34,7 @@ window.JAEHONG_WORKS = [
     medium: "Installation · XR",
     duration: "looped",
     caption: "Installation view — XR, looped",
-    video: "media/work-03.mp4",
+    video: "media/web/work-03-web.mp4",
     poster: "assets/posters/work-03.jpg"
   }
 ];

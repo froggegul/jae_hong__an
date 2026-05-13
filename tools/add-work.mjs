@@ -5,10 +5,12 @@ import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import readline from 'node:readline/promises';
 import { stdin as input, stdout as output } from 'node:process';
+import { spawn } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const manifestPath = path.join(root, 'content', 'works.js');
 const mediaDir = path.join(root, 'media');
+const webMediaDir = path.join(root, 'media', 'web');
 const posterDir = path.join(root, 'assets', 'posters');
 
 function cleanInputPath(value) {
@@ -46,6 +48,53 @@ async function copyAsset(source, destinationDir, basename) {
   const ext = path.extname(source) || path.extname(basename) || '';
   const destination = path.join(destinationDir, basename.replace(/\.[^.]+$/, '') + ext);
   await fs.copyFile(source, destination);
+  return path.relative(root, destination).split(path.sep).join('/');
+}
+
+function run(command, args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { stdio: ['ignore', 'ignore', 'inherit'] });
+    child.on('error', reject);
+    child.on('close', code => {
+      if (code === 0) resolve();
+      else reject(new Error(`${command} exited with code ${code}`));
+    });
+  });
+}
+
+async function canRun(command) {
+  try {
+    await run(command, ['-version']);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function optimizeVideo(source, idx) {
+  if (!(await canRun('ffmpeg'))) return null;
+
+  await fs.mkdir(webMediaDir, { recursive: true });
+  const destination = path.join(webMediaDir, `work-${idx}-web.mp4`);
+
+  console.log('\nCreating lightweight web video...');
+  await run('ffmpeg', [
+    '-y',
+    '-i', source,
+    '-vf', 'scale=540:-2',
+    '-c:v', 'libx264',
+    '-preset', 'medium',
+    '-crf', '30',
+    '-pix_fmt', 'yuv420p',
+    '-profile:v', 'main',
+    '-level', '4.0',
+    '-tag:v', 'avc1',
+    '-movflags', '+faststart',
+    '-c:a', 'aac',
+    '-b:a', '96k',
+    destination
+  ]);
+
   return path.relative(root, destination).split(path.sep).join('/');
 }
 
@@ -93,7 +142,14 @@ async function main() {
   const descEn = await ask('English description', '');
   const desc = await ask('Korean description', '');
 
-  const video = await copyAsset(videoSource, mediaDir, `work-${idx}${path.extname(videoSource) || '.mp4'}`);
+  const originalVideo = await copyAsset(videoSource, mediaDir, `work-${idx}${path.extname(videoSource) || '.mp4'}`);
+  let video = originalVideo;
+  try {
+    video = await optimizeVideo(path.join(root, originalVideo), idx) || originalVideo;
+  } catch (err) {
+    console.warn(`\nCould not create web video, using original instead: ${err.message}`);
+  }
+
   const poster = posterSource
     ? await copyAsset(posterSource, posterDir, `work-${idx}${path.extname(posterSource) || '.jpg'}`)
     : `assets/posters/work-${idx}.jpg`;
@@ -104,6 +160,7 @@ async function main() {
   rl.close();
   console.log(`\nAdded N° ${idx}: ${title}`);
   console.log(`Video:  ${video}`);
+  if (video !== originalVideo) console.log(`Original kept at: ${originalVideo}`);
   console.log(`Poster: ${poster}`);
   console.log('Refresh the portfolio page to see the new work.');
 }
