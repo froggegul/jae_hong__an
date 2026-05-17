@@ -2594,9 +2594,15 @@ function softScrollElement(el, deltaY) {
   state.raf = requestAnimationFrame(animate);
 }
 
+function shouldBypassCaptionPriority(e) {
+  if (e.target.closest?.(".note-copy, .overlay-meta p")) return false;
+  return Boolean(e.target.closest?.(".top, .depth-meter, .archive, .open-fs, #main-sound, button, a"));
+}
+
 function activeCaptionCopyForWheel(e) {
   const pointedNote = e.target.closest?.(".tunnel-note.in");
   if (pointedNote) return pointedNote.querySelector(".note-copy");
+  if (shouldBypassCaptionPriority(e)) return null;
 
   const tunnel = document.getElementById("tunnel");
   if (!tunnel || currentRoom < 0) return null;
@@ -2616,7 +2622,7 @@ function activeCaptionCopyForWheel(e) {
 
 function routeCaptionWheel(e) {
   if (overlay?.classList.contains("active")) {
-    const overlayCopy = e.target.closest?.(".overlay-meta p");
+    const overlayCopy = e.target.closest?.(".overlay-meta p") || overlay.querySelector(".overlay-meta p");
     if (overlayCopy && canScrollElement(overlayCopy, e.deltaY)) {
       e.preventDefault();
       softScrollElement(overlayCopy, e.deltaY);
