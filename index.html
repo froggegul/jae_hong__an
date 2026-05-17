@@ -1944,6 +1944,7 @@ let userHasScrolled = false;
 
 let currentRoom = -1;
 const warmedVideos = new Map();
+const captionScrollStates = new WeakMap();
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -2115,7 +2116,10 @@ function updateTunnel() {
     currentRoom = bestIdx;
     tunnelNotes.forEach((n, i) => n.classList.toggle("in", i === bestIdx));
     const activeCopy = tunnelNotes[bestIdx]?.querySelector(".note-copy");
-    if (activeCopy) activeCopy.scrollTop = 0;
+    if (activeCopy) {
+      activeCopy.scrollTop = 0;
+      captionScrollStates.set(activeCopy, { target: 0, raf: 0 });
+    }
     approachEl.textContent = ui("works.now") + works[bestIdx].idx;
     approachEl.classList.add("now");
     archiveThumbs.forEach((th, i) => {
@@ -2559,6 +2563,37 @@ function canScrollElement(el, deltaY) {
   return el.scrollTop > 2;
 }
 
+function softScrollElement(el, deltaY) {
+  if (!el) return;
+  const maxScroll = Math.max(0, el.scrollHeight - el.clientHeight);
+  let state = captionScrollStates.get(el);
+  if (!state) {
+    state = { target: el.scrollTop, raf: 0 };
+    captionScrollStates.set(el, state);
+  }
+
+  const towardBottom = deltaY > 0;
+  const edgeDistance = towardBottom ? el.scrollTop : maxScroll - el.scrollTop;
+  const easeIn = smoothstep(0, 220, edgeDistance);
+  const scale = 0.28 + 0.72 * easeIn;
+  const maxStep = 28 + 54 * easeIn;
+  const step = Math.sign(deltaY) * Math.min(Math.abs(deltaY) * scale, maxStep);
+  state.target = clamp(state.target + step, 0, maxScroll);
+
+  if (state.raf) return;
+  const animate = () => {
+    const diff = state.target - el.scrollTop;
+    if (Math.abs(diff) < 0.45) {
+      el.scrollTop = state.target;
+      state.raf = 0;
+      return;
+    }
+    el.scrollTop += diff * 0.24;
+    state.raf = requestAnimationFrame(animate);
+  };
+  state.raf = requestAnimationFrame(animate);
+}
+
 function activeCaptionCopyForWheel(e) {
   const pointedNote = e.target.closest?.(".tunnel-note.in");
   if (pointedNote) return pointedNote.querySelector(".note-copy");
@@ -2584,7 +2619,7 @@ function routeCaptionWheel(e) {
     const overlayCopy = e.target.closest?.(".overlay-meta p");
     if (overlayCopy && canScrollElement(overlayCopy, e.deltaY)) {
       e.preventDefault();
-      overlayCopy.scrollTop += e.deltaY;
+      softScrollElement(overlayCopy, e.deltaY);
     }
     return true;
   }
@@ -2598,7 +2633,7 @@ function routeCaptionWheel(e) {
   e.preventDefault();
   cancelAuto();
   clearQueuedAdvance();
-  copy.scrollTop += e.deltaY;
+  softScrollElement(copy, e.deltaY);
   return true;
 }
 
