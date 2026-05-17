@@ -1653,13 +1653,23 @@ function updateTunnel() {
   // camera travels from -ENTRY_DEPTH (in front of room 0) past room (N-1) to +EXIT_DEPTH
   const camZ = -ENTRY_DEPTH + t * CAM_TRAVEL;
 
+  // current room = the frame closest to the reading plane (relZ near 0)
+  let bestIdx = 0, bestScore = -Infinity;
+  const frameMetrics = tunnelFrames.map((f, i) => {
+    const frameZ = -i * Z_SPACING;
+    const relZ = camZ + frameZ;
+    const score = -Math.abs(relZ);
+    if (score > bestScore) {
+      bestScore = score;
+      bestIdx = i;
+    }
+    return { f, i, relZ };
+  });
+
   // Reading plane = relZ 0. Each room "lives" in a narrow window around it,
   // peaks crisply at the snap, then dissolves quickly so the next/prev room
   // doesn't bleed into focus.
-  tunnelFrames.forEach((f, i) => {
-    const frameZ = -i * Z_SPACING;
-    const relZ   = camZ + frameZ;
-
+  frameMetrics.forEach(({ f, i, relZ }) => {
     // d = signed distance from reading plane in units of Z_SPACING (-1..1 spans the
     // entire approach-and-departure window around this room)
     const d = relZ / Z_SPACING;
@@ -1688,7 +1698,12 @@ function updateTunnel() {
       const floor = 0.42 - 0.20 * entryT;
       op = Math.max(op, floor);
     }
+
+    // The selected work card should read as a solid poster, not as a ghosted
+    // depth layer. Keep z-depth in the non-current cards only.
+    if (i === bestIdx) op = 1;
     f.style.opacity = op.toFixed(3);
+    f.style.zIndex = i === bestIdx ? "3" : "1";
   });
 
   // Entry nudge + aura: only during the first approach (camZ still negative
@@ -1706,15 +1721,6 @@ function updateTunnel() {
     scrollNudge.style.opacity = "0";
     approachAura.style.opacity = "0";
   }
-
-  // current room = the frame closest to the reading plane (relZ near 0)
-  let bestIdx = 0, bestScore = -Infinity;
-  tunnelFrames.forEach((f, i) => {
-    const frameZ = -i * Z_SPACING;
-    const relZ   = camZ + frameZ;
-    const score = -Math.abs(relZ);
-    if (score > bestScore) { bestScore = score; bestIdx = i; }
-  });
 
   if (bestIdx !== currentRoom) {
     currentRoom = bestIdx;
