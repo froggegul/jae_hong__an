@@ -1257,6 +1257,10 @@
     font-weight: 300;
     letter-spacing: -0.02em;
     max-width: 38ch;
+    max-height: min(34vh, 360px);
+    overflow-y: auto;
+    padding-right: 8px;
+    white-space: pre-line;
   }
   .overlay-meta p:empty { display: none; }
 
@@ -1746,8 +1750,8 @@ function ui(key) {
 
 function workDescription(work) {
   return currentLang === "ko"
-    ? (work.desc || work.descEn || "")
-    : (work.descEn || work.desc || "");
+    ? (work.fullDesc || work.desc || work.fullDescEn || work.descEn || "")
+    : (work.fullDescEn || work.descEn || work.fullDesc || work.desc || "");
 }
 
 const fallbackWorks = [
@@ -1808,6 +1812,8 @@ function normalizeWork(work, i) {
     aspect: work.aspect || "9 : 16",
     layout: work.layout || "",
     caption: work.caption || work.title || `Work ${idx}`,
+    fullDesc: work.fullDesc || "",
+    fullDescEn: work.fullDescEn || "",
     video: videoPath,
     videoPoster: work.videoPoster || posterPath,
     externalUrl: work.externalUrl || "",
@@ -2640,19 +2646,29 @@ function activePoster() {
   return ovActive === "a" ? posterA : posterB;
 }
 
+function setVideoAudible(video, audible) {
+  if (!video) return;
+  video.muted = !audible;
+  video.defaultMuted = !audible;
+  video.volume = audible ? 1 : 0;
+  if (audible) {
+    video.removeAttribute("muted");
+  } else {
+    video.setAttribute("muted", "");
+  }
+}
+
 function stopAmbient() {
   [posterA, posterB].forEach(video => {
-    if (!video) return;
-    video.muted = true;
+    setVideoAudible(video, false);
   });
 }
 
-function startAmbient() {
+function startAmbient(targetVideo = activePoster()) {
   stopMainAmbient(140);
-  const video = activePoster();
+  const video = targetVideo;
   if (!video) return;
-  video.muted = false;
-  video.volume = 1;
+  setVideoAudible(video, true);
   video.play().catch(() => {});
 }
 
@@ -2772,8 +2788,7 @@ function setPosterVideo(layer, work, audible) {
     layer.poster = work.videoPoster;
     layer.style.backgroundImage = `url(${work.videoPoster})`;
     layer.loop = false;
-    layer.muted = true;
-    layer.volume = 0;
+    setVideoAudible(layer, false);
     return;
   }
   const nextSrc = new URL(work.video, window.location.href).href;
@@ -2784,8 +2799,7 @@ function setPosterVideo(layer, work, audible) {
   layer.style.backgroundImage = "";
   layer.poster = work.videoPoster;
   layer.loop = true;
-  layer.muted = !audible;
-  layer.volume = audible ? 1 : 0;
+  setVideoAudible(layer, audible);
   layer.playsInline = true;
   const playRequest = layer.play();
   if (playRequest && typeof playRequest.catch === "function") {
@@ -2821,7 +2835,7 @@ function openOverlay(i) {
   try { posterB.pause(); } catch (e) {}
   posterB.removeAttribute("src");
   posterB.load();
-  posterB.muted = true;
+  setVideoAudible(posterB, false);
   [posterA, posterB].forEach(video => {
     video.classList.remove("active", "exit-left", "exit-right");
     video.style.transform = "";
@@ -2856,9 +2870,10 @@ function transition(dir) {
   ovBusy = true;
   const cur  = ovActive === "a" ? posterA : posterB;
   const nxt  = ovActive === "a" ? posterB : posterA;
+  const nextActive = ovActive === "a" ? "b" : "a";
   setPosterVideo(nxt, works[next], ovSoundOn);
   if (!works[next].video) ovSoundOn = false;
-  cur.muted = true;
+  setVideoAudible(cur, false);
   nxt.classList.remove("active","exit-left","exit-right");
   // initial state for next layer
   nxt.style.transform = (dir > 0 ? "translateX(8%)" : "translateX(-8%)") + " scale(0.96)";
@@ -2871,16 +2886,16 @@ function transition(dir) {
   cur.classList.remove("active");
   cur.classList.add(dir > 0 ? "exit-left" : "exit-right");
   ovIndex = next;
+  ovActive = nextActive;
   paintMeta(next);
   if (ovSoundOn && works[next].video) {
-    startAmbient();
+    startAmbient(nxt);
   } else if (mainSoundOn && mainArmed) {
     startMainAmbient();
   }
   setTimeout(() => {
     cur.classList.remove("exit-left","exit-right");
     try { cur.pause(); } catch (e) {}
-    ovActive = ovActive === "a" ? "b" : "a";
     ovBusy = false;
   }, 720);
 }
