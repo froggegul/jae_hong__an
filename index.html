@@ -483,7 +483,7 @@
     font-weight: 900;
   }
   .tunnel-note .note-copy {
-    max-height: min(50vh, 410px);
+    max-height: min(56vh, 480px);
     overflow-y: auto;
     overscroll-behavior: auto;
     padding-right: 14px;
@@ -2114,6 +2114,8 @@ function updateTunnel() {
   if (bestIdx !== currentRoom) {
     currentRoom = bestIdx;
     tunnelNotes.forEach((n, i) => n.classList.toggle("in", i === bestIdx));
+    const activeCopy = tunnelNotes[bestIdx]?.querySelector(".note-copy");
+    if (activeCopy) activeCopy.scrollTop = 0;
     approachEl.textContent = ui("works.now") + works[bestIdx].idx;
     approachEl.classList.add("now");
     archiveThumbs.forEach((th, i) => {
@@ -2557,6 +2559,26 @@ function canScrollElement(el, deltaY) {
   return el.scrollTop > 2;
 }
 
+function activeCaptionCopyForWheel(e) {
+  const pointedNote = e.target.closest?.(".tunnel-note.in");
+  if (pointedNote) return pointedNote.querySelector(".note-copy");
+
+  const tunnel = document.getElementById("tunnel");
+  if (!tunnel || currentRoom < 0) return null;
+  const r = tunnel.getBoundingClientRect();
+  const inRange = r.top < window.innerHeight * 0.32 && r.bottom > window.innerHeight * 0.62;
+  if (!inRange) return null;
+
+  const stops = tunnelStops();
+  const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+  const stop = stops[currentRoom];
+  const nearReadingPlane = Math.abs(window.scrollY - stop) < spacing * 0.20;
+  const justArrived = performance.now() - autoArrivedAt < ARRIVAL_COOLDOWN_MS + 180;
+  if (!nearReadingPlane && !justArrived) return null;
+
+  return tunnelNotes[currentRoom]?.querySelector(".note-copy") || null;
+}
+
 function routeCaptionWheel(e) {
   if (overlay?.classList.contains("active")) {
     const overlayCopy = e.target.closest?.(".overlay-meta p");
@@ -2567,14 +2589,12 @@ function routeCaptionWheel(e) {
     return true;
   }
 
-  const note = e.target.closest?.(".tunnel-note.in");
-  if (!note) return false;
-  const copy = note.querySelector(".note-copy");
+  const copy = activeCaptionCopyForWheel(e);
   if (!canScrollElement(copy, e.deltaY)) return false;
 
-  // While the cursor is inside the active note, interpret the gesture as
-  // reading first. Once the text reaches its edge, the tunnel receives the
-  // next wheel event and continues normally.
+  // In the works tunnel, reading comes first. While the active caption can
+  // still move in the gesture direction, route scroll into the text even if
+  // the cursor is over the video. At the text edge, the tunnel takes over.
   e.preventDefault();
   cancelAuto();
   clearQueuedAdvance();
