@@ -315,6 +315,20 @@
     max-width: 22ch;
     font-weight: 900;
   }
+  .works-intro {
+    min-height: 72vh;
+    padding-top: clamp(72px, 10vh, 120px);
+    padding-bottom: clamp(140px, 24vh, 260px);
+    display: flex;
+    align-items: flex-start;
+  }
+  .works-intro .section-head {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  .works-intro .section-head h2 {
+    max-width: 25ch;
+  }
 
   /* ── Works — Depth Tunnel + Approach ──────────────── */
   .tunnel {
@@ -1295,11 +1309,11 @@
 
   <!-- WORKS — Depth Tunnel + Approach -->
   <section class="section" id="works" data-screen-label="02 Works" style="padding: 0;">
-    <div class="wrap" style="padding-top: clamp(96px, 16vh, 180px); padding-bottom: 48px;">
+    <div class="wrap works-intro">
       <div class="section-head">
         <span class="num" data-i18n="works.kicker">§ 01 / Selected Works</span>
-        <span class="num" style="text-align:right" data-i18n="works.meta">depth tunnel · 9:16</span>
-        <h2 data-i18n="works.title" data-i18n-html="true">Three rooms, in a line.<br/>Each one walks toward you.</h2>
+        <span class="num" style="text-align:right" data-i18n="works.meta">moving image · XR</span>
+        <h2 data-i18n="works.title" data-i18n-html="true">Images that remain as sensation.<br/>Works across film, installation, and XR.</h2>
       </div>
     </div>
 
@@ -1312,12 +1326,12 @@
         <div class="approach-aura" id="approach-aura"></div>
 
         <div class="tunnel-hud">
-          <div class="approach-label" id="approach">Approaching N° 01</div>
+          <div class="approach-label" id="approach">Entering N° 01</div>
 
           <div class="scroll-nudge" id="scroll-nudge">
             <div class="nudge-label" data-i18n="works.nudge" data-i18n-html="true">
-              Scroll · 작품에 가까이 가기
-              <span class="kr">첫 번째 작품까지 약 1,100m</span>
+              Scroll · 작품 보기
+              <span class="kr">첫 번째 작품으로 이동</span>
             </div>
             <div class="nudge-track"></div>
             <div class="nudge-chev"></div>
@@ -1568,13 +1582,13 @@ const I18N = {
     "hero.subjectLabel": "Subject",
     "hero.subjectText": "An explores how images become beliefs — how a calm tone, a still face, an unwavering gaze can persuade us that something is true. The work returns the audience’s gaze to itself.",
     "works.kicker": "§ 01 / Selected Works",
-    "works.meta": "depth tunnel · 9:16",
-    "works.title": "Three rooms, in a line.<br/>Each one walks toward you.",
-    "works.nudge": 'Scroll · walk toward the work <span class="kr">approx. 1,100m to the first room</span>',
+    "works.meta": "moving image · XR",
+    "works.title": "Images that remain as sensation.<br/>Works across film, installation, and XR.",
+    "works.nudge": 'Scroll · view works <span class="kr">enter the first work</span>',
     "works.depth": "Depth",
     "works.archive": "Archive",
     "works.enter": "Enter current room →",
-    "works.approach": "Approaching N° ",
+    "works.approach": "Entering N° ",
     "works.now": "Now showing · N° ",
     "works.clickEnter": "Click to enter →",
     "spec.aspect": "Aspect",
@@ -1615,14 +1629,14 @@ const I18N = {
     "hero.subjectLabel": "질문",
     "hero.subjectText": "작업 속 얼굴은 대체로 정면을 바라본다. 고요한 화면과 기록처럼 보이는 형식은 허구를 사실처럼 보이게 하고, 관객은 어느 순간 보는 사람에서 보이는 사람이 된다.",
     "works.kicker": "§ 01 / 작품",
-    "works.meta": "깊이 · 9:16 영상",
-    "works.title": "세 개의 영상이 서로 다른 깊이에 놓여 있다.<br/>스크롤할수록 작품 쪽으로 가까워진다.",
-    "works.nudge": 'Scroll · 작품에 가까이 가기 <span class="kr">첫 번째 작품까지 약 1,100m</span>',
+    "works.meta": "영상 · 설치 · XR",
+    "works.title": "이미지가 감각으로 남는 순간들.<br/>영화, 설치, XR로 이어지는 작업.",
+    "works.nudge": 'Scroll · 작품 보기 <span class="kr">첫 번째 작품으로 이동</span>',
     "works.depth": "깊이",
     "works.archive": "작품 목록",
     "works.enter": "현재 작품 보기 →",
-    "works.approach": "가까워지는 중 · N° ",
-    "works.now": "보고 있는 작품 · N° ",
+    "works.approach": "진입 중 · N° ",
+    "works.now": "현재 작품 · N° ",
     "works.clickEnter": "클릭해 보기 →",
     "spec.aspect": "비율",
     "spec.run": "길이",
@@ -1637,7 +1651,7 @@ const I18N = {
     "contact.studioTitle": "출발",
     "contact.studioText": "질문은 개인적인 경험에서 시작된다. 현실과 허구, 기억과 이미지, 응시와 관계가 서로의 경계를 흐리는 순간을 따라간다.",
     "contact.formatsTitle": "매체",
-    "contact.formatsText": "무빙 이미지 · 9:16 영상 · XR 설치 · AI 아바타 내러티브 · 영화",
+    "contact.formatsText": "무빙 이미지 · 영상 설치 · XR · AI 아바타 내러티브 · 영화",
     "contact.collabTitle": "발표",
     "contact.collabText": "작업의 맥락이 맞는 자리에서 전시와 상영, 퍼블릭 프로그램, 리서치 프로젝트로 이어진다.",
     "footer.note": "컬러 영상 / 고요한 방들",
