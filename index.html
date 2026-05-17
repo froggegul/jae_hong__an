@@ -2187,6 +2187,7 @@ let autoLatchUntil = 0;     // wall-clock ms until which boost is hard-capped lo
 let autoArrivedAt = 0;      // wall-clock ms of last arrival (commit cooldown source)
 const AUTO_BASE_DUR = 1100;
 const DEPART_THRESHOLD = 0.12;
+const LAST_EXIT_THRESHOLD = 0.04;
 const ROOM_LATCH_MS = 520;
 const BOOST_CAP_LATCHED = 1.0;  // NO boost during latch — hard floor
 const BOOST_CAP_FREE = 1.8;     // gentle ceiling overall
@@ -2299,6 +2300,12 @@ function maybeSnap() {
   const stops = tunnelStops();
   const y = window.scrollY;
   const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+  const lastStop = stops[stops.length - 1];
+
+  // Once the viewer intentionally scrolls past the final work, do not let the
+  // room snap pull the page back upward. The last room should release into the
+  // following section instead of behaving like another locked stop.
+  if (scrollDir > 0 && y > lastStop + 4) return;
 
   let target = null;
   if (scrollDir > 0) {
@@ -2347,7 +2354,8 @@ function maybeCommitAutoAdvance() {
   const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
   const anchorY = stops[autoAnchorIdx];
   const departure = window.scrollY - anchorY;
-  if (departure < spacing * DEPART_THRESHOLD) return;
+  const threshold = autoAnchorIdx === works.length - 1 ? LAST_EXIT_THRESHOLD : DEPART_THRESHOLD;
+  if (departure < spacing * threshold) return;
   let target;
   if (autoAnchorIdx < works.length - 1) {
     target = stops[autoAnchorIdx + 1];
@@ -2365,7 +2373,7 @@ function autoTick(now) {
     const stops = tunnelStops();
     const arrivedIdx = stops.findIndex(s => Math.abs(s - autoTarget) < 2);
     autoAnchorIdx = arrivedIdx;
-    autoArrivedAt = performance.now();   // start cooldown
+    autoArrivedAt = arrivedIdx >= 0 ? performance.now() : 0; // no cooldown after tunnel exit
     cancelAuto();
     return;
   }
