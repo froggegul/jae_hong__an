@@ -360,11 +360,16 @@
   }
   .tunnel-frame.focus { pointer-events: auto; }
   .tunnel-frame.focus .frame-card {
-    transition: border-color 280ms var(--ease), box-shadow 280ms var(--ease);
+    transition: transform 220ms var(--ease), border-color 280ms var(--ease), box-shadow 280ms var(--ease);
   }
   .tunnel-frame.focus:hover .frame-card {
     border-color: var(--ink-70);
     box-shadow: 0 0 0 1px var(--ink-30) inset, 0 24px 80px -32px rgba(0,0,0,0.7);
+  }
+  .tunnel-stage.scroll-buffered .tunnel-frame.focus .frame-card {
+    transform: translateY(7px) scale(0.992);
+    border-color: var(--ink-70);
+    box-shadow: 0 0 0 1px var(--ink-30) inset, 0 22px 72px -34px rgba(255,255,255,0.18);
   }
   .tunnel-frame.focus::after {
     content: attr(data-enter-label);
@@ -535,6 +540,20 @@
     transition: color 240ms var(--ease);
   }
   .approach-label.now { color: var(--ink); }
+  .approach-label::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -12px;
+    width: 54px;
+    height: 1px;
+    background: var(--ink);
+    opacity: 0;
+    transform: translateX(-50%) scaleX(var(--cooldown-progress, 0));
+    transform-origin: left center;
+    transition: opacity 180ms var(--ease), transform 180ms var(--ease);
+  }
+  .tunnel-stage.scroll-buffered .approach-label::after { opacity: 0.7; }
 
   /* ── Scroll nudge: only visible during the first approach ─────
      Sits at bottom-center. Three states: 'in' (fade up), 'dim'
@@ -2171,7 +2190,10 @@ const DEPART_THRESHOLD = 0.12;
 const ROOM_LATCH_MS = 520;
 const BOOST_CAP_LATCHED = 1.0;  // NO boost during latch — hard floor
 const BOOST_CAP_FREE = 1.8;     // gentle ceiling overall
-const ARRIVAL_COOLDOWN_MS = 1200; // user MUST pause at each room — no through-scroll
+const ARRIVAL_COOLDOWN_MS = 860; // pause at each room, but don't feel unresponsive
+const COOLDOWN_QUEUE_ARM_MS = 420; // ignore early trackpad momentum before queuing intent
+let cooldownFeedbackTimer = null;
+let queuedAdvanceTimer = null;
 
 function tunnelStops() {
   const tunnel = document.getElementById("tunnel");
@@ -2185,7 +2207,60 @@ function tunnelExitY() {
   const docTop = tunnel.getBoundingClientRect().top + window.scrollY;
   return docTop + total + 8;
 }
-function cancelAuto() { autoTarget = null; autoBoost = 1; }
+function clearQueuedAdvance() {
+  if (queuedAdvanceTimer) clearTimeout(queuedAdvanceTimer);
+  queuedAdvanceTimer = null;
+}
+
+function pulseScrollBuffer(sinceArrival = 0) {
+  if (!tunnelStage) return;
+  const progress = clamp(sinceArrival / ARRIVAL_COOLDOWN_MS, 0.12, 1);
+  tunnelStage.style.setProperty("--cooldown-progress", progress.toFixed(3));
+  tunnelStage.classList.add("scroll-buffered");
+  if (cooldownFeedbackTimer) clearTimeout(cooldownFeedbackTimer);
+  cooldownFeedbackTimer = setTimeout(() => {
+    tunnelStage.classList.remove("scroll-buffered");
+  }, 220);
+}
+
+function cancelAuto() {
+  autoTarget = null;
+  autoBoost = 1;
+  clearQueuedAdvance();
+}
+
+function beginAutoAdvance(target) {
+  clearQueuedAdvance();
+  autoTarget = target;
+  autoStartT = performance.now();
+  autoStartY = window.scrollY;
+  autoBoost = 1;
+  autoLatchUntil = performance.now() + ROOM_LATCH_MS;
+  startAutoLoop();
+}
+
+function commitQueuedAdvance() {
+  if (autoTarget != null || isProgrammaticScroll) return;
+  setAnchorFromCurrentY();
+  if (autoAnchorIdx < 0 && currentRoom >= 0) autoAnchorIdx = currentRoom;
+  if (autoAnchorIdx < 0) return;
+
+  const stops = tunnelStops();
+  const target = autoAnchorIdx < works.length - 1
+    ? stops[autoAnchorIdx + 1]
+    : tunnelExitY();
+  beginAutoAdvance(target);
+}
+
+function queueAdvanceAfterCooldown(sinceArrival) {
+  const delay = Math.max(24, ARRIVAL_COOLDOWN_MS - sinceArrival + 16);
+  clearQueuedAdvance();
+  queuedAdvanceTimer = setTimeout(() => {
+    queuedAdvanceTimer = null;
+    scrollDir = 1;
+    commitQueuedAdvance();
+  }, delay);
+}
 
 function smoothScrollTo(targetY, duration) {
   if (scrollAnim) cancelAnimationFrame(scrollAnim);
@@ -2273,16 +2348,13 @@ function maybeCommitAutoAdvance() {
   const anchorY = stops[autoAnchorIdx];
   const departure = window.scrollY - anchorY;
   if (departure < spacing * DEPART_THRESHOLD) return;
+  let target;
   if (autoAnchorIdx < works.length - 1) {
-    autoTarget = stops[autoAnchorIdx + 1];
+    target = stops[autoAnchorIdx + 1];
   } else {
-    autoTarget = tunnelExitY();
+    target = tunnelExitY();
   }
-  autoStartT = performance.now();
-  autoStartY = window.scrollY;
-  autoBoost = 1;
-  autoLatchUntil = performance.now() + ROOM_LATCH_MS; // brake until past midpoint
-  startAutoLoop();
+  beginAutoAdvance(target);
 }
 
 function autoTick(now) {
@@ -2360,17 +2432,22 @@ window.addEventListener("wheel", (e) => {
   lastWheelTs = performance.now();
   if (Math.abs(e.deltaY) > 4) scrollDir = e.deltaY > 0 ? 1 : -1;
 
-  // HARD LOCK: just arrived at a room? Ignore downward input completely
-  // for ARRIVAL_COOLDOWN_MS so the user is forced to pause and see it.
-  // Upward scroll always honored (escape hatch).
+  // Just arrived at a room? Briefly absorb downward input so momentum cannot
+  // skip rooms. Continued intent gets visual feedback and queues one advance.
+  // Upward scroll is always honored as an escape hatch.
   const sinceArrival = performance.now() - autoArrivedAt;
   const inCooldown = sinceArrival < ARRIVAL_COOLDOWN_MS;
 
   if (scrollDir < 0) {
     cancelAuto();
   } else if (inCooldown) {
-    // Drop the input on the floor. No boost accumulation, no commit.
+    // Absorb the input, but show that the room received it. After early
+    // momentum settles, a continued downward gesture is queued as one advance.
     e.preventDefault();
+    pulseScrollBuffer(sinceArrival);
+    if (sinceArrival > COOLDOWN_QUEUE_ARM_MS) {
+      queueAdvanceAfterCooldown(sinceArrival);
+    }
     return;
   } else if (autoTarget != null) {
     e.preventDefault();
