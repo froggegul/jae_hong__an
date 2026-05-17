@@ -1312,8 +1312,8 @@
     <div class="wrap works-intro">
       <div class="section-head">
         <span class="num" data-i18n="works.kicker">§ 01 / Selected Works</span>
-        <span class="num" style="text-align:right" data-i18n="works.meta">moving image · XR</span>
-        <h2 data-i18n="works.title" data-i18n-html="true">Images that remain as sensation.<br/>Works across film, installation, and XR.</h2>
+        <span class="num" style="text-align:right" data-i18n="works.meta">image · sensation · space</span>
+        <h2 data-i18n="works.title" data-i18n-html="true">Images that remain as sensation.<br/>Moving between screen, space, and memory.</h2>
       </div>
     </div>
 
@@ -1582,8 +1582,8 @@ const I18N = {
     "hero.subjectLabel": "Subject",
     "hero.subjectText": "An explores how images become beliefs — how a calm tone, a still face, an unwavering gaze can persuade us that something is true. The work returns the audience’s gaze to itself.",
     "works.kicker": "§ 01 / Selected Works",
-    "works.meta": "moving image · XR",
-    "works.title": "Images that remain as sensation.<br/>Works across film, installation, and XR.",
+    "works.meta": "image · sensation · space",
+    "works.title": "Images that remain as sensation.<br/>Moving between screen, space, and memory.",
     "works.nudge": 'Scroll · view works <span class="kr">enter the first work</span>',
     "works.depth": "Depth",
     "works.archive": "Archive",
@@ -1629,8 +1629,8 @@ const I18N = {
     "hero.subjectLabel": "질문",
     "hero.subjectText": "작업 속 얼굴은 대체로 정면을 바라본다. 고요한 화면과 기록처럼 보이는 형식은 허구를 사실처럼 보이게 하고, 관객은 어느 순간 보는 사람에서 보이는 사람이 된다.",
     "works.kicker": "§ 01 / 작품",
-    "works.meta": "영상 · 설치 · XR",
-    "works.title": "이미지가 감각으로 남는 순간들.<br/>영화, 설치, XR로 이어지는 작업.",
+    "works.meta": "이미지 · 감각 · 공간",
+    "works.title": "이미지가 감각으로 남는 순간들.<br/>화면과 공간, 기억 사이를 오가는 작업.",
     "works.nudge": 'Scroll · 작품 보기 <span class="kr">첫 번째 작품으로 이동</span>',
     "works.depth": "깊이",
     "works.archive": "작품 목록",
@@ -2422,6 +2422,10 @@ const io = new IntersectionObserver((entries) => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("in"); });
 }, { threshold: 0.12 });
 document.querySelectorAll(".section, .work").forEach(el => {
+  if (el.id === "works") {
+    el.classList.add("in");
+    return;
+  }
   el.classList.add("reveal");
   io.observe(el);
 });
