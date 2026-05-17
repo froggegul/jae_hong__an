@@ -1,5 +1,6 @@
 // Jaehong An portfolio works manifest
-// Add new works by copying one object and changing idx/title/video/poster paths.
+// Add new works by copying one object and changing idx/title/poster paths.
+// Use video for local playback, or externalUrl for works hosted elsewhere.
 window.JAEHONG_WORKS = [
   {
     idx: "01",
@@ -36,5 +37,22 @@ window.JAEHONG_WORKS = [
     caption: "Installation view — XR, looped",
     video: "media/web/work-03-web.mp4",
     poster: "assets/posters/work-03.jpg"
+  },
+  {
+    idx: "04",
+    title: "Elevate",
+    desc: "불안한 표정의 여성이 엘리베이터를 타고 미용 클리닉으로 올라간다. 수술 뒤 거울 속 얼굴은 더 매끈하고 아름다워졌지만, 밖으로 나서는 순간 더 아름다운 얼굴들이 화면을 가득 채운다. 만족은 곧 또 다른 기준이 되고, 반복되는 상승과 하강 속에서 얼굴은 점점 뒤틀린다.",
+    descEn: "A woman ascends by elevator to a cosmetic clinic and returns with a smoother, more beautiful face. Outside, media screens immediately replace her satisfaction with a new standard of inadequacy. As the journey repeats, each ascent and descent distorts her appearance further, moving not toward elevation but self-erasure.",
+    year: "2024",
+    medium: "AI Film · Gen:48",
+    duration: "3′11″",
+    aspect: "16 : 9",
+    layout: "wide",
+    caption: "Runway Gen:48 Aleph Edition — People's Choice Honoree",
+    award: "Runway Gen:48 Aleph Edition · People's Choice Honoree",
+    authors: "Jaehong An & Haeyun Shin",
+    poster: "assets/posters/work-04.webp",
+    externalUrl: "https://runwayml.com/gen48?film=elevate",
+    youtubeId: "bnU5NJ90peU"
   }
 ];

@@ -352,6 +352,12 @@
     transition: opacity 320ms var(--ease);
     pointer-events: none; /* far frames not clickable */
   }
+  .tunnel-frame.wide {
+    width: min(54vw, 640px);
+    aspect-ratio: 16 / 9;
+    margin-left: calc(min(54vw, 640px) / -2);
+    margin-top: calc(min(54vw, 640px) * 9 / 16 / -2);
+  }
   .tunnel-frame.focus { pointer-events: auto; }
   .tunnel-frame.focus .frame-card {
     transition: border-color 280ms var(--ease), box-shadow 280ms var(--ease);
@@ -1127,6 +1133,10 @@
     filter: blur(0);
     transform: perspective(1200px) translateZ(0) scale(1);
   }
+  .overlay.wide-work .overlay-stage {
+    width: min(72vw, 980px);
+    aspect-ratio: 16 / 9;
+  }
   .overlay-poster {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
@@ -1164,12 +1174,42 @@
     filter: blur(0);
     transform: translateY(-50%);
   }
+  .overlay.wide-work .overlay-meta {
+    left: 50%;
+    top: auto;
+    bottom: clamp(72px, 9vh, 120px);
+    width: min(72vw, 980px);
+    display: grid;
+    grid-template-columns: minmax(160px, 0.42fr) minmax(0, 1fr);
+    column-gap: clamp(24px, 4vw, 56px);
+    transform: translate(-50%, 14px);
+  }
+  .overlay.active.wide-work .overlay-meta {
+    transform: translate(-50%, 0);
+  }
+  .overlay.wide-work .overlay-meta p {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    max-width: none;
+  }
   @media (max-width: 900px) {
     .overlay-meta {
       left: 20px; right: 20px; top: auto; bottom: 80px;
       transform: translateY(14px); width: auto;
     }
+    .overlay.wide-work .overlay-stage {
+      width: 88vw;
+    }
+    .overlay.wide-work .overlay-meta {
+      left: 20px; right: 20px; top: auto; bottom: 80px;
+      display: block;
+      transform: translateY(14px);
+      width: auto;
+    }
     .overlay.active .overlay-meta {
+      transform: translateY(0);
+    }
+    .overlay.active.wide-work .overlay-meta {
       transform: translateY(0);
     }
   }
@@ -1212,6 +1252,7 @@
     transform: translateY(0);
   }
   .overlay-controls button,
+  .overlay-controls .overlay-link,
   .overlay-nav button {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -1223,9 +1264,12 @@
     padding: 8px 12px;
     cursor: pointer;
     transition: border-color var(--dur-fast) var(--ease), background var(--dur-fast) var(--ease);
+    text-decoration: none;
   }
   .overlay-controls button:hover,
+  .overlay-controls .overlay-link:hover,
   .overlay-nav button:hover { border-color: var(--ink); background: rgba(255,255,255,0.04); }
+  .overlay-controls .overlay-link[hidden] { display: none; }
   .overlay-nav {
     position: absolute;
     bottom: 24px; left: 50%;
@@ -1555,6 +1599,7 @@
   </div>
   <div class="overlay-controls">
     <button id="ov-sound" type="button">Sound On</button>
+    <a id="ov-external" class="overlay-link" href="#" target="_blank" rel="noreferrer" hidden>Watch on Runway →</a>
     <button id="ov-exit" type="button" data-i18n="overlay.close">Close</button>
   </div>
   <div class="overlay-nav">
@@ -1613,6 +1658,7 @@ const I18N = {
     "sound.off": "SOUND OFF",
     "overlay.soundOn": "Sound On",
     "overlay.soundOff": "Sound Off",
+    "overlay.external": "Watch on Runway →",
     "overlay.close": "Close",
     "overlay.prev": "← Prev",
     "overlay.next": "Next →",
@@ -1660,6 +1706,7 @@ const I18N = {
     "sound.off": "사운드 OFF",
     "overlay.soundOn": "영상 사운드 켜기",
     "overlay.soundOff": "영상 사운드 끄기",
+    "overlay.external": "Runway에서 보기 →",
     "overlay.close": "닫기",
     "overlay.prev": "← 이전",
     "overlay.next": "다음 →",
@@ -1727,7 +1774,7 @@ const fallbackWorks = [
 function normalizeWork(work, i) {
   const idx = work.idx || String(i + 1).padStart(2, "0");
   const posterPath = work.videoPoster || work.poster || `assets/posters/work-${idx}.jpg`;
-  const videoPath = work.video || `media/work-${idx}.mp4`;
+  const videoPath = work.video || "";
   return {
     ...work,
     idx,
@@ -1735,11 +1782,17 @@ function normalizeWork(work, i) {
     desc: work.desc || "",
     descEn: work.descEn || work.desc || "",
     year: work.year || "",
-    medium: work.medium || "9:16 Video",
+    medium: work.medium || "Moving Image",
     duration: work.duration || "looped",
+    aspect: work.aspect || "9 : 16",
+    layout: work.layout || "",
     caption: work.caption || work.title || `Work ${idx}`,
     video: videoPath,
     videoPoster: work.videoPoster || posterPath,
+    externalUrl: work.externalUrl || "",
+    youtubeId: work.youtubeId || "",
+    award: work.award || "",
+    authors: work.authors || "",
     poster: String(posterPath).startsWith("url(") ? posterPath : `url(${posterPath})`
   };
 }
@@ -1774,7 +1827,7 @@ function roomT(i) {
 
 // Frames
 camera.innerHTML = works.map((w, i) => `
-  <div class="tunnel-frame" data-frame="${i}" data-enter-label="${ui("works.clickEnter")}" style="--zbase: ${-i * Z_SPACING}px">
+  <div class="tunnel-frame ${w.layout === "wide" ? "wide" : ""}" data-frame="${i}" data-enter-label="${ui("works.clickEnter")}" style="--zbase: ${-i * Z_SPACING}px">
     <div class="frame-card">
       <div class="poster" style="background-image:${w.poster}"></div>
       <div class="frame-overlay"></div>
@@ -1794,7 +1847,7 @@ notes.innerHTML = works.map((w, i) => `
       <p class="lang-en">${w.descEn}</p>
       <p class="kr lang-ko">${w.desc}</p>
       <div class="specs">
-        <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>9 : 16</b></span>
+        <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>${w.aspect}</b></span>
         <span><span data-i18n="spec.run">${ui("spec.run")}</span> <b>${w.duration}</b></span>
         <span><span data-i18n="spec.year">${ui("spec.year")}</span> <b>${w.year}</b></span>
       </div>
@@ -1831,7 +1884,7 @@ function smoothstep(edge0, edge1, value) {
 
 function warmVideo(i) {
   const work = works[i];
-  if (!work || warmedVideos.has(i)) return;
+  if (!work || !work.video || warmedVideos.has(i)) return;
 
   const video = document.createElement("video");
   video.preload = "auto";
@@ -2474,6 +2527,7 @@ const ovDesc    = document.getElementById("ov-desc");
 const ovCount   = document.getElementById("ov-count");
 const ovExit    = document.getElementById("ov-exit");
 const ovSound   = document.getElementById("ov-sound");
+const ovExternal = document.getElementById("ov-external");
 const ovPrev    = document.getElementById("ov-prev");
 const ovNext    = document.getElementById("ov-next");
 
@@ -2597,6 +2651,7 @@ function applyLanguage() {
   const mainLabel = mainSoundBtn?.querySelector(".ms-label");
   if (mainLabel) mainLabel.textContent = mainSoundOn ? ui("sound.on") : ui("sound.off");
   ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
+  if (ovExternal) ovExternal.textContent = ui("overlay.external");
 
   if (overlay.classList.contains("active")) paintMeta(ovIndex);
   tick();
@@ -2619,11 +2674,23 @@ if (langToggle) {
 
 function setPosterVideo(layer, work, audible) {
   if (!layer) return;
+  if (!work.video) {
+    try { layer.pause(); } catch (e) {}
+    layer.removeAttribute("src");
+    layer.load();
+    layer.poster = work.videoPoster;
+    layer.style.backgroundImage = `url(${work.videoPoster})`;
+    layer.loop = false;
+    layer.muted = true;
+    layer.volume = 0;
+    return;
+  }
   const nextSrc = new URL(work.video, window.location.href).href;
   if (layer.src !== nextSrc) {
     layer.src = work.video;
     layer.load();
   }
+  layer.style.backgroundImage = "";
   layer.poster = work.videoPoster;
   layer.loop = true;
   layer.muted = !audible;
@@ -2637,10 +2704,20 @@ function setPosterVideo(layer, work, audible) {
 
 function paintMeta(i) {
   const w = works[i];
+  overlay.classList.toggle("wide-work", w.layout === "wide");
   ovNum.textContent = "N° " + w.idx;
   ovTitle.textContent = w.title;
-  ovDesc.textContent = workDescription(w);
+  ovDesc.textContent = [w.award, workDescription(w)].filter(Boolean).join(" — ");
   ovCount.textContent = String(i+1).padStart(2,"0") + " / " + String(works.length).padStart(2,"0");
+  if (ovExternal) {
+    ovExternal.hidden = !w.externalUrl;
+    ovExternal.href = w.externalUrl || "#";
+    ovExternal.textContent = ui("overlay.external");
+  }
+  if (ovSound) {
+    ovSound.hidden = !w.video;
+    if (!w.video) ovSoundOn = false;
+  }
 }
 
 function openOverlay(i) {
@@ -2689,6 +2766,7 @@ function transition(dir) {
   const cur  = ovActive === "a" ? posterA : posterB;
   const nxt  = ovActive === "a" ? posterB : posterA;
   setPosterVideo(nxt, works[next], ovSoundOn);
+  if (!works[next].video) ovSoundOn = false;
   cur.muted = true;
   nxt.classList.remove("active","exit-left","exit-right");
   // initial state for next layer
@@ -2703,7 +2781,7 @@ function transition(dir) {
   cur.classList.add(dir > 0 ? "exit-left" : "exit-right");
   ovIndex = next;
   paintMeta(next);
-  if (ovSoundOn) {
+  if (ovSoundOn && works[next].video) {
     startAmbient();
   } else if (mainSoundOn && mainArmed) {
     startMainAmbient();
