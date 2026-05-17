@@ -457,7 +457,7 @@
     position: absolute; inset: 0;
     pointer-events: none;
   }
-  .tunnel-note.in { opacity: 1; transform: translateY(0); }
+  .tunnel-note.in { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .tunnel-note .note-inner {
     transform: translateX(var(--note-push, 0px));
     transition: transform 260ms var(--ease);
@@ -465,6 +465,7 @@
     display: flex;
     flex-direction: column;
     pointer-events: auto;
+    padding: 6px 0 12px;
   }
   .tunnel-note .num {
     font-family: var(--font-mono); font-size: 10px;
@@ -482,12 +483,14 @@
     font-weight: 900;
   }
   .tunnel-note .note-copy {
-    max-height: min(42vh, 310px);
+    max-height: min(50vh, 410px);
     overflow-y: auto;
-    overscroll-behavior: contain;
-    padding-right: 10px;
+    overscroll-behavior: auto;
+    padding-right: 14px;
     scrollbar-width: thin;
     scrollbar-color: var(--ink-30) transparent;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 18px, #000 calc(100% - 18px), transparent 100%);
   }
   .tunnel-note .note-copy::-webkit-scrollbar,
   .overlay-meta p::-webkit-scrollbar { width: 3px; }
@@ -2492,6 +2495,8 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 window.addEventListener("wheel", (e) => {
+  if (routeCaptionWheel(e)) return;
+
   lastWheelTs = performance.now();
   if (Math.abs(e.deltaY) > 4) scrollDir = e.deltaY > 0 ? 1 : -1;
 
@@ -2543,6 +2548,39 @@ window.addEventListener("scroll", () => {
   if (idleTimer) clearTimeout(idleTimer);
   idleTimer = setTimeout(() => { scrollDir = 0; }, 900);
 }, { passive: true });
+
+function canScrollElement(el, deltaY) {
+  if (!el || Math.abs(deltaY) < 1) return false;
+  const maxScroll = el.scrollHeight - el.clientHeight;
+  if (maxScroll <= 2) return false;
+  if (deltaY > 0) return el.scrollTop < maxScroll - 2;
+  return el.scrollTop > 2;
+}
+
+function routeCaptionWheel(e) {
+  if (overlay?.classList.contains("active")) {
+    const overlayCopy = e.target.closest?.(".overlay-meta p");
+    if (overlayCopy && canScrollElement(overlayCopy, e.deltaY)) {
+      e.preventDefault();
+      overlayCopy.scrollTop += e.deltaY;
+    }
+    return true;
+  }
+
+  const note = e.target.closest?.(".tunnel-note.in");
+  if (!note) return false;
+  const copy = note.querySelector(".note-copy");
+  if (!canScrollElement(copy, e.deltaY)) return false;
+
+  // While the cursor is inside the active note, interpret the gesture as
+  // reading first. Once the text reaches its edge, the tunnel receives the
+  // next wheel event and continues normally.
+  e.preventDefault();
+  cancelAuto();
+  clearQueuedAdvance();
+  copy.scrollTop += e.deltaY;
+  return true;
+}
 
 /* ── Header active link + scrollbar ──────────────── */
 const sections = ["hero","works","statement","contact"].map(id => document.getElementById(id));
