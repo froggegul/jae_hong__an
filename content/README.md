@@ -35,13 +35,33 @@ If no poster image is provided, the script extracts the first video frame as the
   title: "New Work Title",
   desc: "Korean description",
   descEn: "English description",
+  fullDesc: "Long Korean caption or statement. Use \\n\\n between paragraphs.",
+  fullDescEn: "Long English caption or statement, if needed.",
   year: "2026",
   medium: "9:16 Video",
   duration: "looped",
   caption: "Short caption",
+  aspect: "9 : 16",
+  layout: "",
   video: "media/web/work-04-web.mp4",
   poster: "assets/posters/work-04.jpg"
 }
 ```
 
 Important: put a comma between work blocks, but not after the final `]`.
+
+## Long captions
+
+Long captions are handled automatically by the site layout.
+
+- `desc`: shown in the Works section side note. If it is long, only the text body scrolls inside its own area.
+- `fullDesc`: shown when the work is opened fullscreen. If it is long, it scrolls separately from the video.
+- `caption`: shown on top of the work thumbnail/card. Keep this relatively short, or use line breaks with `\n`.
+- `layout: "wide"`: use this for horizontal videos or screen documentation. In fullscreen, the video and caption become separate columns so they do not overlap.
+- `layout: ""`: use this for vertical 9:16 works. Long text still gets an internal scroll area.
+
+For works like a screening or installation with physical dimensions, set `aspect` to the caption value, for example:
+
+```js
+aspect: "26’ × 94’"
+```
