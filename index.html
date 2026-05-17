@@ -1665,6 +1665,7 @@ function updateTunnel() {
     }
     return { f, i, relZ };
   });
+  const visualTopIdx = Math.max(0, Math.min(works.length - 1, Math.floor(Math.max(0, camZ) / Z_SPACING)));
 
   // Reading plane = relZ 0. Each room "lives" in a narrow window around it,
   // peaks crisply at the snap, then dissolves quickly so the next/prev room
@@ -1699,11 +1700,24 @@ function updateTunnel() {
       op = Math.max(op, floor);
     }
 
-    // The selected work card should read as a solid poster, not as a ghosted
-    // depth layer. Keep z-depth in the non-current cards only.
-    if (i === bestIdx) op = 1;
+    // The visual top card stays fully solid until it reaches maximum visual
+    // scale, then fades so the next card can appear through it.
+    if (i === visualTopIdx) {
+      if (d <= 0) {
+        op = 1;
+      } else {
+        const depart = Math.min(1, d / 0.62);
+        const easedDepart = depart * depart * (3 - 2 * depart);
+        op = 1 - 0.88 * easedDepart;
+      }
+    } else if (i === visualTopIdx + 1 && d < 0) {
+      const reveal = Math.max(0, Math.min(1, (d + 0.8) / 0.8));
+      const easedReveal = reveal * reveal * (3 - 2 * reveal);
+      op = Math.max(op, 0.12 + 0.88 * easedReveal);
+    }
+
     f.style.opacity = op.toFixed(3);
-    f.style.zIndex = i === bestIdx ? "3" : "1";
+    f.style.zIndex = i === visualTopIdx ? "3" : (i === visualTopIdx + 1 ? "2" : "1");
   });
 
   // Entry nudge + aura: only during the first approach (camZ still negative
