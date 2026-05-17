@@ -1985,12 +1985,11 @@ function updateTunnel() {
 
     f.style.transform = `translateY(${yShift.toFixed(1)}px) scale(${scale.toFixed(3)})`;
 
-    // Opacity: sharp peak — frame is invisible far from its reading plane,
-    // crisp at the snap. Hard floor on the trailing (past-camera) side so prior
-    // rooms don't ghost the current one.
+    // Opacity: sharp peak. Non-current rooms must not sit visibly behind the
+    // active card; they only appear when their own reading plane approaches.
     let op;
     if (d > 0)       op = focus;             // past camera — fade out fast
-    else             op = 0.18 + 0.82 * focus; // approaching — emerge from dim dust
+    else             op = focus;             // approaching — stay hidden until close
 
     // Special case for the FIRST frame during entry: when the camera is still
     // in front of room 0 (camZ negative, d negative), we want a faint but
