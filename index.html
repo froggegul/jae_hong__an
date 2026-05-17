@@ -477,6 +477,7 @@
     font-weight: 900;
   }
   .tunnel-note p { margin: 0 0 0.7em; font-size: 15px; line-height: 1.85; color: var(--ink); font-weight: 300; letter-spacing: -0.02em; }
+  .tunnel-note p:empty { display: none; }
   .tunnel-note p.kr { color: var(--ink-70); font-size: 13.5px; line-height: 1.85; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: 12px; }
   html[data-lang="ko"] .tunnel-note p.kr { padding-top: 0; border-top: 0; margin-top: 0; }
   .tunnel-note .specs {
@@ -1257,6 +1258,7 @@
     letter-spacing: -0.02em;
     max-width: 38ch;
   }
+  .overlay-meta p:empty { display: none; }
 
   .overlay-controls {
     position: absolute;

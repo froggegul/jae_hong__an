@@ -13,3 +13,7 @@ handoff/
 
 # Dependency folders if added later
 node_modules/
+
+# Local high-resolution source media
+assets/posters/work-00.jpg
+media/web/work-00-web.mp4
