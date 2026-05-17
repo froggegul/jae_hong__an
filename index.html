@@ -416,9 +416,10 @@
     font-weight: 300;
     font-size: 8.5px;
     letter-spacing: 0.08em;
-    text-transform: uppercase;
+    text-transform: none;
     color: rgba(236, 234, 227, 0.55);
     text-align: center;
+    white-space: pre-line;
   }
   .tunnel-frame .frame-idx {
     position: absolute; top: 12px; left: 14px;
@@ -476,7 +477,7 @@
     margin: 0 0 14px;
     font-weight: 900;
   }
-  .tunnel-note p { margin: 0 0 0.7em; font-size: 15px; line-height: 1.85; color: var(--ink); font-weight: 300; letter-spacing: -0.02em; }
+  .tunnel-note p { margin: 0 0 0.7em; font-size: 15px; line-height: 1.85; color: var(--ink); font-weight: 300; letter-spacing: -0.02em; white-space: pre-line; }
   .tunnel-note p:empty { display: none; }
   .tunnel-note p.kr { color: var(--ink-70); font-size: 13.5px; line-height: 1.85; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: 12px; }
   html[data-lang="ko"] .tunnel-note p.kr { padding-top: 0; border-top: 0; margin-top: 0; }
@@ -1751,7 +1752,7 @@ function ui(key) {
 function workDescription(work) {
   return currentLang === "ko"
     ? (work.fullDesc || work.desc || work.fullDescEn || work.descEn || "")
-    : (work.fullDescEn || work.descEn || work.fullDesc || work.desc || "");
+    : (work.fullDescEn || work.fullDesc || work.descEn || work.desc || "");
 }
 
 const fallbackWorks = [
