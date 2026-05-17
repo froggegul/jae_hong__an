@@ -4,15 +4,15 @@
 window.JAEHONG_WORKS = [
   {
     idx: "01",
-    title: "Untitled",
-    desc: "",
-    descEn: "",
-    year: "2026",
-    medium: "Moving Image",
-    duration: "1′17″",
+    title: "Times Square Screening",
+    desc: "타임스퀘어 스크리닝 현장을 기록한 짧은 영상.",
+    descEn: "A short documentation video from the Times Square screening.",
+    year: "2024",
+    medium: "Screening Documentation",
+    duration: "0′20″",
     aspect: "16 : 9",
     layout: "wide",
-    caption: "Moving image — 16:9",
+    caption: "Times Square screening — documentation",
     video: "media/web/work-00-web-lite.mp4",
     poster: "assets/posters/work-00-web.jpg"
   },
