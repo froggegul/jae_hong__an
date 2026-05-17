@@ -1706,14 +1706,14 @@ function updateTunnel() {
       if (d <= 0) {
         op = 1;
       } else {
-        const depart = Math.min(1, d / 0.62);
+        const depart = Math.min(1, d / 0.84);
         const easedDepart = depart * depart * (3 - 2 * depart);
-        op = 1 - 0.88 * easedDepart;
+        op = 1 - easedDepart;
       }
     } else if (i === visualTopIdx + 1 && d < 0) {
-      const reveal = Math.max(0, Math.min(1, (d + 0.8) / 0.8));
+      const reveal = Math.max(0, Math.min(1, (d + 0.95) / 0.95));
       const easedReveal = reveal * reveal * (3 - 2 * reveal);
-      op = Math.max(op, 0.12 + 0.88 * easedReveal);
+      op = Math.max(op, easedReveal);
     }
 
     f.style.opacity = op.toFixed(3);
