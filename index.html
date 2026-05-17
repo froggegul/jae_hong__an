@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ko">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -132,6 +132,28 @@
     text-transform: uppercase;
     text-align: right;
   }
+  .top-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 16px;
+  }
+  .lang-toggle {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: var(--ink-30);
+    text-transform: uppercase;
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .lang-toggle span { transition: color var(--dur-fast) var(--ease); }
+  .lang-toggle span.active { color: var(--ink); }
+  .lang-toggle:hover span { color: var(--ink-70); }
+  html[data-lang="en"] .lang-ko,
+  html[data-lang="ko"] .lang-en { display: none !important; }
   .scroll-meter {
     position: absolute; left: 0; right: 0; bottom: 0;
     height: 1px; background: var(--ink-08);
@@ -283,7 +305,7 @@
     box-shadow: 0 0 0 1px var(--ink-30) inset, 0 24px 80px -32px rgba(0,0,0,0.7);
   }
   .tunnel-frame.focus::after {
-    content: "Click to enter →";
+    content: attr(data-enter-label);
     position: absolute;
     left: 50%; bottom: -32px;
     transform: translateX(-50%);
@@ -854,6 +876,8 @@
     border-top: 1px dashed var(--line);
     margin-top: 14px;
   }
+  html[data-lang="ko"] .scene-block p:not(.kr) { display: none; }
+  html[data-lang="en"] .scene-block p.kr { display: none; }
   .scene-block p em {
     font-style: italic;
     background: linear-gradient(transparent 70%, var(--ink-08) 70%);
@@ -1163,12 +1187,19 @@
   <div class="wrap top-row">
     <a href="#hero" class="logo">JAEHONG&nbsp;<b>AN</b></a>
     <nav class="menu" id="menu">
-      <a href="#hero" data-link="hero" class="active">Intro</a>
-      <a href="#works" data-link="works">Works</a>
-      <a href="#statement" data-link="statement">Statement</a>
-      <a href="#contact" data-link="contact">Contact</a>
+      <a href="#hero" data-link="hero" data-i18n="nav.intro" class="active">Intro</a>
+      <a href="#works" data-link="works" data-i18n="nav.works">Works</a>
+      <a href="#statement" data-link="statement" data-i18n="nav.statement">Statement</a>
+      <a href="#contact" data-link="contact" data-i18n="nav.contact">Contact</a>
     </nav>
-    <div class="meta-clock" id="clock">SEOUL · KST</div>
+    <div class="top-meta">
+      <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Toggle language">
+        <span data-lang-choice="ko">KR</span>
+        <span>/</span>
+        <span data-lang-choice="en">EN</span>
+      </button>
+      <div class="meta-clock" id="clock">SEOUL · KST</div>
+    </div>
   </div>
   <div class="scroll-meter"><span id="scrollbar"></span></div>
 </header>
@@ -1178,7 +1209,7 @@
   <!-- HERO -->
   <section class="section hero" id="hero" data-screen-label="01 Hero">
     <div class="wrap">
-      <p class="caption">
+      <p class="caption" data-i18n="hero.caption" data-i18n-html="true">
         <span class="dot"></span>
         Media Artist
         <span>·</span>
@@ -1186,18 +1217,18 @@
         <span>·</span>
         Selected Works 2021—2026
       </p>
-      <h1>
+      <h1 data-i18n="hero.title" data-i18n-html="true">
         Jaehong&nbsp;An,<br/>
         <span class="light">looking back<br/>at the gaze.</span>
       </h1>
       <div class="hero-grid">
         <div>
-          <div class="label">Practice</div>
-          <p>현실과 가상의 경계에서 감각과 관계의 방식을 다시 설계합니다. 페이크 다큐멘터리에서 출발해 XR과 가상공간을 통과하며, 보는 자와 보이는 것 사이의 거리를 측정해 왔습니다.</p>
+          <div class="label" data-i18n="hero.practiceLabel">Practice</div>
+          <p data-i18n="hero.practiceText">현실과 가상의 경계에서 감각과 관계의 방식을 다시 설계합니다. 페이크 다큐멘터리에서 출발해 XR과 가상공간을 통과하며, 보는 자와 보이는 것 사이의 거리를 측정해 왔습니다.</p>
         </div>
         <div>
-          <div class="label">Subject</div>
-          <p>An explores how images become beliefs — how a calm tone, a still face, an unwavering gaze can persuade us that something is true. The work returns the audience’s gaze to itself.</p>
+          <div class="label" data-i18n="hero.subjectLabel">Subject</div>
+          <p data-i18n="hero.subjectText">An explores how images become beliefs — how a calm tone, a still face, an unwavering gaze can persuade us that something is true. The work returns the audience’s gaze to itself.</p>
         </div>
       </div>
     </div>
@@ -1207,9 +1238,9 @@
   <section class="section" id="works" data-screen-label="02 Works" style="padding: 0;">
     <div class="wrap" style="padding-top: clamp(96px, 16vh, 180px); padding-bottom: 48px;">
       <div class="section-head">
-        <span class="num">§ 01 / Selected Works</span>
-        <span class="num" style="text-align:right">depth tunnel · 9:16</span>
-        <h2>Three rooms, in a line.<br/>Each one walks toward you.</h2>
+        <span class="num" data-i18n="works.kicker">§ 01 / Selected Works</span>
+        <span class="num" style="text-align:right" data-i18n="works.meta">depth tunnel · 9:16</span>
+        <h2 data-i18n="works.title" data-i18n-html="true">Three rooms, in a line.<br/>Each one walks toward you.</h2>
       </div>
     </div>
 
@@ -1225,7 +1256,7 @@
           <div class="approach-label" id="approach">Approaching N° 01</div>
 
           <div class="scroll-nudge" id="scroll-nudge">
-            <div class="nudge-label">
+            <div class="nudge-label" data-i18n="works.nudge" data-i18n-html="true">
               Scroll · 작품을 향해 걸어가세요
               <span class="kr">첫 번째 방까지 약 1,100m</span>
             </div>
@@ -1234,10 +1265,10 @@
           </div>
 
           <div class="depth-meter">
-            <span>Depth</span>
+            <span data-i18n="works.depth">Depth</span>
             <span class="num" id="depth-num">−2800m</span>
             <div class="ladder"><span id="ladder-mark"></span></div>
-            <span style="margin-top: 12px;">Archive</span>
+            <span style="margin-top: 12px;" data-i18n="works.archive">Archive</span>
             <div class="archive" id="archive"></div>
           </div>
 
@@ -1245,7 +1276,7 @@
             <!-- notes injected -->
           </div>
 
-          <button class="open-fs" id="tunnel-fs" type="button">Enter current room →</button>
+          <button class="open-fs" id="tunnel-fs" type="button" data-i18n="works.enter">Enter current room →</button>
         </div>
       </div>
     </div>
@@ -1255,9 +1286,9 @@
   <section class="section" id="statement" data-screen-label="03 Statement">
     <div class="wrap">
       <div class="section-head">
-        <span class="num">§ 02 / Statement</span>
-        <span class="num" style="text-align:right">감각 · 관계 · 실재</span>
-        <h2>What are we looking at, and why do we believe it?</h2>
+        <span class="num" data-i18n="statement.kicker">§ 02 / Statement</span>
+        <span class="num" style="text-align:right" data-i18n="statement.meta">감각 · 관계 · 실재</span>
+        <h2 data-i18n="statement.title">What are we looking at, and why do we believe it?</h2>
       </div>
 
       <div class="statement-stage">
@@ -1326,7 +1357,7 @@
           </div>
 
           <div class="belief-lens" id="belief-lens">
-            <span class="kicker">Position of Belief</span>
+            <span class="kicker" data-i18n="belief.kicker">Position of Belief</span>
             <strong class="word" id="belief-word">CONTEXT</strong>
             <span class="track"><span id="belief-progress"></span></span>
             <small id="belief-sub">Identity is rewritten by who is looking.</small>
@@ -1376,7 +1407,8 @@
             <p>I recall Velázquez’s <em>Las Meninas</em>. The painting captures a scene from the perspective of King Philip IV — a scene undeniably real for the king. Similarly, my sense of authenticity in my work arises from the personal memory of the figure being my spouse. <em>Ultimately, truth changes according to the viewer’s position and memories.</em></p>
             <p class="kr">벨라스케스의 〈라스 메니나스〉를 떠올린다. 이 그림은 왕 펠리페 4세의 시점에서 본 장면이며, 왕에게는 의심할 수 없이 실재였다. 마찬가지로, 내 작품의 진실성은 그 인물이 나의 아내라는 사적인 기억에서 비롯된다. 결국 진실은 보는 자의 위치와 기억에 따라 달라진다.</p>
             <div class="statement-coda">
-              What are we looking at,<br/>and on what grounds<br/>do we believe it to be real?
+              <span class="lang-en">What are we looking at,<br/>and on what grounds<br/>do we believe it to be real?</span>
+              <span class="lang-ko">우리는 무엇을 보고 있으며,<br/>무엇을 근거로<br/>그것을 실재라 믿는가?</span>
             </div>
           </article>
 
@@ -1389,23 +1421,23 @@
   <section class="section" id="contact" data-screen-label="04 Contact">
     <div class="wrap">
       <div class="section-head">
-        <span class="num">§ 03 / Contact</span>
-        <span class="num" style="text-align:right">Open studio · Seoul</span>
-        <h2>Open for commissions, XR exhibitions, and narrative installations.</h2>
+        <span class="num" data-i18n="contact.kicker">§ 03 / Contact</span>
+        <span class="num" style="text-align:right" data-i18n="contact.meta">Open studio · Seoul</span>
+        <h2 data-i18n="contact.title">Open for commissions, XR exhibitions, and narrative installations.</h2>
       </div>
 
       <div class="contact-grid">
         <article>
-          <h3>Studio</h3>
-          <p>Seoul-based media art practice focused on immersive visual narratives across XR, AI avatar, and projected environments.</p>
+          <h3 data-i18n="contact.studioTitle">Studio</h3>
+          <p data-i18n="contact.studioText">Seoul-based media art practice focused on immersive visual narratives across XR, AI avatar, and projected environments.</p>
         </article>
         <article>
-          <h3>Available Formats</h3>
-          <p>9:16 short-form films · projection mapping · generative avatar performance · XR story spaces.</p>
+          <h3 data-i18n="contact.formatsTitle">Available Formats</h3>
+          <p data-i18n="contact.formatsText">9:16 short-form films · projection mapping · generative avatar performance · XR story spaces.</p>
         </article>
         <article>
-          <h3>Collaboration</h3>
-          <p>Brand films · installation partnerships · gallery-led commissions · experimental music visuals.</p>
+          <h3 data-i18n="contact.collabTitle">Collaboration</h3>
+          <p data-i18n="contact.collabText">Brand films · installation partnerships · gallery-led commissions · experimental music visuals.</p>
         </article>
       </div>
 
@@ -1417,7 +1449,7 @@
 
       <footer class="foot">
         <div>© 2026 · Jaehong An</div>
-        <div class="right">Color video works / quiet rooms</div>
+        <div class="right" data-i18n="footer.note">Color video works / quiet rooms</div>
       </footer>
     </div>
   </section>
@@ -1449,12 +1481,12 @@
   </div>
   <div class="overlay-controls">
     <button id="ov-sound" type="button">Sound On</button>
-    <button id="ov-exit" type="button">Close</button>
+    <button id="ov-exit" type="button" data-i18n="overlay.close">Close</button>
   </div>
   <div class="overlay-nav">
-    <button id="ov-prev" type="button">← Prev</button>
+    <button id="ov-prev" type="button" data-i18n="overlay.prev">← Prev</button>
     <span class="count" id="ov-count">01 / 03</span>
-    <button id="ov-next" type="button">Next →</button>
+    <button id="ov-next" type="button" data-i18n="overlay.next">Next →</button>
   </div>
 </div>
 
@@ -1464,6 +1496,118 @@
    Data — loaded from content/works.js.
    Edit that local manifest to add portfolio works.
 ───────────────────────────────────────────────── */
+const I18N = {
+  en: {
+    "nav.intro": "Intro",
+    "nav.works": "Works",
+    "nav.statement": "Statement",
+    "nav.contact": "Contact",
+    "hero.caption": '<span class="dot"></span> Media Artist <span>·</span> XR / AI Avatar Narrative <span>·</span> Selected Works 2021—2026',
+    "hero.title": 'Jaehong&nbsp;An,<br/><span class="light">looking back<br/>at the gaze.</span>',
+    "hero.practiceLabel": "Practice",
+    "hero.practiceText": "At the boundary between reality and virtuality, An redesigns modes of sensation and relation. Beginning with fake documentaries and moving through XR and virtual spaces, the work measures the distance between the one who looks and the one being seen.",
+    "hero.subjectLabel": "Subject",
+    "hero.subjectText": "An explores how images become beliefs — how a calm tone, a still face, an unwavering gaze can persuade us that something is true. The work returns the audience’s gaze to itself.",
+    "works.kicker": "§ 01 / Selected Works",
+    "works.meta": "depth tunnel · 9:16",
+    "works.title": "Three rooms, in a line.<br/>Each one walks toward you.",
+    "works.nudge": 'Scroll · walk toward the work <span class="kr">approx. 1,100m to the first room</span>',
+    "works.depth": "Depth",
+    "works.archive": "Archive",
+    "works.enter": "Enter current room →",
+    "works.approach": "Approaching N° ",
+    "works.now": "Now showing · N° ",
+    "works.clickEnter": "Click to enter →",
+    "spec.aspect": "Aspect",
+    "spec.run": "Run",
+    "spec.year": "Year",
+    "statement.kicker": "§ 02 / Statement",
+    "statement.meta": "sensation · relation · reality",
+    "statement.title": "What are we looking at, and why do we believe it?",
+    "belief.kicker": "Position of Belief",
+    "contact.kicker": "§ 03 / Contact",
+    "contact.meta": "Open studio · Seoul",
+    "contact.title": "Open for commissions, XR exhibitions, and narrative installations.",
+    "contact.studioTitle": "Studio",
+    "contact.studioText": "Seoul-based media art practice focused on immersive visual narratives across XR, AI avatar, and projected environments.",
+    "contact.formatsTitle": "Available Formats",
+    "contact.formatsText": "9:16 short-form films · projection mapping · generative avatar performance · XR story spaces.",
+    "contact.collabTitle": "Collaboration",
+    "contact.collabText": "Brand films · installation partnerships · gallery-led commissions · experimental music visuals.",
+    "footer.note": "Color video works / quiet rooms",
+    "sound.on": "SOUND ON",
+    "sound.off": "SOUND OFF",
+    "overlay.soundOn": "Sound On",
+    "overlay.soundOff": "Sound Off",
+    "overlay.close": "Close",
+    "overlay.prev": "← Prev",
+    "overlay.next": "Next →",
+    "clock.city": "Seoul"
+  },
+  ko: {
+    "nav.intro": "소개",
+    "nav.works": "작업",
+    "nav.statement": "스테이트먼트",
+    "nav.contact": "연락",
+    "hero.caption": '<span class="dot"></span> 미디어 아티스트 <span>·</span> XR / AI 아바타 내러티브 <span>·</span> 주요 작업 2021—2026',
+    "hero.title": '안재홍,<br/><span class="light">시선을<br/>되돌려 보는 작업.</span>',
+    "hero.practiceLabel": "작업",
+    "hero.practiceText": "현실과 가상의 경계에서 감각과 관계의 방식을 다시 설계합니다. 페이크 다큐멘터리에서 출발해 XR과 가상공간을 통과하며, 보는 자와 보이는 것 사이의 거리를 측정해 왔습니다.",
+    "hero.subjectLabel": "주제",
+    "hero.subjectText": "이미지는 어떻게 믿음이 되는가. 차분한 톤, 정지한 얼굴, 흔들리지 않는 시선은 어떻게 우리에게 어떤 것이 진실이라고 설득하는가. 이 작업은 관객의 시선을 다시 관객 자신에게 되돌립니다.",
+    "works.kicker": "§ 01 / 주요 작업",
+    "works.meta": "깊이 회랑 · 9:16",
+    "works.title": "세 개의 방이 일렬로 놓이고,<br/>각 방이 관객을 향해 걸어옵니다.",
+    "works.nudge": 'Scroll · 작품을 향해 걸어가세요 <span class="kr">첫 번째 방까지 약 1,100m</span>',
+    "works.depth": "깊이",
+    "works.archive": "아카이브",
+    "works.enter": "현재 방으로 들어가기 →",
+    "works.approach": "N° ",
+    "works.now": "현재 보기 · N° ",
+    "works.clickEnter": "클릭해서 들어가기 →",
+    "spec.aspect": "화면비",
+    "spec.run": "길이",
+    "spec.year": "연도",
+    "statement.kicker": "§ 02 / 작가 노트",
+    "statement.meta": "감각 · 관계 · 실재",
+    "statement.title": "우리는 무엇을 보고, 왜 그것을 믿는가?",
+    "belief.kicker": "믿음의 위치",
+    "contact.kicker": "§ 03 / 연락",
+    "contact.meta": "오픈 스튜디오 · 서울",
+    "contact.title": "커미션, XR 전시, 내러티브 설치 작업을 위한 협업을 기다립니다.",
+    "contact.studioTitle": "스튜디오",
+    "contact.studioText": "서울을 기반으로 XR, AI 아바타, 프로젝션 환경을 가로지르는 몰입형 시각 내러티브를 작업합니다.",
+    "contact.formatsTitle": "가능한 형식",
+    "contact.formatsText": "9:16 숏폼 필름 · 프로젝션 매핑 · 생성형 아바타 퍼포먼스 · XR 스토리 공간.",
+    "contact.collabTitle": "협업",
+    "contact.collabText": "브랜드 필름 · 설치 파트너십 · 갤러리 커미션 · 실험적 음악 비주얼.",
+    "footer.note": "컬러 영상 작업 / 조용한 방들",
+    "sound.on": "사운드 ON",
+    "sound.off": "사운드 OFF",
+    "overlay.soundOn": "영상 사운드 켜기",
+    "overlay.soundOff": "영상 사운드 끄기",
+    "overlay.close": "닫기",
+    "overlay.prev": "← 이전",
+    "overlay.next": "다음 →",
+    "clock.city": "서울"
+  }
+};
+
+const savedLang = localStorage.getItem("jaehong-lang");
+let currentLang = savedLang === "ko" || savedLang === "en" ? savedLang : "en";
+document.documentElement.dataset.lang = currentLang;
+document.documentElement.lang = currentLang;
+
+function ui(key) {
+  return I18N[currentLang]?.[key] || I18N.en[key] || key;
+}
+
+function workDescription(work) {
+  return currentLang === "ko"
+    ? (work.desc || work.descEn || "")
+    : (work.descEn || work.desc || "");
+}
+
 const fallbackWorks = [
   {
     idx: "01",
@@ -1556,7 +1700,7 @@ function roomT(i) {
 
 // Frames
 camera.innerHTML = works.map((w, i) => `
-  <div class="tunnel-frame" data-frame="${i}" style="--zbase: ${-i * Z_SPACING}px">
+  <div class="tunnel-frame" data-frame="${i}" data-enter-label="${ui("works.clickEnter")}" style="--zbase: ${-i * Z_SPACING}px">
     <div class="frame-card">
       <div class="poster" style="background-image:${w.poster}"></div>
       <div class="frame-overlay"></div>
@@ -1572,12 +1716,12 @@ notes.innerHTML = works.map((w, i) => `
   <article class="tunnel-note" data-note="${i}">
     <div class="num"><span>N° ${w.idx}</span><span>${w.year}</span><span>${w.medium}</span></div>
     <h3>${w.title}</h3>
-    <p>${w.descEn}</p>
-    <p class="kr">${w.desc}</p>
+    <p class="lang-en">${w.descEn}</p>
+    <p class="kr lang-ko">${w.desc}</p>
     <div class="specs">
-      <span>Aspect <b>9 : 16</b></span>
-      <span>Run <b>${w.duration}</b></span>
-      <span>Year <b>${w.year}</b></span>
+      <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>9 : 16</b></span>
+      <span><span data-i18n="spec.run">${ui("spec.run")}</span> <b>${w.duration}</b></span>
+      <span><span data-i18n="spec.year">${ui("spec.year")}</span> <b>${w.year}</b></span>
     </div>
   </article>
 `).join("");
@@ -1739,7 +1883,7 @@ function updateTunnel() {
   if (bestIdx !== currentRoom) {
     currentRoom = bestIdx;
     tunnelNotes.forEach((n, i) => n.classList.toggle("in", i === bestIdx));
-    approachEl.textContent = "Now showing · N° " + works[bestIdx].idx;
+    approachEl.textContent = ui("works.now") + works[bestIdx].idx;
     approachEl.classList.add("now");
     archiveThumbs.forEach((th, i) => {
       th.classList.toggle("current", i === bestIdx);
@@ -2133,13 +2277,13 @@ window.addEventListener("resize", onScroll);
 
 /* ── Belief lens / scene switcher ─────────────────── */
 const SCENES = [
-  { word: "CONTEXT",    sub: "Identity is rewritten by who is looking." },
-  { word: "FORM",       sub: "Calm tone. Steady cuts. We mistake form for fact." },
-  { word: "DOUBT",      sub: "Not what is true — but why we believe it." },
-  { word: "CONNECTION", sub: "An image becomes meaningful only when something is at stake." },
-  { word: "DISTANCE",   sub: "The same face, two different distances." },
-  { word: "GAZE",       sub: "You stop being the one who watches." },
-  { word: "POSITION",   sub: "Truth is a function of where you stand." },
+  { en: ["CONTEXT", "Identity is rewritten by who is looking."], ko: ["맥락", "정체성은 누가 보는가에 따라 다시 쓰입니다."] },
+  { en: ["FORM", "Calm tone. Steady cuts. We mistake form for fact."], ko: ["형식", "차분한 톤과 안정된 편집은 형식을 사실로 오인하게 합니다."] },
+  { en: ["DOUBT", "Not what is true — but why we believe it."], ko: ["의심", "무엇이 진실인가보다, 왜 그것을 믿는가를 묻습니다."] },
+  { en: ["CONNECTION", "An image becomes meaningful only when something is at stake."], ko: ["관계", "이미지는 관계가 걸려 있을 때 비로소 의미를 얻습니다."] },
+  { en: ["DISTANCE", "The same face, two different distances."], ko: ["거리", "같은 얼굴, 서로 다른 두 개의 거리."] },
+  { en: ["GAZE", "You stop being the one who watches."], ko: ["시선", "관객은 보는 자에서 보이는 자가 됩니다."] },
+  { en: ["POSITION", "Truth is a function of where you stand."], ko: ["위치", "진실은 당신이 서 있는 위치의 함수입니다."] },
 ];
 
 const wordEl  = document.getElementById("belief-word");
@@ -2149,6 +2293,10 @@ const scenes  = Array.from(document.querySelectorAll(".scene-frame .scene, .stag
 const blocks  = Array.from(document.querySelectorAll(".scene-block"));
 let activeScene = 0;
 
+function sceneText(i) {
+  return SCENES[i]?.[currentLang] || SCENES[i]?.en || ["", ""];
+}
+
 function setScene(i) {
   if (i === activeScene) return;
   activeScene = i;
@@ -2157,8 +2305,9 @@ function setScene(i) {
   // belief word flip
   wordEl.classList.add("flip");
   setTimeout(() => {
-    wordEl.textContent = SCENES[i].word;
-    subEl.textContent  = SCENES[i].sub;
+    const [word, sub] = sceneText(i);
+    wordEl.textContent = word;
+    subEl.textContent  = sub;
     wordEl.classList.remove("flip");
   }, 180);
 }
@@ -2190,7 +2339,7 @@ function pickActiveScene() {
 function tick() {
   const d = new Date();
   const t = d.toLocaleTimeString("en-GB", { hour12: false, timeZone: "Asia/Seoul" });
-  document.getElementById("clock").textContent = "Seoul · " + t.slice(0,5) + " KST";
+  document.getElementById("clock").textContent = ui("clock.city") + " · " + t.slice(0,5) + " KST";
 }
 tick();
 setInterval(tick, 30000);
@@ -2294,13 +2443,65 @@ if (mainSoundBtn) {
   mainSoundBtn.addEventListener("click", () => {
     mainSoundOn = !mainSoundOn;
     mainSoundBtn.setAttribute("aria-pressed", mainSoundOn ? "true" : "false");
-    if (label) label.textContent = mainSoundOn ? "SOUND ON" : "SOUND OFF";
+    if (label) label.textContent = mainSoundOn ? ui("sound.on") : ui("sound.off");
     if (mainSoundOn) {
       mainArmed = true;
       if (!ovSoundOn) startMainAmbient();
     } else {
       stopMainAmbient(320);
     }
+  });
+}
+
+const langToggle = document.getElementById("lang-toggle");
+function applyLanguage() {
+  document.documentElement.dataset.lang = currentLang;
+  document.documentElement.lang = currentLang;
+  localStorage.setItem("jaehong-lang", currentLang);
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    const value = ui(el.dataset.i18n);
+    if (el.dataset.i18nHtml === "true") el.innerHTML = value;
+    else el.textContent = value;
+  });
+
+  document.querySelectorAll("[data-lang-choice]").forEach(el => {
+    el.classList.toggle("active", el.dataset.langChoice === currentLang);
+  });
+
+  document.querySelectorAll(".tunnel-frame").forEach(frame => {
+    frame.dataset.enterLabel = ui("works.clickEnter");
+  });
+
+  const [word, sub] = sceneText(activeScene);
+  wordEl.textContent = word;
+  subEl.textContent = sub;
+
+  if (currentRoom >= 0) {
+    approachEl.textContent = ui("works.now") + works[currentRoom].idx;
+  } else {
+    approachEl.textContent = ui("works.approach") + works[0].idx;
+  }
+
+  const mainLabel = mainSoundBtn?.querySelector(".ms-label");
+  if (mainLabel) mainLabel.textContent = mainSoundOn ? ui("sound.on") : ui("sound.off");
+  ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
+
+  if (overlay.classList.contains("active")) paintMeta(ovIndex);
+  tick();
+}
+
+function setLanguage(lang) {
+  if (lang !== "ko" && lang !== "en") return;
+  if (lang === currentLang) return;
+  currentLang = lang;
+  applyLanguage();
+  updateTunnel();
+}
+
+if (langToggle) {
+  langToggle.addEventListener("click", () => {
+    setLanguage(currentLang === "en" ? "ko" : "en");
   });
 }
 
@@ -2327,7 +2528,7 @@ function paintMeta(i) {
   const w = works[i];
   ovNum.textContent = "N° " + w.idx;
   ovTitle.textContent = w.title;
-  ovDesc.textContent = w.descEn;
+  ovDesc.textContent = workDescription(w);
   ovCount.textContent = String(i+1).padStart(2,"0") + " / " + String(works.length).padStart(2,"0");
 }
 
@@ -2335,7 +2536,7 @@ function openOverlay(i) {
   ovIndex = i;
   ovActive = "a";
   ovSoundOn = false;
-  ovSound.textContent = "Sound On";
+  ovSound.textContent = ui("overlay.soundOn");
   setPosterVideo(posterA, works[i], false);
   try { posterA.currentTime = 0; } catch (e) {}
   try { posterB.pause(); } catch (e) {}
@@ -2364,7 +2565,7 @@ function closeOverlay() {
   stopAmbient();
   [posterA, posterB].forEach(video => { try { video.pause(); } catch (e) {} });
   ovSoundOn = false;
-  ovSound.textContent = "Sound On";
+  ovSound.textContent = ui("overlay.soundOn");
   if (mainSoundOn && mainArmed) {
     setTimeout(() => startMainAmbient(), 260);
   }
@@ -2410,7 +2611,7 @@ ovPrev.addEventListener("click", () => transition(-1));
 ovNext.addEventListener("click", () => transition( 1));
 ovSound.addEventListener("click", () => {
   ovSoundOn = !ovSoundOn;
-  ovSound.textContent = ovSoundOn ? "Sound Off" : "Sound On";
+  ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
   if (ovSoundOn) {
     startAmbient();
   } else {
@@ -2426,6 +2627,7 @@ window.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft")  transition(-1);
 });
 
+applyLanguage();
 onScroll();
 </script>
 
