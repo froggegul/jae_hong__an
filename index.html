@@ -448,7 +448,7 @@
     pointer-events: none;
   }
   @media (max-width: 900px) {
-    .tunnel-notes { right: 16px; left: 16px; width: auto; bottom: 80px; top: auto; transform: none; height: auto; --note-push: 0px; }
+    .tunnel-notes { right: 16px; left: 16px; width: auto; bottom: 80px; top: auto; transform: none; height: min(42vh, 360px); --note-push: 0px; }
   }
   .tunnel-note {
     opacity: 0;
@@ -461,6 +461,10 @@
   .tunnel-note .note-inner {
     transform: translateX(var(--note-push, 0px));
     transition: transform 260ms var(--ease);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    pointer-events: auto;
   }
   .tunnel-note .num {
     font-family: var(--font-mono); font-size: 10px;
@@ -477,6 +481,18 @@
     margin: 0 0 14px;
     font-weight: 900;
   }
+  .tunnel-note .note-copy {
+    max-height: min(42vh, 310px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--ink-30) transparent;
+  }
+  .tunnel-note .note-copy::-webkit-scrollbar,
+  .overlay-meta p::-webkit-scrollbar { width: 3px; }
+  .tunnel-note .note-copy::-webkit-scrollbar-thumb,
+  .overlay-meta p::-webkit-scrollbar-thumb { background: var(--ink-30); }
   .tunnel-note p { margin: 0 0 0.7em; font-size: 15px; line-height: 1.85; color: var(--ink); font-weight: 300; letter-spacing: -0.02em; white-space: pre-line; }
   .tunnel-note p:empty { display: none; }
   .tunnel-note p.kr { color: var(--ink-70); font-size: 13.5px; line-height: 1.85; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: 12px; }
@@ -1133,6 +1149,14 @@
       opacity 620ms var(--ease),
       visibility 0ms linear 0ms;
   }
+  .overlay.wide-work {
+    grid-template-columns: minmax(420px, 0.66fr) minmax(320px, 0.34fr);
+    column-gap: clamp(36px, 5vw, 88px);
+    align-items: center;
+    justify-items: stretch;
+    padding: 92px clamp(36px, 5vw, 96px) 92px;
+    box-sizing: border-box;
+  }
   .overlay-stage {
     position: relative;
     width: min(56vh, 88vw);
@@ -1155,8 +1179,9 @@
     transform: perspective(1200px) translateZ(0) scale(1);
   }
   .overlay.wide-work .overlay-stage {
-    width: min(72vw, 980px);
+    width: min(100%, 1040px);
     aspect-ratio: 16 / 9;
+    justify-self: end;
   }
   .overlay-poster {
     position: absolute; inset: 0;
@@ -1196,24 +1221,36 @@
     transform: translateY(-50%);
   }
   .overlay.wide-work .overlay-meta {
-    left: 50%;
+    position: relative;
+    left: auto;
     top: auto;
-    bottom: clamp(72px, 9vh, 120px);
-    width: min(72vw, 980px);
-    display: grid;
-    grid-template-columns: minmax(160px, 0.42fr) minmax(0, 1fr);
-    column-gap: clamp(24px, 4vw, 56px);
-    transform: translate(-50%, 14px);
+    bottom: auto;
+    width: min(30vw, 460px);
+    max-height: calc(100vh - 184px);
+    display: flex;
+    flex-direction: column;
+    justify-self: start;
+    overflow: hidden;
+    transform: translateY(14px);
   }
   .overlay.active.wide-work .overlay-meta {
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
   .overlay.wide-work .overlay-meta p {
-    grid-column: 2;
-    grid-row: 1 / span 2;
+    grid-column: auto;
+    grid-row: auto;
     max-width: none;
+    max-height: min(48vh, 460px);
   }
   @media (max-width: 900px) {
+    .overlay.wide-work {
+      display: grid;
+      grid-template-columns: 1fr;
+      padding: 72px 20px 96px;
+      row-gap: 22px;
+      overflow-y: auto;
+      align-content: center;
+    }
     .overlay-meta {
       left: 20px; right: 20px; top: auto; bottom: 80px;
       transform: translateY(14px); width: auto;
@@ -1222,10 +1259,12 @@
       width: 88vw;
     }
     .overlay.wide-work .overlay-meta {
-      left: 20px; right: 20px; top: auto; bottom: 80px;
+      position: relative;
+      left: auto; right: auto; top: auto; bottom: auto;
       display: block;
       transform: translateY(14px);
       width: auto;
+      max-height: none;
     }
     .overlay.active .overlay-meta {
       transform: translateY(0);
@@ -1872,8 +1911,10 @@ notes.innerHTML = works.map((w, i) => `
     <div class="note-inner">
       <div class="num"><span>N° ${w.idx}</span><span>${w.year}</span><span>${w.medium}</span></div>
       <h3>${w.title}</h3>
-      <p class="lang-en">${w.descEn}</p>
-      <p class="kr lang-ko">${w.desc}</p>
+      <div class="note-copy">
+        <p class="lang-en">${w.descEn || w.desc}</p>
+        <p class="kr lang-ko">${w.desc}</p>
+      </div>
       <div class="specs">
         <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>${w.aspect}</b></span>
         <span><span data-i18n="spec.run">${ui("spec.run")}</span> <b>${w.duration}</b></span>
