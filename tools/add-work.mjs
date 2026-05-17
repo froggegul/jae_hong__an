@@ -98,6 +98,25 @@ async function optimizeVideo(source, idx) {
   return path.relative(root, destination).split(path.sep).join('/');
 }
 
+async function extractPoster(source, idx) {
+  if (!(await canRun('ffmpeg'))) return null;
+
+  await fs.mkdir(posterDir, { recursive: true });
+  const destination = path.join(posterDir, `work-${idx}.jpg`);
+
+  console.log('\nExtracting first-frame poster...');
+  await run('ffmpeg', [
+    '-y',
+    '-i', source,
+    '-frames:v', '1',
+    '-q:v', '2',
+    '-update', '1',
+    destination
+  ]);
+
+  return path.relative(root, destination).split(path.sep).join('/');
+}
+
 async function writeWorks(works) {
   const header = [
     '// Jaehong An portfolio works manifest',
@@ -150,9 +169,17 @@ async function main() {
     console.warn(`\nCould not create web video, using original instead: ${err.message}`);
   }
 
-  const poster = posterSource
-    ? await copyAsset(posterSource, posterDir, `work-${idx}${path.extname(posterSource) || '.jpg'}`)
-    : `assets/posters/work-${idx}.jpg`;
+  let poster;
+  if (posterSource) {
+    poster = await copyAsset(posterSource, posterDir, `work-${idx}${path.extname(posterSource) || '.jpg'}`);
+  } else {
+    try {
+      poster = await extractPoster(path.join(root, originalVideo), idx);
+    } catch (err) {
+      console.warn(`\nCould not extract first-frame poster: ${err.message}`);
+    }
+    poster ||= `assets/posters/work-${idx}.jpg`;
+  }
 
   works.push({ idx, title, desc, descEn, year, medium, duration, caption, video, poster });
   await writeWorks(works);

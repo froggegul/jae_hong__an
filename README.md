@@ -30,11 +30,12 @@ Double-click:
 Add New Work.command
 ```
 
-Then drag a video and poster image into the Terminal prompts.
+Then drag a video into the Terminal prompts. For the poster prompt, drag an image or press Enter to use the video's first frame.
 
 The script copies files into:
 
 - `media/work-04.mp4`, `media/work-05.mp4`, ...
+- `media/web/work-04-web.mp4`, `media/web/work-05-web.mp4`, ...
 - `assets/posters/work-04.jpg`, `assets/posters/work-05.jpg`, ...
 
 Work metadata lives in:
