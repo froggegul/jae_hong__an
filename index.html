@@ -40,8 +40,11 @@
     --bg:        #050505;
     --bg-soft:   #0B0B0B;
     --ink:       #F2F0EC;
+    --ink-86:    rgba(242, 240, 236, 0.86);
     --ink-70:    rgba(242, 240, 236, 0.72);
+    --ink-62:    rgba(242, 240, 236, 0.62);
     --ink-50:    rgba(242, 240, 236, 0.50);
+    --ink-44:    rgba(242, 240, 236, 0.44);
     --ink-30:    rgba(242, 240, 236, 0.30);
     --ink-15:    rgba(242, 240, 236, 0.15);
     --ink-08:    rgba(242, 240, 236, 0.08);
@@ -72,7 +75,7 @@
   html, body { margin: 0; padding: 0; background: var(--bg); }
   body {
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.02em;
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
@@ -128,13 +131,13 @@
   nav.menu {
     display: flex; gap: 28px; justify-content: center;
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 420;
     font-size: 11px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
   nav.menu a {
-    color: var(--ink-50);
+    color: var(--ink-62);
     text-decoration: none;
     transition: color var(--dur-fast) var(--ease);
     position: relative;
@@ -149,7 +152,7 @@
   .meta-clock {
     font-family: var(--font-mono);
     font-size: 10px;
-    color: var(--ink-30);
+    color: var(--ink-44);
     letter-spacing: 0.14em;
     text-transform: uppercase;
     text-align: right;
@@ -164,7 +167,7 @@
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.14em;
-    color: var(--ink-30);
+    color: var(--ink-44);
     text-transform: uppercase;
     background: transparent;
     border: 0;
@@ -190,7 +193,7 @@
   html[data-lang="ko"] .scene-seal .seal-line,
   html[data-lang="ko"] .belief-lens .word,
   html[data-lang="ko"] .overlay-meta h3 {
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.025em;
     line-height: 1.12;
   }
@@ -234,9 +237,9 @@
   }
   .hero .caption {
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 420;
     font-size: 11px;
-    color: var(--ink-50);
+    color: var(--ink-62);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin: 0 0 28px;
@@ -258,9 +261,9 @@
   }
   .hero h1 .light {
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.02em;
-    color: var(--ink-50);
+    color: var(--ink-62);
   }
   .hero-grid {
     margin-top: clamp(40px, 6vh, 72px);
@@ -273,10 +276,10 @@
   @media (max-width: 820px) { .hero-grid { grid-template-columns: 1fr; gap: 24px; } }
   .hero-grid p {
     margin: 0;
-    color: var(--ink-70);
+    color: var(--ink-86);
     font-size: 15px;
     line-height: 1.85;
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.02em;
     max-width: 52ch;
   }
@@ -285,7 +288,7 @@
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--ink-30);
+    color: var(--ink-50);
     margin-bottom: 12px;
   }
 
@@ -301,9 +304,10 @@
   .section-head .num {
     font-family: var(--font-mono);
     font-size: 11px;
-    color: var(--ink-50);
+    color: var(--ink-62);
     letter-spacing: 0.18em;
     text-transform: uppercase;
+    font-weight: 500;
   }
   .section-head h2 {
     grid-column: 1 / -1;
@@ -379,7 +383,7 @@
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.22em;
-    color: var(--ink-50);
+    color: var(--ink-62);
     text-transform: uppercase;
     white-space: nowrap;
     opacity: 0;
@@ -413,18 +417,19 @@
     position: absolute;
     left: 14px; right: 14px; bottom: 36px;
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 360;
     font-size: 8.5px;
     letter-spacing: 0.08em;
     text-transform: none;
-    color: rgba(236, 234, 227, 0.55);
+    color: rgba(236, 234, 227, 0.68);
     text-align: center;
     white-space: pre-line;
   }
   .tunnel-frame .frame-idx {
     position: absolute; top: 12px; left: 14px;
     font-family: var(--font-mono); font-size: 10px;
-    letter-spacing: 0.18em; color: var(--ink-50);
+    letter-spacing: 0.18em; color: var(--ink-62);
+    font-weight: 500;
   }
   .tunnel-frame .frame-title {
     position: absolute; bottom: 14px; left: 14px; right: 14px;
@@ -470,9 +475,10 @@
   .tunnel-note .num {
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
     margin-bottom: 12px;
     display: flex; gap: 14px;
+    font-weight: 500;
   }
   .tunnel-note h3 {
     font-family: var(--font-display);
@@ -496,9 +502,9 @@
   .overlay-meta p::-webkit-scrollbar { width: 3px; }
   .tunnel-note .note-copy::-webkit-scrollbar-thumb,
   .overlay-meta p::-webkit-scrollbar-thumb { background: var(--ink-30); }
-  .tunnel-note p { margin: 0 0 0.7em; font-size: 15px; line-height: 1.85; color: var(--ink); font-weight: 300; letter-spacing: -0.02em; white-space: pre-line; }
+  .tunnel-note p { margin: 0 0 0.7em; font-size: 15px; line-height: 1.85; color: var(--ink-86); font-weight: 340; letter-spacing: -0.02em; white-space: pre-line; }
   .tunnel-note p:empty { display: none; }
-  .tunnel-note p.kr { color: var(--ink-70); font-size: 13.5px; line-height: 1.85; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: 12px; }
+  .tunnel-note p.kr { color: var(--ink-86); font-size: 13.5px; line-height: 1.85; padding-top: 10px; border-top: 1px dashed var(--line); margin-top: 12px; }
   html[data-lang="ko"] .tunnel-note p.kr { padding-top: 0; border-top: 0; margin-top: 0; }
   .tunnel-note .specs {
     margin-top: 20px; padding-top: 14px;
@@ -506,7 +512,8 @@
     display: flex; gap: 24px; flex-wrap: wrap;
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
+    font-weight: 500;
   }
   .tunnel-note .specs b { color: var(--ink); font-weight: 500; }
 
@@ -517,7 +524,8 @@
     display: flex; flex-direction: column; gap: 8px;
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
+    font-weight: 500;
     pointer-events: auto;
   }
   @media (max-width: 900px) { .depth-meter { display: none; } }
@@ -557,7 +565,7 @@
     transform: translateX(-50%);
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
     transition: color 240ms var(--ease);
   }
   .approach-label.now { color: var(--ink); }
@@ -601,7 +609,7 @@
   }
   .scroll-nudge .nudge-label .kr {
     display: block;
-    color: var(--ink-50);
+    color: var(--ink-62);
     font-family: var(--font-body);
     font-size: 11px;
     letter-spacing: 0.04em;
@@ -735,7 +743,8 @@
     position: absolute; top: 14px; left: 14px;
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
+    font-weight: 500;
   }
   .scene-split .seen-as {
     position: absolute; bottom: 14px; left: 14px; right: 14px;
@@ -774,7 +783,7 @@
     text-align: center;
     font-family: var(--font-body); font-size: 14px;
     color: var(--ink); letter-spacing: -0.02em;
-    font-weight: 300;
+    font-weight: 340;
     text-shadow: 0 1px 0 rgba(0,0,0,0.8);
     padding: 0 24px;
   }
@@ -847,7 +856,8 @@
     color: var(--ink);
     max-width: 30%;
   }
-  .scene-double .cap.audience { left: 14px; bottom: 18px; color: var(--ink-50); }
+  .scene-double .cap.audience { left: 14px; bottom: 18px; color: var(--ink-62); }
+  .scene-double .cap { font-weight: 500; }
   .scene-double .cap.artist   { right: 14px; top: 18px; }
   .scene-double .arrow {
     position: absolute;
@@ -887,7 +897,7 @@
   .scene-seal .seal-kicker {
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.22em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
     margin-bottom: 18px;
   }
   .scene-seal .seal-line {
@@ -901,7 +911,7 @@
     margin-top: 18px;
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
   }
 
   /* belief lens (smaller, under stage) */
@@ -915,7 +925,8 @@
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
+    font-weight: 500;
     display: block;
     margin-bottom: 14px;
   }
@@ -947,9 +958,9 @@
     font-family: var(--font-body);
     font-size: 11px;
     line-height: 1.65;
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.02em;
-    color: var(--ink-50);
+    color: var(--ink-70);
     display: block;
   }
 
@@ -962,27 +973,28 @@
   }
   .scene-block.active { border-left-color: var(--ink); }
   .scene-block:not(.active) p { color: var(--ink-70); }
-  .scene-block:not(.active) p.kr { color: var(--ink-50); }
+  .scene-block:not(.active) p.kr { color: var(--ink-62); }
   .scene-block:first-child { padding-top: 0; }
   .scene-block:last-child { padding-bottom: 0; }
   .scene-block .scene-num {
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.2em; text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
     margin-bottom: 14px;
     display: flex; gap: 14px;
+    font-weight: 500;
   }
   .scene-block.active .scene-num { color: var(--ink); }
   .scene-block p {
     margin: 0 0 0.9em;
     font-size: 16px;
     line-height: 1.85;
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.02em;
-    color: var(--ink);
+    color: var(--ink-86);
   }
   .scene-block p.kr {
-    color: var(--ink-70);
+    color: var(--ink-86);
     font-size: 14.5px;
     line-height: 1.85;
     margin-bottom: 0;
@@ -1026,17 +1038,17 @@
     font-family: var(--font-display);
     font-size: 18px;
     letter-spacing: -0.025em;
-    color: var(--ink-50);
+    color: var(--ink-70);
     margin: 0 0 14px;
-    font-weight: 300;
+    font-weight: 340;
   }
   .contact-grid p {
     margin: 0;
     font-size: 15px;
     line-height: 1.85;
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.02em;
-    color: var(--ink);
+    color: var(--ink-86);
     max-width: 32ch;
   }
   .contact-links {
@@ -1047,7 +1059,7 @@
   }
   .contact-links a {
     font-family: var(--font-body);
-    font-weight: 300;
+    font-weight: 420;
     font-size: 12px;
     letter-spacing: 0.02em;
     text-transform: uppercase;
@@ -1067,10 +1079,10 @@
     grid-template-columns: 1fr 1fr;
     align-items: end;
     gap: 24px;
-    color: var(--ink-50);
+    color: var(--ink-62);
     font-family: var(--font-body);
     font-size: 10px;
-    font-weight: 300;
+    font-weight: 420;
     letter-spacing: -0.02em;
     text-transform: uppercase;
   }
@@ -1281,7 +1293,8 @@
     font-size: 10px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--ink-50);
+    color: var(--ink-62);
+    font-weight: 500;
     margin-bottom: 12px;
   }
   .overlay-meta h3 {
@@ -1294,10 +1307,10 @@
   }
   .overlay-meta p {
     margin: 0;
-    color: var(--ink-70);
+    color: var(--ink-86);
     font-size: 14px;
     line-height: 1.85;
-    font-weight: 300;
+    font-weight: 340;
     letter-spacing: -0.02em;
     max-width: 38ch;
     max-height: min(34vh, 360px);
@@ -1355,7 +1368,8 @@
     font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.16em;
-    color: var(--ink-50);
+    color: var(--ink-62);
+    font-weight: 500;
   }
 
   /* reveal */
