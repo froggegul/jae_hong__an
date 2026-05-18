@@ -682,12 +682,16 @@
     top: clamp(96px, 14vh, 132px);
     left: clamp(20px, 5vw, 64px);
     transform: none;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--ink-62);
     transition: color 240ms var(--ease);
     text-align: left;
   }
+  .approach-label .approach-number { color: var(--ink); }
   .approach-label.now { color: var(--ink); }
   .approach-label::after {
     content: "";
@@ -705,14 +709,72 @@
   .tunnel-stage.scroll-buffered .approach-label::after { opacity: 0.7; }
   @media (max-width: 1024px) {
     .approach-label {
-      top: clamp(96px, 14vh, 132px);
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
+      top: 31%;
+      left: max(18px, calc(50% - min(44vw, 200px) / 2 - 76px));
+      width: 58px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 5px;
+      font-size: 9px;
+      line-height: 1.25;
+      letter-spacing: 0.15em;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .approach-label .approach-kicker,
+    .approach-label .approach-number {
+      display: block;
+    }
+    .approach-label .approach-number {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+    }
+    .approach-label::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: calc(100% + 9px);
+      width: 1px;
+      height: 38px;
+      background: var(--ink-15);
     }
     .approach-label::after {
+      left: 0;
+      top: calc(100% + 9px);
+      bottom: auto;
+      width: 1px;
+      height: 38px;
+      transform: scaleY(var(--cooldown-progress, 0));
+      transform-origin: top center;
+    }
+    .tunnel-stage.wide-current .approach-label {
+      top: max(132px, calc(31% - min(24.1875vw, 146.25px) - 28px));
       left: 50%;
+      width: auto;
+      transform: translateX(-50%);
+      flex-direction: row;
+      align-items: baseline;
+      gap: 10px;
+      text-align: center;
+    }
+    .tunnel-stage.wide-current .approach-label::after {
+      left: 50%;
+      top: auto;
+      bottom: -10px;
+      width: 48px;
+      height: 1px;
       transform: translateX(-50%) scaleX(var(--cooldown-progress, 0));
+      transform-origin: left center;
+    }
+    .tunnel-stage.wide-current .approach-label::before {
+      left: 50%;
+      top: auto;
+      bottom: -10px;
+      width: 48px;
+      height: 1px;
+      transform: translateX(-50%);
     }
   }
 
@@ -1917,6 +1979,8 @@ const I18N = {
     "works.enter": "Enter current room →",
     "works.approach": "Entering N° ",
     "works.now": "Now showing · N° ",
+    "works.approachLabel": "Entering",
+    "works.nowLabel": "Now showing",
     "works.clickEnter": "Click to enter →",
     "spec.aspect": "Aspect",
     "spec.run": "Run",
@@ -1965,6 +2029,8 @@ const I18N = {
     "works.enter": "현재 작품 보기 →",
     "works.approach": "진입 중 · N° ",
     "works.now": "현재 작품 · N° ",
+    "works.approachLabel": "진입 중",
+    "works.nowLabel": "현재 작품",
     "works.clickEnter": "클릭해 보기 →",
     "spec.aspect": "비율",
     "spec.run": "길이",
@@ -2094,6 +2160,7 @@ if (tunnelRoot) {
 const camera  = document.getElementById("camera");
 const notes   = document.getElementById("notes");
 const archive = document.getElementById("archive");
+const tunnelStageEl = document.querySelector(".tunnel-stage");
 
 // each room sits at z = -i * spacing
 const Z_SPACING = 1800;
@@ -2158,6 +2225,19 @@ let userHasScrolled = false;
 let currentRoom = -1;
 const warmedVideos = new Map();
 const captionScrollStates = new WeakMap();
+
+function setApproachLabel(mode, idx) {
+  if (!approachEl) return;
+  const kicker = document.createElement("span");
+  kicker.className = "approach-kicker";
+  kicker.textContent = mode === "now" ? ui("works.nowLabel") : ui("works.approachLabel");
+
+  const number = document.createElement("span");
+  number.className = "approach-number";
+  number.textContent = `N° ${idx}`;
+
+  approachEl.replaceChildren(kicker, number);
+}
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
@@ -2340,8 +2420,9 @@ function updateTunnel() {
     if (activeCopy) {
       resetCaptionScroll(activeCopy, 0);
     }
-    approachEl.textContent = ui("works.now") + works[bestIdx].idx;
+    setApproachLabel("now", works[bestIdx].idx);
     approachEl.classList.add("now");
+    tunnelStageEl?.classList.toggle("wide-current", works[bestIdx]?.layout === "wide");
     archiveThumbs.forEach((th, i) => {
       th.classList.toggle("current", i === bestIdx);
       th.classList.toggle("passed", i < bestIdx);
@@ -3134,9 +3215,9 @@ function applyLanguage() {
   subEl.textContent = sub;
 
   if (currentRoom >= 0) {
-    approachEl.textContent = ui("works.now") + works[currentRoom].idx;
+    setApproachLabel("now", works[currentRoom].idx);
   } else {
-    approachEl.textContent = ui("works.approach") + works[0].idx;
+    setApproachLabel("approach", works[0].idx);
   }
 
   const mainLabel = mainSoundBtn?.querySelector(".ms-label");
