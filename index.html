@@ -362,6 +362,14 @@
     margin-left: calc(min(54vw, 640px) / -2);
     margin-top: calc(min(54vw, 640px) * 9 / 16 / -2);
   }
+  @media (max-width: 1500px) and (min-width: 1025px) {
+    .tunnel-frame { left: 38%; }
+    .tunnel-frame.wide {
+      width: min(44vw, 560px);
+      margin-left: calc(min(44vw, 560px) / -2);
+      margin-top: calc(min(44vw, 560px) * 9 / 16 / -2);
+    }
+  }
   .tunnel-frame.focus { pointer-events: auto; }
   .tunnel-frame.focus .frame-card {
     transition: transform 220ms var(--ease), border-color 280ms var(--ease), box-shadow 280ms var(--ease);
@@ -452,8 +460,75 @@
     --note-push: 0px;
     pointer-events: none;
   }
-  @media (max-width: 900px) {
-    .tunnel-notes { right: 16px; left: 16px; width: auto; bottom: 80px; top: auto; transform: none; height: min(42vh, 360px); --note-push: 0px; }
+  @media (max-width: 1500px) and (min-width: 1025px) {
+    .tunnel-notes {
+      right: 36px;
+      width: min(34vw, 360px);
+      height: min(68vh, 500px);
+    }
+    .tunnel-note h3 {
+      font-size: clamp(24px, 3vw, 34px);
+    }
+    .tunnel-note .note-copy {
+      max-height: min(44vh, 360px);
+    }
+  }
+  @media (max-width: 1024px) {
+    .tunnel-frame {
+      left: 50%;
+      top: 31%;
+      width: min(44vw, 200px);
+      margin-left: calc(min(44vw, 200px) / -2);
+      margin-top: calc(min(44vw, 200px) * 16 / 9 / -2);
+    }
+    .tunnel-frame.wide {
+      width: min(86vw, 520px);
+      margin-left: calc(min(86vw, 520px) / -2);
+      margin-top: calc(min(86vw, 520px) * 9 / 16 / -2);
+    }
+    .tunnel-frame.focus::after {
+      display: none;
+    }
+    .tunnel-notes {
+      right: 18px;
+      left: 18px;
+      width: auto;
+      bottom: max(88px, env(safe-area-inset-bottom));
+      top: auto;
+      transform: none;
+      height: min(34vh, 300px);
+      --note-push: 0px;
+    }
+    .tunnel-note .note-inner {
+      background: linear-gradient(to bottom, rgba(5,5,5,0.76), rgba(5,5,5,0.92));
+      border-top: 1px solid var(--line);
+      padding: 14px 0 12px;
+      backdrop-filter: blur(10px);
+    }
+    .tunnel-note .num {
+      margin-bottom: 8px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .tunnel-note h3 {
+      font-size: clamp(22px, 7vw, 34px);
+      margin-bottom: 10px;
+    }
+    .tunnel-note .note-copy {
+      max-height: min(16vh, 140px);
+      padding-top: 12px;
+      padding-right: 8px;
+    }
+    .tunnel-note p {
+      font-size: 14px;
+      line-height: 1.75;
+    }
+    .tunnel-note .specs {
+      margin-top: 10px;
+      padding-top: 10px;
+      gap: 12px;
+    }
   }
   .tunnel-note {
     opacity: 0;
@@ -528,7 +603,7 @@
     font-weight: 500;
     pointer-events: auto;
   }
-  @media (max-width: 900px) { .depth-meter { display: none; } }
+  @media (max-width: 1024px) { .depth-meter { display: none; } }
   .depth-meter .num { color: var(--ink); font-size: 14px; letter-spacing: 0.04em; }
   .depth-meter .ladder {
     width: 1px; height: 36vh;
@@ -700,7 +775,7 @@
     gap: clamp(40px, 6vw, 96px);
     align-items: start;
   }
-  @media (max-width: 900px) { .statement-stage { grid-template-columns: 1fr; gap: 32px; } }
+  @media (max-width: 1024px) { .statement-stage { grid-template-columns: 1fr; gap: 32px; } }
 
   .stage-rail {
     position: sticky;
@@ -708,7 +783,7 @@
     display: flex; flex-direction: column; gap: 18px;
     height: fit-content;
   }
-  @media (max-width: 900px) { .stage-rail { position: relative; top: 0; } }
+  @media (max-width: 1024px) { .stage-rail { position: relative; top: 0; } }
 
   .stage-frame {
     aspect-ratio: 4 / 5;
@@ -1257,7 +1332,7 @@
     max-width: none;
     max-height: min(48vh, 460px);
   }
-  @media (max-width: 900px) {
+  @media (max-width: 1024px) {
     .overlay.wide-work {
       display: grid;
       grid-template-columns: 1fr;
@@ -2022,7 +2097,7 @@ function scheduleVideoWarm(center, urgent = false) {
 }
 
 function updateNoteAvoidance(bestIdx, frameMetrics) {
-  if (window.innerWidth <= 900) {
+  if (window.innerWidth <= 1024) {
     notes.style.setProperty("--note-push", "0px");
     return;
   }
