@@ -679,29 +679,42 @@
 
   .approach-label {
     position: absolute;
-    top: clamp(80px, 14vh, 130px);
-    left: 50%;
-    transform: translateX(-50%);
+    top: clamp(96px, 14vh, 132px);
+    left: clamp(20px, 5vw, 64px);
+    transform: none;
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--ink-62);
     transition: color 240ms var(--ease);
+    text-align: left;
   }
   .approach-label.now { color: var(--ink); }
   .approach-label::after {
     content: "";
     position: absolute;
-    left: 50%;
+    left: 0;
     bottom: -12px;
     width: 54px;
     height: 1px;
     background: var(--ink);
     opacity: 0;
-    transform: translateX(-50%) scaleX(var(--cooldown-progress, 0));
+    transform: scaleX(var(--cooldown-progress, 0));
     transform-origin: left center;
     transition: opacity 180ms var(--ease), transform 180ms var(--ease);
   }
   .tunnel-stage.scroll-buffered .approach-label::after { opacity: 0.7; }
+  @media (max-width: 1024px) {
+    .approach-label {
+      top: clamp(96px, 14vh, 132px);
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+    }
+    .approach-label::after {
+      left: 50%;
+      transform: translateX(-50%) scaleX(var(--cooldown-progress, 0));
+    }
+  }
 
   /* ── Scroll nudge: only visible during the first approach ─────
      Sits at bottom-center. Three states: 'in' (fade up), 'dim'
