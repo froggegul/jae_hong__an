@@ -2246,6 +2246,7 @@ let autoLatchUntil = 0;     // wall-clock ms until which boost is hard-capped lo
 let autoArrivedAt = 0;      // wall-clock ms of last arrival (commit cooldown source)
 const AUTO_BASE_DUR = 1100;
 const DEPART_THRESHOLD = 0.12;
+const FIRST_EXIT_THRESHOLD = 0.045;
 const LAST_EXIT_THRESHOLD = 0.04;
 const ROOM_LATCH_MS = 520;
 const BOOST_CAP_LATCHED = 1.0;  // NO boost during latch — hard floor
@@ -2369,7 +2370,13 @@ function maybeSnap() {
   const stops = tunnelStops();
   const y = window.scrollY;
   const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+  const firstStop = stops[0];
   const lastStop = finalStop(stops);
+  const firstReleaseWindow = Math.max(24, spacing * FIRST_EXIT_THRESHOLD);
+
+  // Symmetric release for the first work: when the viewer scrolls upward near
+  // room 01, do not let snap pull them back into the first caption.
+  if (scrollDir < 0 && y < firstStop + firstReleaseWindow) return;
 
   // Once the viewer intentionally scrolls past the final work, do not let the
   // room snap pull the page back upward. The last room should release into the
