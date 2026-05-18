@@ -709,10 +709,10 @@
   .tunnel-stage.scroll-buffered .approach-label::after { opacity: 0.7; }
   @media (max-width: 1024px) {
     .approach-label {
-      top: 31%;
-      left: max(18px, calc(50% - min(44vw, 200px) / 2 - 76px));
-      width: 58px;
-      transform: translateY(-50%);
+      top: max(126px, calc(31% - min(24.1875vw, 146.25px) - 28px));
+      left: max(24px, calc(env(safe-area-inset-left) + 24px));
+      width: auto;
+      transform: none;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -748,33 +748,6 @@
       height: 38px;
       transform: scaleY(var(--cooldown-progress, 0));
       transform-origin: top center;
-    }
-    .tunnel-stage.wide-current .approach-label {
-      top: max(132px, calc(31% - min(24.1875vw, 146.25px) - 28px));
-      left: 50%;
-      width: auto;
-      transform: translateX(-50%);
-      flex-direction: row;
-      align-items: baseline;
-      gap: 10px;
-      text-align: center;
-    }
-    .tunnel-stage.wide-current .approach-label::after {
-      left: 50%;
-      top: auto;
-      bottom: -10px;
-      width: 48px;
-      height: 1px;
-      transform: translateX(-50%) scaleX(var(--cooldown-progress, 0));
-      transform-origin: left center;
-    }
-    .tunnel-stage.wide-current .approach-label::before {
-      left: 50%;
-      top: auto;
-      bottom: -10px;
-      width: 48px;
-      height: 1px;
-      transform: translateX(-50%);
     }
   }
 
@@ -2160,7 +2133,6 @@ if (tunnelRoot) {
 const camera  = document.getElementById("camera");
 const notes   = document.getElementById("notes");
 const archive = document.getElementById("archive");
-const tunnelStageEl = document.querySelector(".tunnel-stage");
 
 // each room sits at z = -i * spacing
 const Z_SPACING = 1800;
@@ -2422,7 +2394,6 @@ function updateTunnel() {
     }
     setApproachLabel("now", works[bestIdx].idx);
     approachEl.classList.add("now");
-    tunnelStageEl?.classList.toggle("wide-current", works[bestIdx]?.layout === "wide");
     archiveThumbs.forEach((th, i) => {
       th.classList.toggle("current", i === bestIdx);
       th.classList.toggle("passed", i < bestIdx);
