@@ -681,7 +681,7 @@
     position: absolute;
     top: clamp(96px, 14vh, 132px);
     left: clamp(20px, 5vw, 64px);
-    transform: none;
+    transform: translateY(var(--approach-shift-y, 0px));
     display: flex;
     gap: 10px;
     align-items: baseline;
@@ -709,10 +709,10 @@
   .tunnel-stage.scroll-buffered .approach-label::after { opacity: 0.7; }
   @media (max-width: 1024px) {
     .approach-label {
-      top: max(126px, calc(31% - min(24.1875vw, 146.25px) - 28px));
+      top: max(112px, calc(31% - min(24.1875vw, 146.25px) - 52px));
       left: max(24px, calc(env(safe-area-inset-left) + 24px));
       width: auto;
-      transform: none;
+      transform: translateY(var(--approach-shift-y, 0px));
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -2292,6 +2292,33 @@ function updateNoteAvoidance(bestIdx, frameMetrics) {
   notes.style.setProperty("--note-push", `${push.toFixed(1)}px`);
 }
 
+function updateApproachCollision(bestIdx) {
+  if (!approachEl) return;
+
+  approachEl.style.setProperty("--approach-shift-y", "0px");
+  if (window.innerWidth > 1024) return;
+
+  const frame = tunnelFrames[bestIdx];
+  if (!frame) return;
+
+  const frameRect = frame.getBoundingClientRect();
+  const labelRect = approachEl.getBoundingClientRect();
+  const safeGap = 18;
+  const overlapsX = labelRect.right > frameRect.left - safeGap && labelRect.left < frameRect.right + safeGap;
+  if (!overlapsX) return;
+
+  const requiredLift = labelRect.bottom + safeGap - frameRect.top;
+  if (requiredLift <= 0) return;
+
+  // Keep the status label below the mobile header while still avoiding the
+  // current frame. This makes future media additions less dependent on manual
+  // visual tuning for every aspect ratio.
+  const headerSafeTop = 104;
+  const availableLift = Math.max(0, labelRect.top - headerSafeTop);
+  const lift = Math.min(requiredLift, availableLift);
+  approachEl.style.setProperty("--approach-shift-y", `${(-lift).toFixed(1)}px`);
+}
+
 function updateTunnel() {
   const tunnel = document.getElementById("tunnel");
   const r = tunnel.getBoundingClientRect();
@@ -2401,6 +2428,8 @@ function updateTunnel() {
     tunnelFrames.forEach((f, i) => f.classList.toggle("focus", i === bestIdx));
     scheduleVideoWarm(bestIdx);
   }
+
+  updateApproachCollision(bestIdx);
 
   // depth meter readout — distance still ahead until the last room
   const depth = Math.round(-(TUNNEL_DEPTH - camZ));
