@@ -792,8 +792,12 @@
       top: clamp(76px, 9vh, 104px);
       z-index: 8;
       gap: 10px;
-      padding: 0 0 14px;
-      background: linear-gradient(to bottom, rgba(5,5,5,0.98) 0%, rgba(5,5,5,0.92) 72%, rgba(5,5,5,0) 100%);
+      width: 100%;
+      padding: 0 0 16px;
+      margin-bottom: 24px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      box-shadow: 0 22px 36px rgba(5,5,5,0.98);
     }
   }
 
@@ -808,12 +812,11 @@
   @media (max-width: 1024px) {
     .stage-frame {
       aspect-ratio: auto;
-      height: clamp(190px, 34vh, 320px);
+      height: clamp(150px, 24vh, 240px);
     }
     .belief-lens {
       padding: 12px 14px;
-      background: rgba(5,5,5,0.86);
-      backdrop-filter: blur(10px);
+      background: var(--bg);
     }
     .belief-lens .kicker {
       margin-bottom: 8px;
@@ -1078,6 +1081,14 @@
   }
 
   .statement-body { max-width: 64ch; }
+  @media (max-width: 1024px) {
+    .statement-body {
+      position: relative;
+      z-index: 1;
+      max-width: none;
+      background: var(--bg);
+    }
+  }
   .scene-block {
     padding: clamp(48px, 8vh, 96px) 0 clamp(48px, 8vh, 96px) clamp(20px, 3vw, 36px);
     border-left: 1px solid var(--line);
