@@ -1955,6 +1955,14 @@ function smoothstep(edge0, edge1, value) {
   return t * t * (3 - 2 * t);
 }
 
+function resetCaptionScroll(el, target = 0) {
+  if (!el) return;
+  const state = captionScrollStates.get(el);
+  if (state?.raf) cancelAnimationFrame(state.raf);
+  el.scrollTop = target;
+  captionScrollStates.set(el, { target, raf: 0, dir: 0 });
+}
+
 function warmVideo(i) {
   const work = works[i];
   if (!work || !work.video || warmedVideos.has(i)) return;
@@ -2117,8 +2125,7 @@ function updateTunnel() {
     tunnelNotes.forEach((n, i) => n.classList.toggle("in", i === bestIdx));
     const activeCopy = tunnelNotes[bestIdx]?.querySelector(".note-copy");
     if (activeCopy) {
-      activeCopy.scrollTop = 0;
-      captionScrollStates.set(activeCopy, { target: 0, raf: 0 });
+      resetCaptionScroll(activeCopy, 0);
     }
     approachEl.textContent = ui("works.now") + works[bestIdx].idx;
     approachEl.classList.add("now");
@@ -2573,11 +2580,26 @@ function canScrollElement(el, deltaY) {
 function softScrollElement(el, deltaY) {
   if (!el) return;
   const maxScroll = Math.max(0, el.scrollHeight - el.clientHeight);
+  const dir = Math.sign(deltaY);
   let state = captionScrollStates.get(el);
   if (!state) {
-    state = { target: el.scrollTop, raf: 0 };
+    state = { target: el.scrollTop, raf: 0, dir: 0 };
     captionScrollStates.set(el, state);
   }
+
+  // Direction changes must feel immediate. If the previous eased target is
+  // still ahead in the opposite direction, reset it to the real scrollTop;
+  // otherwise reverse scrolling appears to be swallowed for several ticks.
+  if (
+    (dir < 0 && state.target > el.scrollTop) ||
+    (dir > 0 && state.target < el.scrollTop) ||
+    (state.dir && state.dir !== dir)
+  ) {
+    if (state.raf) cancelAnimationFrame(state.raf);
+    state.raf = 0;
+    state.target = el.scrollTop;
+  }
+  state.dir = dir;
 
   const towardBottom = deltaY > 0;
   const edgeDistance = towardBottom ? el.scrollTop : maxScroll - el.scrollTop;
