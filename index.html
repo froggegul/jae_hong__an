@@ -1144,6 +1144,21 @@
     letter-spacing: -0.025em;
     color: var(--ink);
   }
+  @media (max-width: 1024px) {
+    #statement {
+      padding-bottom: clamp(120px, 22vh, 260px);
+    }
+    .scene-block:last-child {
+      padding-bottom: clamp(180px, 30vh, 340px);
+    }
+    .scene-block:last-child .statement-coda {
+      margin-top: clamp(96px, 16vh, 160px);
+      min-height: clamp(260px, 44vh, 440px);
+      display: flex;
+      align-items: center;
+      padding-top: 0;
+    }
+  }
 
   /* ── Contact ──────────────────────────────────────────────── */
   .contact-grid {
