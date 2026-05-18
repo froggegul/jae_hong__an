@@ -772,7 +772,13 @@
     gap: clamp(40px, 6vw, 96px);
     align-items: start;
   }
-  @media (max-width: 1024px) { .statement-stage { grid-template-columns: 1fr; gap: 32px; } }
+  @media (max-width: 1024px) {
+    .statement-stage {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+  }
 
   .stage-rail {
     position: sticky;
@@ -780,7 +786,16 @@
     display: flex; flex-direction: column; gap: 18px;
     height: fit-content;
   }
-  @media (max-width: 1024px) { .stage-rail { position: relative; top: 0; } }
+  @media (max-width: 1024px) {
+    .stage-rail {
+      position: sticky;
+      top: clamp(76px, 9vh, 104px);
+      z-index: 8;
+      gap: 10px;
+      padding: 0 0 14px;
+      background: linear-gradient(to bottom, rgba(5,5,5,0.98) 0%, rgba(5,5,5,0.92) 72%, rgba(5,5,5,0) 100%);
+    }
+  }
 
   .stage-frame {
     aspect-ratio: 4 / 5;
@@ -789,6 +804,32 @@
     border: 1px solid var(--line);
     position: relative;
     overflow: hidden;
+  }
+  @media (max-width: 1024px) {
+    .stage-frame {
+      aspect-ratio: auto;
+      height: clamp(190px, 34vh, 320px);
+    }
+    .belief-lens {
+      padding: 12px 14px;
+      background: rgba(5,5,5,0.86);
+      backdrop-filter: blur(10px);
+    }
+    .belief-lens .kicker {
+      margin-bottom: 8px;
+      font-size: 9px;
+    }
+    .belief-lens .word {
+      font-size: clamp(24px, 7vw, 34px);
+      margin-bottom: 10px;
+    }
+    .belief-lens .track {
+      margin-bottom: 9px;
+    }
+    .belief-lens small {
+      font-size: 11px;
+      line-height: 1.55;
+    }
   }
   .stage-frame .scene {
     position: absolute; inset: 0;
@@ -2836,9 +2877,10 @@ function updateBelief(y) {
 }
 
 /* observe each scene-block via scroll position — pick the block whose top
-   has crossed the reading line (40% from top of viewport). */
+   has crossed the reading line. Mobile uses a lower line because the sticky
+   visual rail occupies the upper part of the viewport. */
 function pickActiveScene() {
-  const line = window.innerHeight * 0.4;
+  const line = window.innerHeight * (window.innerWidth <= 1024 ? 0.68 : 0.4);
   let current = 0;
   for (let i = 0; i < blocks.length; i++) {
     const r = blocks[i].getBoundingClientRect();
