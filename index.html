@@ -69,6 +69,20 @@
     --pad-x:    clamp(20px, 4vw, 56px);
     --max-w:    1280px;
     --gutter:   clamp(20px, 5vw, 64px);
+
+    --caption-label-size: 10px;
+    --caption-label-line: 1.68;
+    --caption-label-track: 0.14em;
+    --caption-label-weight: 540;
+    --caption-title-size: clamp(28px, 3vw, 38px);
+    --caption-title-line: 1.06;
+    --caption-title-weight: 620;
+    --caption-body-size: 14px;
+    --caption-body-line: 1.78;
+    --caption-body-weight: 380;
+    --caption-gap-title: 10px;
+    --caption-gap-context: 14px;
+    --caption-gap-rule: 16px;
   }
 
   *, *::before, *::after { box-sizing: border-box; }
@@ -1468,7 +1482,7 @@
     left: max(20px, calc(50% + min(56vh, 88vw) * 0.56));
     top: 50%;
     transform: translateY(calc(-50% + 14px));
-    width: min(34vw, 460px);
+    width: min(30vw, 430px);
     color: var(--ink);
     opacity: 0;
     filter: blur(10px);
@@ -1566,6 +1580,160 @@
     white-space: pre-line;
   }
   .overlay-meta p:empty { display: none; }
+
+  /* Unified work-caption system: right-side notes and fullscreen captions
+     must read as the same typographic surface, not separate templates. */
+  .tunnel-note .num,
+  .tunnel-note .note-context,
+  .tunnel-note .specs,
+  .overlay-meta .num,
+  .overlay-meta .overlay-context {
+    font-family: var(--font-mono);
+    font-size: var(--caption-label-size);
+    line-height: var(--caption-label-line);
+    letter-spacing: var(--caption-label-track);
+    text-transform: uppercase;
+    color: var(--ink-70);
+    font-weight: var(--caption-label-weight);
+  }
+
+  .tunnel-note .num,
+  .overlay-meta .num {
+    margin-bottom: var(--caption-gap-title);
+  }
+
+  .tunnel-note h3,
+  .overlay-meta h3 {
+    font-family: var(--font-display);
+    font-size: var(--caption-title-size);
+    line-height: var(--caption-title-line);
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--caption-gap-title);
+    font-weight: var(--caption-title-weight);
+  }
+
+  html[data-lang="ko"] .tunnel-note h3,
+  html[data-lang="ko"] .overlay-meta h3 {
+    font-weight: 380;
+    letter-spacing: -0.03em;
+    line-height: 1.12;
+  }
+
+  .tunnel-note .note-context,
+  .overlay-meta .overlay-context {
+    margin: 0 0 var(--caption-gap-context);
+    white-space: pre-line;
+  }
+
+  .overlay-meta .overlay-context:empty {
+    display: none;
+  }
+
+  .tunnel-note .note-copy,
+  .overlay-meta p {
+    color: var(--ink-86);
+    font-family: var(--font-body);
+    font-size: var(--caption-body-size);
+    line-height: var(--caption-body-line);
+    font-weight: var(--caption-body-weight);
+    letter-spacing: -0.02em;
+    white-space: pre-line;
+  }
+
+  .tunnel-note .note-copy {
+    max-height: min(48vh, 390px);
+    padding: 10px 14px 14px 0;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 18px), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 12px, #000 calc(100% - 18px), transparent 100%);
+  }
+
+  .tunnel-note p {
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+    color: inherit;
+    margin: 0 0 0.72em;
+  }
+
+  .tunnel-note p.kr {
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
+  }
+
+  .tunnel-note .specs {
+    margin-top: var(--caption-gap-rule);
+    padding-top: var(--caption-gap-rule);
+    border-top: 1px solid var(--line);
+  }
+
+  .overlay-meta p {
+    font-size: var(--caption-body-size);
+    line-height: var(--caption-body-line);
+    font-weight: var(--caption-body-weight);
+    max-width: 42ch;
+  }
+
+  .overlay.wide-work .overlay-meta p {
+    max-height: min(44vh, 420px);
+  }
+
+  @media (max-width: 1500px) and (min-width: 1025px) {
+    .tunnel-note h3,
+    .overlay-meta h3 {
+      font-size: clamp(26px, 2.8vw, 34px);
+    }
+
+    .tunnel-note .note-copy {
+      max-height: min(40vh, 330px);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .tunnel-notes {
+      height: min(38vh, 326px);
+      bottom: max(76px, env(safe-area-inset-bottom));
+    }
+
+    .tunnel-note .note-inner {
+      padding-top: 14px;
+      padding-bottom: 10px;
+    }
+
+    .tunnel-note h3,
+    .overlay-meta h3 {
+      font-size: clamp(23px, 6.4vw, 32px);
+      margin-bottom: 9px;
+    }
+
+    .tunnel-note .note-context,
+    .overlay-meta .overlay-context {
+      margin-bottom: 10px;
+      line-height: 1.58;
+    }
+
+    .tunnel-note .note-copy {
+      flex: 1 1 64px;
+      min-height: 52px;
+      max-height: none;
+      padding-top: 0;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+
+    .tunnel-note .specs {
+      margin-top: 10px;
+      padding-top: 10px;
+      gap: 14px;
+      font-size: 9.5px;
+      line-height: 1.55;
+    }
+
+    .overlay-meta p {
+      max-width: none;
+      max-height: min(42vh, 360px);
+    }
+  }
 
   .overlay-controls {
     position: absolute;
@@ -1924,6 +2092,7 @@
   <div class="overlay-meta">
     <div class="num" id="ov-num">#01</div>
     <h3 id="ov-title">Threshold Body</h3>
+    <div class="overlay-context" id="ov-context"></div>
     <p id="ov-desc"></p>
   </div>
   <div class="overlay-controls">
@@ -2056,14 +2225,16 @@ function ui(key) {
   return I18N[currentLang]?.[key] || I18N.en[key] || key;
 }
 
-function workDescription(work) {
-  const context = currentLang === "ko"
+function workContext(work) {
+  return currentLang === "ko"
     ? (work.context || work.contextEn || "")
     : (work.contextEn || work.context || "");
-  const body = currentLang === "ko"
+}
+
+function workBody(work) {
+  return currentLang === "ko"
     ? (work.desc || work.descEn || work.fullDesc || work.fullDescEn || "")
     : (work.descEn || work.desc || work.fullDescEn || work.fullDesc || "");
-  return [work.award, context, body].filter(Boolean).join("\n\n");
 }
 
 const fallbackWorks = [
@@ -3113,6 +3284,7 @@ const posterA   = document.getElementById("poster-a");
 const posterB   = document.getElementById("poster-b");
 const ovNum     = document.getElementById("ov-num");
 const ovTitle   = document.getElementById("ov-title");
+const ovContext = document.getElementById("ov-context");
 const ovDesc    = document.getElementById("ov-desc");
 const ovCount   = document.getElementById("ov-count");
 const ovExit    = document.getElementById("ov-exit");
@@ -3305,7 +3477,8 @@ function paintMeta(i) {
   overlay.classList.toggle("wide-work", w.layout === "wide");
   ovNum.textContent = "N° " + w.idx;
   ovTitle.textContent = w.title;
-  ovDesc.textContent = workDescription(w);
+  ovContext.textContent = [w.award, workContext(w)].filter(Boolean).join("\n");
+  ovDesc.textContent = workBody(w);
   ovCount.textContent = String(i+1).padStart(2,"0") + " / " + String(works.length).padStart(2,"0");
   if (ovExternal) {
     ovExternal.hidden = !w.externalUrl;
