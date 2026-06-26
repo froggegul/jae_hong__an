@@ -2057,9 +2057,13 @@ function ui(key) {
 }
 
 function workDescription(work) {
-  return currentLang === "ko"
-    ? (work.fullDesc || work.desc || work.fullDescEn || work.descEn || "")
-    : (work.fullDescEn || work.fullDesc || work.descEn || work.desc || "");
+  const context = currentLang === "ko"
+    ? (work.context || work.contextEn || "")
+    : (work.contextEn || work.context || "");
+  const body = currentLang === "ko"
+    ? (work.desc || work.descEn || work.fullDesc || work.fullDescEn || "")
+    : (work.descEn || work.desc || work.fullDescEn || work.fullDesc || "");
+  return [work.award, context, body].filter(Boolean).join("\n\n");
 }
 
 const fallbackWorks = [
@@ -2177,27 +2181,31 @@ camera.innerHTML = works.map((w, i) => `
 `).join("");
 
 // Notes
-notes.innerHTML = works.map((w, i) => `
-  <article class="tunnel-note" data-note="${i}">
-    <div class="note-inner">
-      <div class="num"><span>N° ${w.idx}</span><span>${w.year}</span><span>${w.medium}</span></div>
-      <h3>${w.title}</h3>
-      ${w.context || w.contextEn ? `<div class="note-context">
-        <span class="lang-en">${w.contextEn}</span>
-        <span class="lang-ko">${w.context}</span>
-      </div>` : ""}
-      <div class="note-copy">
-        <p class="lang-en">${w.descEn || w.desc}</p>
-        <p class="kr lang-ko">${w.desc}</p>
+notes.innerHTML = works.map((w, i) => {
+  const contextEn = [w.award, w.contextEn].filter(Boolean).join("\n");
+  const contextKo = [w.award, w.context].filter(Boolean).join("\n");
+  return `
+    <article class="tunnel-note" data-note="${i}">
+      <div class="note-inner">
+        <div class="num"><span>N° ${w.idx}</span><span>${w.year}</span><span>${w.medium}</span></div>
+        <h3>${w.title}</h3>
+        ${contextEn || contextKo ? `<div class="note-context">
+          <span class="lang-en">${contextEn}</span>
+          <span class="lang-ko">${contextKo}</span>
+        </div>` : ""}
+        <div class="note-copy">
+          <p class="lang-en">${w.descEn || w.desc}</p>
+          <p class="kr lang-ko">${w.desc}</p>
+        </div>
+        <div class="specs">
+          <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>${w.aspect}</b></span>
+          <span><span data-i18n="spec.run">${ui("spec.run")}</span> <b>${w.duration}</b></span>
+          <span><span data-i18n="spec.year">${ui("spec.year")}</span> <b>${w.year}</b></span>
+        </div>
       </div>
-      <div class="specs">
-        <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>${w.aspect}</b></span>
-        <span><span data-i18n="spec.run">${ui("spec.run")}</span> <b>${w.duration}</b></span>
-        <span><span data-i18n="spec.year">${ui("spec.year")}</span> <b>${w.year}</b></span>
-      </div>
-    </div>
-  </article>
-`).join("");
+    </article>
+  `;
+}).join("");
 
 // Archive thumbs
 archive.innerHTML = works.map((w, i) => `
@@ -3297,7 +3305,7 @@ function paintMeta(i) {
   overlay.classList.toggle("wide-work", w.layout === "wide");
   ovNum.textContent = "N° " + w.idx;
   ovTitle.textContent = w.title;
-  ovDesc.textContent = [w.award, workDescription(w)].filter(Boolean).join(" — ");
+  ovDesc.textContent = workDescription(w);
   ovCount.textContent = String(i+1).padStart(2,"0") + " / " + String(works.length).padStart(2,"0");
   if (ovExternal) {
     ovExternal.hidden = !w.externalUrl;
