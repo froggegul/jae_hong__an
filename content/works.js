@@ -29,7 +29,9 @@ window.JAEHONG_WORKS = [
     medium: "Generative AI · Digital Art Installation",
     duration: "2023.12.22–2024.01.21",
     aspect: "9 : 16",
-    caption: "A HUNDRED POSSIBILITIES & VENECITE\n2023 SEOULIGHT GWANGHWAMUN (2023 서울라이트 광화문)\nGenerative AI Digital Art Installation · Gwanghwamun Square, Yukjo Madang",
+    context: "2023 SEOULIGHT GWANGHWAMUN (2023 서울라이트 광화문)\n2023.12.22. - 2024.01.21. · 광화문광장 육조마당",
+    contextEn: "2023 SEOULIGHT GWANGHWAMUN (2023 서울라이트 광화문)\nDecember 22, 2023 - January 21, 2024 · Yukjo Madang, Gwanghwamun Square, Seoul",
+    caption: "",
     video: "media/web/work-seoulight-2023-web.mp4",
     poster: "assets/posters/work-seoulight-2023.jpg"
   },
