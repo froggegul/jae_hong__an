@@ -1452,6 +1452,11 @@
   /* Hide while a piece is in fullscreen */
   body.in-overlay #main-sound { opacity: 0; pointer-events: none; }
   @media (max-width: 720px) {
+    body[data-active-section="statement"] #main-sound,
+    body[data-active-section="bio"] #main-sound {
+      opacity: 0;
+      pointer-events: none;
+    }
     body[data-active-section="contact"] #main-sound {
       opacity: 0.28;
       background: rgba(10, 10, 10, 0.42);
@@ -1474,9 +1479,14 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
+    overscroll-behavior: contain;
     transition:
       opacity 620ms var(--ease),
       visibility 0ms linear 620ms;
+  }
+  html.overlay-lock,
+  html.overlay-lock body {
+    overflow: hidden;
   }
   .overlay.active {
     opacity: 1;
@@ -1580,20 +1590,40 @@
     max-height: min(48vh, 460px);
   }
   @media (max-width: 1024px) {
+    .overlay,
     .overlay.wide-work {
-      display: grid;
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-direction: column;
       padding: 72px 20px 96px;
       row-gap: 22px;
       overflow-y: auto;
-      align-content: center;
+      align-items: stretch;
+      justify-content: flex-start;
+      -webkit-overflow-scrolling: touch;
+    }
+    .overlay-stage {
+      grid-column: 1;
+      grid-row: 1;
+      flex: 0 0 auto;
+      width: min(88vw, 380px);
+      justify-self: center;
+      margin: 22px 0 0;
     }
     .overlay-meta {
-      left: 20px; right: 20px; top: auto; bottom: 80px;
-      transform: translateY(14px); width: auto;
+      grid-column: 1;
+      grid-row: 2;
+      position: relative;
+      left: auto; right: auto; top: auto; bottom: auto;
+      transform: translateY(14px);
+      width: auto;
+      max-width: 720px;
+      margin: 0 auto;
+      justify-self: stretch;
+      flex: 0 0 auto;
     }
     .overlay.wide-work .overlay-stage {
-      width: 88vw;
+      width: min(88vw, 720px);
+      justify-self: center;
     }
     .overlay.wide-work .overlay-meta {
       position: relative;
@@ -1602,6 +1632,12 @@
       transform: translateY(14px);
       width: auto;
       max-height: none;
+    }
+    .overlay-meta p,
+    .overlay.wide-work .overlay-meta p {
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
     }
     .overlay.active .overlay-meta {
       transform: translateY(0);
@@ -1792,7 +1828,9 @@
 
     .overlay-meta p {
       max-width: none;
-      max-height: min(42vh, 360px);
+      max-height: none;
+      overflow: visible;
+      padding-right: 0;
     }
   }
 
@@ -1846,6 +1884,19 @@
     letter-spacing: 0.16em;
     color: var(--ink-62);
     font-weight: 500;
+  }
+  @media (max-width: 1024px) {
+    .overlay-nav {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      transform: none;
+      align-self: center;
+      margin: 4px auto 0;
+    }
+    .overlay.active .overlay-nav {
+      transform: none;
+    }
   }
 
   /* reveal */
@@ -3379,6 +3430,32 @@ let ovIndex = 0;
 let ovActive = "a";
 let ovBusy = false;
 let ovSoundOn = false;
+let overlayPageScrollY = 0;
+
+function resetOverlayScroll() {
+  overlay.scrollTop = 0;
+  ovDesc.scrollTop = 0;
+}
+
+function lockPageScroll() {
+  overlayPageScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+  document.documentElement.classList.add("overlay-lock");
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${overlayPageScrollY}px`;
+  document.body.style.left = "0";
+  document.body.style.right = "0";
+  document.body.style.width = "100%";
+}
+
+function unlockPageScroll() {
+  document.documentElement.classList.remove("overlay-lock");
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.left = "";
+  document.body.style.right = "";
+  document.body.style.width = "";
+  window.scrollTo(0, overlayPageScrollY);
+}
 
 /* ── Local media audio: existing BGM + active work video ──────────────
    The downloaded design used generated WebAudio. This project instead uses
@@ -3592,17 +3669,18 @@ function openOverlay(i) {
   });
   posterA.classList.add("active");
   paintMeta(i);
+  resetOverlayScroll();
   overlay.classList.add("active");
   overlay.setAttribute("aria-hidden", "false");
   document.body.classList.add("in-overlay");
-  document.body.style.overflow = "hidden";
+  lockPageScroll();
   if (mainSoundOn && mainArmed) startMainAmbient();
 }
 function closeOverlay() {
   overlay.classList.remove("active");
   overlay.setAttribute("aria-hidden", "true");
   document.body.classList.remove("in-overlay");
-  document.body.style.overflow = "";
+  unlockPageScroll();
   stopAmbient();
   [posterA, posterB].forEach(video => { try { video.pause(); } catch (e) {} });
   ovSoundOn = false;
@@ -3636,6 +3714,7 @@ function transition(dir) {
   ovIndex = next;
   ovActive = nextActive;
   paintMeta(next);
+  resetOverlayScroll();
   if (ovSoundOn && works[next].video) {
     startAmbient(nxt);
   } else if (mainSoundOn && mainArmed) {
