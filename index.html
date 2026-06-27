@@ -143,7 +143,7 @@
   }
   .logo b { font-weight: 500; }
   nav.menu {
-    display: flex; gap: 28px; justify-content: center;
+    display: flex; gap: clamp(18px, 2vw, 28px); justify-content: center;
     font-family: var(--font-body);
     font-weight: 420;
     font-size: 11px;
@@ -215,9 +215,9 @@
     nav.menu {
       grid-area: menu;
       justify-content: center;
-      gap: clamp(22px, 8vw, 34px);
-      font-size: 12px;
-      letter-spacing: 0.08em;
+      gap: clamp(14px, 4.8vw, 28px);
+      font-size: 11px;
+      letter-spacing: 0.06em;
       width: 100%;
     }
     .top-meta {
@@ -1841,6 +1841,7 @@
       <a href="#hero" data-link="hero" data-i18n="nav.intro" class="active">Intro</a>
       <a href="#works" data-link="works" data-i18n="nav.works">Works</a>
       <a href="#statement" data-link="statement" data-i18n="nav.statement">Statement</a>
+      <a href="#bio" data-link="bio" data-i18n="nav.bio">Bio</a>
       <a href="#contact" data-link="contact" data-i18n="nav.contact">Contact</a>
     </nav>
     <div class="top-meta">
@@ -2068,28 +2069,39 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
-  <section class="section" id="contact" data-screen-label="04 Contact">
+  <!-- BIO -->
+  <section class="section" id="bio" data-screen-label="04 Bio">
     <div class="wrap">
       <div class="section-head">
-        <span class="num" data-i18n="contact.kicker">§ 03 / Contact</span>
-        <span class="num" style="text-align:right" data-i18n="contact.meta">Independent practice · Seoul</span>
-        <h2 data-i18n="contact.title">Films, exhibitions, and XR works developed from an independent artistic practice.</h2>
+        <span class="num" data-i18n="bio.kicker">§ 03 / Bio</span>
+        <span class="num" style="text-align:right" data-i18n="bio.meta">Independent practice · Seoul</span>
+        <h2 data-i18n="bio.title">Films, exhibitions, and XR works developed from an independent artistic practice.</h2>
       </div>
 
       <div class="contact-grid">
         <article>
-          <h3 data-i18n="contact.bioTitle">Biography</h3>
-          <div class="contact-copy" data-i18n="contact.bioText" data-i18n-html="true">Jaehong An is a media artist working across moving image, XR, generative AI, and public media environments.</div>
+          <h3 data-i18n="bio.bioTitle">Biography</h3>
+          <div class="contact-copy" data-i18n="bio.bioText" data-i18n-html="true">Jaehong An is a media artist working across moving image, XR, generative AI, and public media environments.</div>
         </article>
         <article>
-          <h3 data-i18n="contact.projectsTitle">Selected Projects</h3>
-          <div class="contact-copy" data-i18n="contact.projectsText" data-i18n-html="true">Selected projects and exhibitions.</div>
+          <h3 data-i18n="bio.projectsTitle">Selected Projects</h3>
+          <div class="contact-copy" data-i18n="bio.projectsText" data-i18n-html="true">Selected projects and exhibitions.</div>
         </article>
         <article>
-          <h3 data-i18n="contact.publicTitle">Publications · Press</h3>
-          <div class="contact-copy" data-i18n="contact.publicText" data-i18n-html="true">Publications, press, and lectures.</div>
+          <h3 data-i18n="bio.publicTitle">Publications · Press</h3>
+          <div class="contact-copy" data-i18n="bio.publicText" data-i18n-html="true">Publications, press, and lectures.</div>
         </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact" data-screen-label="05 Contact">
+    <div class="wrap">
+      <div class="section-head">
+        <span class="num" data-i18n="contact.kicker">§ 04 / Contact</span>
+        <span class="num" style="text-align:right" data-i18n="contact.meta">Email · Instagram · YouTube</span>
+        <h2 data-i18n="contact.title">Exhibitions, screenings, writing, and conversation.</h2>
       </div>
 
       <div class="contact-links">
@@ -2154,6 +2166,7 @@ const I18N = {
     "nav.intro": "Intro",
     "nav.works": "Works",
     "nav.statement": "Statement",
+    "nav.bio": "Bio",
     "nav.contact": "Contact",
     "hero.caption": '<span class="dot"></span> Media Artist <span>·</span> XR / AI Avatar Narrative <span>·</span> Selected Works 2021—2026',
     "hero.title": 'Jaehong&nbsp;An,<br/><span class="light">looking back<br/>at the gaze.</span>',
@@ -2180,15 +2193,18 @@ const I18N = {
     "statement.meta": "sensation · relation · reality",
     "statement.title": "What are we looking at, and why do we believe it?",
     "belief.kicker": "Position of Belief",
-    "contact.kicker": "§ 03 / Contact",
-    "contact.meta": "Independent practice · Seoul",
-    "contact.title": "Films, exhibitions, and XR works shaped by an independent practice.",
-    "contact.bioTitle": "Biography",
-    "contact.bioText": "Jaehong An is a media artist working across moving image, XR, generative AI, and public media environments. He studies Art & Technology in the doctoral program at Sogang University, with an M.Des. from Hongik University IDAS and a B.A. from Handong Global University.",
-    "contact.projectsTitle": "Selected Projects",
-    "contact.projectsText": `<ul><li><em>WE WERE HERE</em>, solo exhibition, 2025.</li><li><em>Light Visions</em>, Times Square, New York, 2024.</li><li><em>A HUNDRED POSSIBILITIES & VENECITE</em>, 2023 SEOULIGHT GWANGHWAMUN.</li><li><em>Here WE ARE</em>, early AI vs Human exhibition project, 2023.</li><li>Runway Gen:48 Aleph Edition, People's Choice Honoree.</li></ul>`,
-    "contact.publicTitle": "Publications · Press",
-    "contact.publicText": `<ul><li>AI trend newsletter <em>Daily Prompt</em> crew.</li><li>Author/co-author of <em>AI Wonderland</em> and <em>AI Video × Midjourney, Runway, Sora, Kling, Hailuo</em>.</li><li>Featured by YTN Radio, Korea Economic Daily, YTN Science, and KBS.</li><li>Lectures at Keimyung University, Hankyong National University, Seoul National University, Hongik University, Chung-Ang University, and Hanyang University.</li></ul>`,
+    "bio.kicker": "§ 03 / Bio",
+    "bio.meta": "Independent practice · Seoul",
+    "bio.title": "Films, exhibitions, and XR works shaped by an independent practice.",
+    "bio.bioTitle": "Biography",
+    "bio.bioText": "Jaehong An is a media artist working across moving image, XR, generative AI, and public media environments. He studies Art & Technology in the doctoral program at Sogang University, with an M.Des. from Hongik University IDAS and a B.A. from Handong Global University.",
+    "bio.projectsTitle": "Selected Projects",
+    "bio.projectsText": `<ul><li><em>WE WERE HERE</em>, solo exhibition, 2025.</li><li><em>Light Visions</em>, Times Square, New York, 2024.</li><li>Presented <em>A HUNDRED POSSIBILITIES & VENECITE</em> at 2023 SEOULIGHT GWANGHWAMUN.</li><li><em>Here WE ARE</em>, early AI vs Human exhibition project, 2023.</li><li>Runway Gen:48 Aleph Edition, People's Choice Honoree.</li></ul>`,
+    "bio.publicTitle": "Publications · Press",
+    "bio.publicText": `<ul><li>AI trend newsletter <em>Daily Prompt</em> crew.</li><li>Author/co-author of <em>AI Wonderland</em> and <em>AI Video × Midjourney, Runway, Sora, Kling, Hailuo</em>.</li><li>Featured by YTN Radio, Korea Economic Daily, YTN Science, and KBS.</li><li>Lectures at Keimyung University, Hankyong National University, Seoul National University, Hongik University, Chung-Ang University, and Hanyang University.</li></ul>`,
+    "contact.kicker": "§ 04 / Contact",
+    "contact.meta": "Email · Instagram · YouTube",
+    "contact.title": "Exhibitions, screenings, writing, and conversation.",
     "footer.note": "Color video works / quiet rooms",
     "sound.on": "SOUND ON",
     "sound.off": "SOUND OFF",
@@ -2204,7 +2220,8 @@ const I18N = {
     "nav.intro": "소개",
     "nav.works": "작품",
     "nav.statement": "글",
-    "nav.contact": "약력",
+    "nav.bio": "약력",
+    "nav.contact": "Contact",
     "hero.caption": '<span class="dot"></span> 미디어 아티스트 <span>·</span> XR / AI 아바타 / 영상 <span>·</span> 주요 작품 2021—2026',
     "hero.title": '안재홍,<br/><span class="light">감각이<br/>믿음이 되는 순간.</span>',
     "hero.practiceLabel": "작업",
@@ -2230,15 +2247,18 @@ const I18N = {
     "statement.meta": "감각 · 관계 · 실재",
     "statement.title": "우리는 무엇을 보고, 무엇을 근거로 그것을 믿는가?",
     "belief.kicker": "믿음의 자리",
-    "contact.kicker": "§ 03 / 약력",
-    "contact.meta": "작가 정보 · 연락",
-    "contact.title": "영화와 전시, XR을 통해 이미지가 실재가 되는 조건을 실험한다.",
-    "contact.bioTitle": "약력",
-    "contact.bioText": "안재홍은 영상, XR, 생성형 AI, 공공 미디어 환경을 오가며 현실과 허구, 이미지와 믿음의 관계를 다루는 미디어 아티스트다. 서강대학교 Art & Technology 박사과정에 재학 중이며, 홍익대학교 국제디자인전문대학원 디지털미디어디자인 석사(M.Des.), 한동대학교 공연영상 학사(B.A.)를 마쳤다.",
-    "contact.projectsTitle": "주요 활동",
-    "contact.projectsText": `<ul><li>2025 개인전 <em>WE WERE HERE</em>.</li><li>2024 뉴욕 타임스퀘어 <em>Light Visions</em> 아나몰픽 영상 전시.</li><li>2023 서울라이트 광화문 참여, <em>A HUNDRED POSSIBILITIES & VENECITE</em>.</li><li>2023 국내 초기 AI vs 인간 전시 프로젝트 <em>Here WE ARE</em> 기획 및 참여.</li><li>Runway Gen:48 Aleph Edition People's Choice Honoree 수상.</li></ul>`,
-    "contact.publicTitle": "출판 · 언론",
-    "contact.publicText": `<ul><li>AI 트렌드 뉴스레터 <em>Daily Prompt</em> crew.</li><li>저서 <em>AI 원더랜드</em>, 공저 <em>AI 영상×미드저니·런웨이·소라·클링·하이루오</em>.</li><li>YTN 라디오, 한국경제, YTN 사이언스, KBS 보도.</li><li>계명대학교, 한경국립대학교 출강 및 서울대, 홍익대, 중앙대, 한양대 등 특강.</li></ul>`,
+    "bio.kicker": "§ 03 / 약력",
+    "bio.meta": "작가 정보 · 주요 활동",
+    "bio.title": "영화와 전시, XR을 통해 이미지가 실재가 되는 조건을 실험한다.",
+    "bio.bioTitle": "약력",
+    "bio.bioText": "안재홍은 영상, XR, 생성형 AI, 공공 미디어 환경을 오가며 현실과 허구, 이미지와 믿음의 관계를 다루는 미디어 아티스트다. 서강대학교 Art & Technology 박사과정에 재학 중이며, 홍익대학교 국제디자인전문대학원 디지털미디어디자인 석사(M.Des.), 한동대학교 공연영상 학사(B.A.)를 마쳤다.",
+    "bio.projectsTitle": "주요 활동",
+    "bio.projectsText": `<ul><li>2025 개인전 <em>WE WERE HERE</em>.</li><li>2024 뉴욕 타임스퀘어 <em>Light Visions</em> 아나몰픽 영상 전시.</li><li>2023 서울라이트 광화문 참여, <em>A HUNDRED POSSIBILITIES & VENECITE</em>.</li><li>2023 국내 초기 AI vs 인간 전시 프로젝트 <em>Here WE ARE</em> 기획 및 참여.</li><li>Runway Gen:48 Aleph Edition People's Choice Honoree 수상.</li></ul>`,
+    "bio.publicTitle": "출판 · 언론",
+    "bio.publicText": `<ul><li>AI 트렌드 뉴스레터 <em>Daily Prompt</em> crew.</li><li>저서 <em>AI 원더랜드</em>, 공저 <em>AI 영상×미드저니·런웨이·소라·클링·하이루오</em>.</li><li>YTN 라디오, 한국경제, YTN 사이언스, KBS 보도.</li><li>계명대학교, 한경국립대학교 출강 및 서울대, 홍익대, 중앙대, 한양대 등 특강.</li></ul>`,
+    "contact.kicker": "§ 04 / Contact",
+    "contact.meta": "Email · Instagram · YouTube",
+    "contact.title": "전시, 상영, 글과 대화.",
     "footer.note": "컬러 영상 / 고요한 방들",
     "sound.on": "사운드 ON",
     "sound.off": "사운드 OFF",
@@ -3202,7 +3222,7 @@ function routeCaptionWheel(e) {
 }
 
 /* ── Header active link + scrollbar ──────────────── */
-const sections = ["hero","works","statement","contact"].map(id => document.getElementById(id));
+const sections = ["hero","works","statement","bio","contact"].map(id => document.getElementById(id));
 const links = Array.from(document.querySelectorAll("[data-link]"));
 const scrollbar = document.getElementById("scrollbar");
 
