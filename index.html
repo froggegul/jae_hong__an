@@ -1290,6 +1290,7 @@
     background: var(--line);
     border: 1px solid var(--line);
   }
+  @media (max-width: 980px) { #bio .contact-grid { grid-template-columns: 1fr; } }
   @media (max-width: 720px) { .contact-grid { grid-template-columns: 1fr; } }
   .contact-grid article {
     background: var(--bg);
@@ -1356,7 +1357,7 @@
     overflow-wrap: normal;
   }
   html[data-lang="ko"] #bio article:first-child .contact-copy {
-    letter-spacing: -0.04em;
+    text-wrap: balance;
   }
   html[data-lang="ko"] #bio h2 {
     word-break: keep-all;
@@ -2282,7 +2283,7 @@ const I18N = {
     "bio.publicText": `<ul><li>AI 트렌드 뉴스레터 <em>Daily Prompt</em> crew.</li><li>저서 <em>AI 원더랜드</em>, 공저 <em>AI 영상×미드저니 · 런웨이 · 소라 · 클링 · 하이루오</em>.</li><li>YTN 라디오, 한국경제, YTN 사이언스, KBS 보도.</li><li>계명대학교, 한경국립대학교 출강 및 서울대, 홍익대, 중앙대, 한양대 등 특강.</li></ul>`,
     "contact.kicker": "§ 04 / Contact",
     "contact.meta": "Email · Instagram · YouTube",
-    "contact.title": "전시와 상영, 강연에 관하여.",
+    "contact.title": "전시·상영·강연 관련 문의.",
     "footer.note": "컬러 영상 / 고요한 방들",
     "sound.on": "사운드 ON",
     "sound.off": "사운드 OFF",
