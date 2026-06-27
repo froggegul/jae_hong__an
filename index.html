@@ -1303,7 +1303,8 @@
     margin: 0 0 14px;
     font-weight: 340;
   }
-  .contact-grid p {
+  .contact-grid p,
+  .contact-grid .contact-copy {
     margin: 0;
     font-size: 15px;
     line-height: 1.85;
@@ -1311,6 +1312,31 @@
     letter-spacing: -0.02em;
     color: var(--ink-86);
     max-width: 32ch;
+  }
+  .contact-grid .contact-copy ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 10px;
+  }
+  .contact-grid .contact-copy li {
+    position: relative;
+    padding-left: 16px;
+  }
+  .contact-grid .contact-copy li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.82em;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--ink-50);
+  }
+  .contact-grid .contact-copy em {
+    font-style: normal;
+    color: var(--ink);
   }
   .contact-links {
     margin-top: 56px;
@@ -1400,6 +1426,16 @@
   }
   /* Hide while a piece is in fullscreen */
   body.in-overlay #main-sound { opacity: 0; pointer-events: none; }
+  @media (max-width: 720px) {
+    body[data-active-section="contact"] #main-sound {
+      opacity: 0.28;
+      background: rgba(10, 10, 10, 0.42);
+    }
+    body[data-active-section="contact"] #main-sound:hover,
+    body[data-active-section="contact"] #main-sound:focus-visible {
+      opacity: 0.92;
+    }
+  }
 
   /* ── Fullscreen overlay ───────────────────────────────────── */
   .overlay {
@@ -2043,16 +2079,16 @@
 
       <div class="contact-grid">
         <article>
-          <h3 data-i18n="contact.studioTitle">Practice</h3>
-          <p data-i18n="contact.studioText">Jaehong An works from self-directed questions, moving across film, XR, AI avatars, and projected environments.</p>
+          <h3 data-i18n="contact.bioTitle">Biography</h3>
+          <div class="contact-copy" data-i18n="contact.bioText" data-i18n-html="true">Jaehong An is a media artist working across moving image, XR, generative AI, and public media environments.</div>
         </article>
         <article>
-          <h3 data-i18n="contact.formatsTitle">Forms</h3>
-          <p data-i18n="contact.formatsText">Moving-image works · XR installations · AI avatar narratives · films · exhibition projects.</p>
+          <h3 data-i18n="contact.projectsTitle">Selected Projects</h3>
+          <div class="contact-copy" data-i18n="contact.projectsText" data-i18n-html="true">Selected projects and exhibitions.</div>
         </article>
         <article>
-          <h3 data-i18n="contact.collabTitle">Contexts</h3>
-          <p data-i18n="contact.collabText">Exhibitions, screenings, public programs, and research-led projects may become part of the practice when the context genuinely aligns.</p>
+          <h3 data-i18n="contact.publicTitle">Publications · Press</h3>
+          <div class="contact-copy" data-i18n="contact.publicText" data-i18n-html="true">Publications, press, and lectures.</div>
         </article>
       </div>
 
@@ -2146,13 +2182,13 @@ const I18N = {
     "belief.kicker": "Position of Belief",
     "contact.kicker": "§ 03 / Contact",
     "contact.meta": "Independent practice · Seoul",
-    "contact.title": "Films, exhibitions, and XR works developed from an independent artistic practice.",
-    "contact.studioTitle": "Practice",
-    "contact.studioText": "Jaehong An works from self-directed questions, moving across film, XR, AI avatars, and projected environments.",
-    "contact.formatsTitle": "Forms",
-    "contact.formatsText": "Moving-image works · XR installations · AI avatar narratives · films · exhibition projects.",
-    "contact.collabTitle": "Contexts",
-    "contact.collabText": "Exhibitions, screenings, public programs, and research-led projects may become part of the practice when the context genuinely aligns.",
+    "contact.title": "Films, exhibitions, and XR works shaped by an independent practice.",
+    "contact.bioTitle": "Biography",
+    "contact.bioText": "Jaehong An is a media artist working across moving image, XR, generative AI, and public media environments. He studies Art & Technology in the doctoral program at Sogang University, with an M.Des. from Hongik University IDAS and a B.A. from Handong Global University.",
+    "contact.projectsTitle": "Selected Projects",
+    "contact.projectsText": `<ul><li><em>WE WERE HERE</em>, solo exhibition, 2025.</li><li><em>Light Visions</em>, Times Square, New York, 2024.</li><li><em>A HUNDRED POSSIBILITIES & VENECITE</em>, 2023 SEOULIGHT GWANGHWAMUN.</li><li><em>Here WE ARE</em>, early AI vs Human exhibition project, 2023.</li><li>Runway Gen:48 Aleph Edition, People's Choice Honoree.</li></ul>`,
+    "contact.publicTitle": "Publications · Press",
+    "contact.publicText": `<ul><li>AI trend newsletter <em>Daily Prompt</em> crew.</li><li>Author/co-author of <em>AI Wonderland</em> and <em>AI Video × Midjourney, Runway, Sora, Kling, Hailuo</em>.</li><li>Featured by YTN Radio, Korea Economic Daily, YTN Science, and KBS.</li><li>Lectures at Keimyung University, Hankyong National University, Seoul National University, Hongik University, Chung-Ang University, and Hanyang University.</li></ul>`,
     "footer.note": "Color video works / quiet rooms",
     "sound.on": "SOUND ON",
     "sound.off": "SOUND OFF",
@@ -2196,13 +2232,13 @@ const I18N = {
     "belief.kicker": "믿음의 자리",
     "contact.kicker": "§ 03 / 연락",
     "contact.meta": "서울 · 전시와 상영",
-    "contact.title": "영화와 전시, XR을 통해 이미지가 실재로 받아들여지는 조건을 실험한다.",
-    "contact.studioTitle": "출발",
-    "contact.studioText": "질문은 개인적인 경험에서 시작된다. 현실과 허구, 기억과 이미지, 응시와 관계가 서로의 경계를 흐리는 순간을 따라간다.",
-    "contact.formatsTitle": "매체",
-    "contact.formatsText": "무빙 이미지 · 영상 설치 · XR · AI 아바타 내러티브 · 영화",
-    "contact.collabTitle": "발표",
-    "contact.collabText": "작업의 맥락이 맞는 자리에서 전시와 상영, 퍼블릭 프로그램, 리서치 프로젝트로 이어진다.",
+    "contact.title": "영화와 전시, XR을 통해 이미지가 실재가 되는 조건을 실험한다.",
+    "contact.bioTitle": "약력",
+    "contact.bioText": "안재홍은 영상, XR, 생성형 AI, 공공 미디어 환경을 오가며 현실과 허구, 이미지와 믿음의 관계를 다루는 미디어 아티스트다. 서강대학교 Art & Technology 박사과정에 재학 중이며, 홍익대학교 국제디자인전문대학원 디지털미디어디자인 석사(M.Des.), 한동대학교 공연영상 학사(B.A.)를 마쳤다.",
+    "contact.projectsTitle": "주요 활동",
+    "contact.projectsText": `<ul><li>2025 개인전 <em>WE WERE HERE</em>.</li><li>2024 뉴욕 타임스퀘어 <em>Light Visions</em> 아나몰픽 영상 전시.</li><li>2023 서울라이트 광화문 <em>A HUNDRED POSSIBILITIES & VENECITE</em> 참여.</li><li>2023 국내 초기 AI vs 인간 전시 프로젝트 <em>Here WE ARE</em> 기획 및 참여.</li><li>Runway Gen:48 Aleph Edition People's Choice Honoree 수상.</li></ul>`,
+    "contact.publicTitle": "출판 · 언론",
+    "contact.publicText": `<ul><li>AI 트렌드 뉴스레터 <em>Daily Prompt</em> crew.</li><li>저서 <em>AI 원더랜드</em>, 공저 <em>AI 영상×미드저니·런웨이·소라·클링·하이루오</em>.</li><li>YTN 라디오, 한국경제, YTN 사이언스, KBS 보도.</li><li>계명대학교, 한경국립대학교 출강 및 서울대, 홍익대, 중앙대, 한양대 등 특강.</li></ul>`,
     "footer.note": "컬러 영상 / 고요한 방들",
     "sound.on": "사운드 ON",
     "sound.off": "사운드 OFF",
@@ -3178,6 +3214,7 @@ function onScroll() {
   let active = sections[0].id;
   const probe = y + window.innerHeight * 0.34;
   for (const s of sections) if (s.offsetTop <= probe) active = s.id;
+  document.body.dataset.activeSection = active;
   links.forEach(a => a.classList.toggle("active", a.dataset.link === active));
 
   // depth recede — only when a section is fully off-screen,
