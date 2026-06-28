@@ -132,7 +132,8 @@ window.JAEHONG_WORKS = [
     frameCaption: "Online streaming",
     fullDesc: "The Breath Keepers\nJaehong An, 2025\nAI Generated · Single-channel Video\n2160×3840 px\n온라인 스트리밍\n정해진 상영 기간 없음",
     fullDescEn: "The Breath Keepers\nJaehong An, 2025\nAI Generated · Single-channel Video\n2160×3840 px\nOnline streaming\nNo fixed screening period",
-    poster: "assets/posters/work-07.svg"
+    video: "media/web/work-07-breath-keepers-web.mp4",
+    poster: "assets/posters/work-07-breath-keepers.jpg"
   },
   {
     idx: "08",

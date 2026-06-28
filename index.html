@@ -1752,6 +1752,7 @@
     letter-spacing: -0.02em;
     margin: 0 0 var(--caption-gap-title);
     font-weight: var(--caption-title-weight);
+    overflow-wrap: anywhere;
   }
 
   html[data-lang="ko"] .tunnel-note h3,
@@ -1832,6 +1833,17 @@
     }
   }
 
+  @media (max-width: 1320px) and (min-width: 1025px) {
+    .overlay:not(.wide-work):not(.four-three-work) .overlay-stage {
+      width: min(52vh, 68vw);
+    }
+
+    .overlay:not(.wide-work):not(.four-three-work) .overlay-meta {
+      left: max(20px, calc(50% + min(52vh, 68vw) * 0.54));
+      width: min(26vw, 340px);
+    }
+  }
+
   @media (max-width: 1024px) {
     .tunnel-notes {
       height: min(38vh, 326px);
@@ -1894,6 +1906,7 @@
   }
   .overlay-controls button,
   .overlay-controls .overlay-link,
+  .overlay-playback button,
   .overlay-nav button {
     font-family: var(--font-mono);
     font-size: 10px;
@@ -1909,8 +1922,52 @@
   }
   .overlay-controls button:hover,
   .overlay-controls .overlay-link:hover,
+  .overlay-playback button:hover,
   .overlay-nav button:hover { border-color: var(--ink); background: rgba(255,255,255,0.04); }
   .overlay-controls .overlay-link[hidden] { display: none; }
+  .overlay-playback {
+    position: absolute;
+    left: 50%;
+    bottom: 74px;
+    z-index: 3;
+    width: min(720px, calc(100vw - 48px));
+    display: grid;
+    grid-template-columns: auto auto minmax(140px, 1fr) auto auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    background: rgba(0,0,0,0.52);
+    backdrop-filter: blur(18px);
+    opacity: 0;
+    transform: translate(-50%, 8px);
+    transition: opacity 480ms var(--ease) 400ms, transform 480ms var(--ease) 400ms;
+  }
+  .overlay.active .overlay-playback {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .overlay-playback[hidden] { display: none; }
+  .overlay-playback button {
+    min-width: 44px;
+  }
+  .overlay-playback .playback-time {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--ink-70);
+    white-space: nowrap;
+    font-weight: 500;
+  }
+  .overlay-playback input[type="range"] {
+    width: 100%;
+    accent-color: var(--ink);
+    cursor: pointer;
+  }
+  .overlay-playback input[type="range"]:disabled {
+    cursor: default;
+    opacity: 0.36;
+  }
   .overlay-nav {
     position: absolute;
     bottom: 24px; left: 50%;
@@ -1932,6 +1989,20 @@
     font-weight: 500;
   }
   @media (max-width: 1024px) {
+    .overlay-playback {
+      position: relative;
+      left: auto;
+      bottom: auto;
+      width: min(100%, 720px);
+      margin: -4px auto 0;
+      transform: none;
+      grid-template-columns: auto auto minmax(110px, 1fr) auto auto;
+      gap: 8px;
+      padding: 9px 10px;
+    }
+    .overlay.active .overlay-playback {
+      transform: none;
+    }
     .overlay-nav {
       position: relative;
       bottom: auto;
@@ -2270,6 +2341,13 @@
     <a id="ov-external" class="overlay-link" href="#" target="_blank" rel="noreferrer" hidden>Watch on Runway →</a>
     <button id="ov-exit" type="button" data-i18n="overlay.close">Close</button>
   </div>
+  <div class="overlay-playback" id="ov-playback" hidden>
+    <button id="ov-back" type="button" aria-label="Back 10 seconds">-10</button>
+    <button id="ov-play" type="button" aria-label="Play">Play</button>
+    <input id="ov-seek" type="range" min="0" max="0" value="0" step="0.1" aria-label="Video timeline" />
+    <span class="playback-time"><span id="ov-elapsed">0:00</span> / <span id="ov-duration">0:00</span></span>
+    <button id="ov-forward" type="button" aria-label="Forward 10 seconds">+10</button>
+  </div>
   <div class="overlay-nav">
     <button id="ov-prev" type="button" data-i18n="overlay.prev">← Prev</button>
     <span class="count" id="ov-count">01 / 03</span>
@@ -2277,7 +2355,7 @@
   </div>
 </div>
 
-<script src="content/works.js?v=20260629-works9e"></script>
+<script src="content/works.js?v=20260629-works9f"></script>
 <script>
 /* ────────────────────────────────────────────────
    Data — loaded from content/works.js.
@@ -2336,6 +2414,8 @@ const I18N = {
     "overlay.close": "Close",
     "overlay.prev": "← Prev",
     "overlay.next": "Next →",
+    "overlay.play": "Play",
+    "overlay.pause": "Pause",
     "clock.city": "Seoul"
   },
   ko: {
@@ -2390,6 +2470,8 @@ const I18N = {
     "overlay.close": "닫기",
     "overlay.prev": "← 이전",
     "overlay.next": "다음 →",
+    "overlay.play": "재생",
+    "overlay.pause": "일시정지",
     "clock.city": "서울"
   }
 };
@@ -3480,12 +3562,20 @@ const ovSound   = document.getElementById("ov-sound");
 const ovExternal = document.getElementById("ov-external");
 const ovPrev    = document.getElementById("ov-prev");
 const ovNext    = document.getElementById("ov-next");
+const ovPlayback = document.getElementById("ov-playback");
+const ovPlay = document.getElementById("ov-play");
+const ovSeek = document.getElementById("ov-seek");
+const ovElapsed = document.getElementById("ov-elapsed");
+const ovDuration = document.getElementById("ov-duration");
+const ovBack = document.getElementById("ov-back");
+const ovForward = document.getElementById("ov-forward");
 
 let ovIndex = 0;
 let ovActive = "a";
 let ovBusy = false;
 let ovSoundOn = false;
 let overlayPageScrollY = 0;
+let playbackSyncQueued = false;
 
 function resetOverlayScroll() {
   overlay.scrollTop = 0;
@@ -3522,7 +3612,68 @@ let mainArmed = false;
 let mainFadeToken = 0;
 
 function activePoster() {
+  const active = overlay?.querySelector(".overlay-poster.active");
+  if (active === posterA || active === posterB) return active;
   return ovActive === "a" ? posterA : posterB;
+}
+
+function formatPlaybackTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const whole = Math.floor(seconds);
+  const h = Math.floor(whole / 3600);
+  const m = Math.floor((whole % 3600) / 60);
+  const s = whole % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function syncPlaybackControls() {
+  playbackSyncQueued = false;
+  const work = works[ovIndex];
+  const video = activePoster();
+  const hasPlayableVideo = Boolean(work?.video && video?.src);
+
+  if (!ovPlayback) return;
+  ovPlayback.hidden = !hasPlayableVideo;
+  if (!hasPlayableVideo) return;
+
+  const duration = Number.isFinite(video.duration) ? video.duration : 0;
+  const current = Number.isFinite(video.currentTime) ? video.currentTime : 0;
+
+  ovSeek.disabled = duration <= 0;
+  ovSeek.max = duration > 0 ? String(duration) : "0";
+  ovSeek.value = String(Math.min(current, duration || current));
+  ovElapsed.textContent = formatPlaybackTime(current);
+  ovDuration.textContent = duration > 0 ? formatPlaybackTime(duration) : "0:00";
+  ovPlay.textContent = video.paused ? ui("overlay.play") : ui("overlay.pause");
+  ovPlay.setAttribute("aria-label", video.paused ? ui("overlay.play") : ui("overlay.pause"));
+}
+
+function requestPlaybackSync() {
+  if (playbackSyncQueued) return;
+  playbackSyncQueued = true;
+  requestAnimationFrame(syncPlaybackControls);
+}
+
+function setActiveVideoTime(time) {
+  const video = activePoster();
+  if (!works[ovIndex]?.video || !video || !Number.isFinite(time)) return;
+  const duration = Number.isFinite(video.duration) ? video.duration : 0;
+  const max = duration > 0 ? duration : Number.MAX_SAFE_INTEGER;
+  const target = Math.max(0, Math.min(time, max));
+  try {
+    video.currentTime = target;
+  } catch (e) {
+    try { video.currentTime = target; } catch (ignore) {}
+  }
+  requestPlaybackSync();
+  setTimeout(requestPlaybackSync, 120);
+}
+
+function seekActiveVideo(delta) {
+  const video = activePoster();
+  if (!works[ovIndex]?.video || !video) return;
+  setActiveVideoTime((Number.isFinite(video.currentTime) ? video.currentTime : 0) + delta);
 }
 
 function setVideoAudible(video, audible) {
@@ -3638,6 +3789,7 @@ function applyLanguage() {
   if (mainLabel) mainLabel.textContent = mainSoundOn ? ui("sound.on") : ui("sound.off");
   ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
   if (ovExternal) ovExternal.textContent = ui("overlay.external");
+  requestPlaybackSync();
 
   if (overlay.classList.contains("active")) paintMeta(ovIndex);
   tick();
@@ -3711,6 +3863,7 @@ function paintMeta(i) {
     if (!hasPlayableVideo) ovSoundOn = false;
     ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
   }
+  requestPlaybackSync();
 }
 
 function openOverlay(i) {
@@ -3738,6 +3891,7 @@ function openOverlay(i) {
   document.body.classList.add("in-overlay");
   lockPageScroll();
   if (mainSoundOn && mainArmed) startMainAmbient();
+  requestPlaybackSync();
 }
 function closeOverlay() {
   overlay.classList.remove("active");
@@ -3746,6 +3900,7 @@ function closeOverlay() {
   unlockPageScroll();
   stopAmbient();
   [posterA, posterB].forEach(video => { try { video.pause(); } catch (e) {} });
+  if (ovPlayback) ovPlayback.hidden = true;
   ovSoundOn = false;
   ovSound.textContent = ui("overlay.soundOn");
   if (mainSoundOn && mainArmed) {
@@ -3757,9 +3912,9 @@ function transition(dir) {
   const next = (ovIndex + dir + works.length) % works.length;
   if (next === ovIndex) return;
   ovBusy = true;
-  const cur  = ovActive === "a" ? posterA : posterB;
-  const nxt  = ovActive === "a" ? posterB : posterA;
-  const nextActive = ovActive === "a" ? "b" : "a";
+  const cur  = activePoster();
+  const nxt  = cur === posterA ? posterB : posterA;
+  const nextActive = cur === posterA ? "b" : "a";
   setPosterVideo(nxt, works[next], ovSoundOn);
   if (!works[next].video) ovSoundOn = false;
   setVideoAudible(cur, false);
@@ -3783,10 +3938,12 @@ function transition(dir) {
   } else if (mainSoundOn && mainArmed) {
     startMainAmbient();
   }
+  requestPlaybackSync();
   setTimeout(() => {
     cur.classList.remove("exit-left","exit-right");
     try { cur.pause(); } catch (e) {}
     ovBusy = false;
+    requestPlaybackSync();
   }, 720);
 }
 
@@ -3794,6 +3951,29 @@ function transition(dir) {
 ovExit.addEventListener("click", closeOverlay);
 ovPrev.addEventListener("click", () => transition(-1));
 ovNext.addEventListener("click", () => transition( 1));
+ovPlay.addEventListener("click", () => {
+  const video = activePoster();
+  if (!works[ovIndex]?.video || !video) return;
+  if (video.paused) video.play().catch(() => {});
+  else video.pause();
+  requestPlaybackSync();
+});
+ovBack.addEventListener("click", () => seekActiveVideo(-10));
+ovForward.addEventListener("click", () => seekActiveVideo(10));
+ovSeek.addEventListener("input", () => {
+  const video = activePoster();
+  if (!works[ovIndex]?.video || !video || ovSeek.disabled) return;
+  const nextTime = Number(ovSeek.value);
+  if (Number.isFinite(nextTime)) {
+    setActiveVideoTime(nextTime);
+    ovElapsed.textContent = formatPlaybackTime(nextTime);
+  }
+});
+[posterA, posterB].forEach(video => {
+  ["loadedmetadata", "durationchange", "timeupdate", "play", "pause", "seeked", "ended"].forEach(eventName => {
+    video.addEventListener(eventName, requestPlaybackSync);
+  });
+});
 ovSound.addEventListener("click", () => {
   if (!works[ovIndex]?.video) return;
   ovSoundOn = !ovSoundOn;

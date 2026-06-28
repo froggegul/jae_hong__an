@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1920" viewBox="0 0 1080 1920">
-  <rect width="1080" height="1920" fill="#060606"/>
-  <rect x="36" y="36" width="1008" height="1848" rx="18" fill="#0b0b0b" stroke="rgba(236,234,227,0.22)" stroke-width="2"/>
-  <circle cx="540" cy="845" r="230" fill="rgba(236,234,227,0.055)"/>
-  <circle cx="540" cy="845" r="122" fill="none" stroke="rgba(236,234,227,0.18)" stroke-width="2"/>
-  <text x="82" y="120" fill="rgba(236,234,227,0.62)" font-family="IBM Plex Mono, monospace" font-size="34" letter-spacing="10">N° 07</text>
-  <text x="82" y="1680" fill="#ECEAE3" font-family="Inter Tight, sans-serif" font-size="74" font-weight="300">The Breath Keepers</text>
-  <text x="82" y="1750" fill="rgba(236,234,227,0.48)" font-family="IBM Plex Mono, monospace" font-size="26" letter-spacing="8">AI GENERATED · SINGLE-CHANNEL VIDEO</text>
-</svg>
