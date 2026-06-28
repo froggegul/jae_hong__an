@@ -423,12 +423,23 @@
     margin-left: calc(min(54vw, 640px) / -2);
     margin-top: calc(min(54vw, 640px) * 9 / 16 / -2);
   }
+  .tunnel-frame.four-three {
+    width: min(48vw, 560px);
+    aspect-ratio: 4 / 3;
+    margin-left: calc(min(48vw, 560px) / -2);
+    margin-top: calc(min(48vw, 560px) * 3 / 4 / -2);
+  }
   @media (max-width: 1500px) and (min-width: 1025px) {
     .tunnel-frame { left: 38%; }
     .tunnel-frame.wide {
       width: min(44vw, 560px);
       margin-left: calc(min(44vw, 560px) / -2);
       margin-top: calc(min(44vw, 560px) * 9 / 16 / -2);
+    }
+    .tunnel-frame.four-three {
+      width: min(40vw, 500px);
+      margin-left: calc(min(40vw, 500px) / -2);
+      margin-top: calc(min(40vw, 500px) * 3 / 4 / -2);
     }
   }
   .tunnel-frame.focus { pointer-events: auto; }
@@ -547,6 +558,11 @@
       width: min(86vw, 520px);
       margin-left: calc(min(86vw, 520px) / -2);
       margin-top: calc(min(86vw, 520px) * 9 / 16 / -2);
+    }
+    .tunnel-frame.four-three {
+      width: min(80vw, 460px);
+      margin-left: calc(min(80vw, 460px) / -2);
+      margin-top: calc(min(80vw, 460px) * 3 / 4 / -2);
     }
     .tunnel-frame.focus::after {
       display: none;
@@ -1420,7 +1436,8 @@
     transition: color var(--dur-fast) var(--ease),
                 border-color var(--dur-fast) var(--ease),
                 background var(--dur-fast) var(--ease),
-                opacity var(--dur-fast) var(--ease);
+                opacity var(--dur-fast) var(--ease),
+                transform var(--dur-fast) var(--ease);
   }
   #main-sound:hover { color: var(--ink); border-color: var(--ink-30); }
   #main-sound .ms-glyph {
@@ -1452,6 +1469,13 @@
   /* Hide while a piece is in fullscreen */
   body.in-overlay #main-sound { opacity: 0; pointer-events: none; }
   @media (max-width: 720px) {
+    #main-sound {
+      left: 14px;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      transform: scale(0.84);
+      transform-origin: left bottom;
+    }
+    body[data-active-section="works"] #main-sound,
     body[data-active-section="statement"] #main-sound,
     body[data-active-section="bio"] #main-sound {
       opacity: 0;
@@ -1496,7 +1520,8 @@
       opacity 620ms var(--ease),
       visibility 0ms linear 0ms;
   }
-  .overlay.wide-work {
+  .overlay.wide-work,
+  .overlay.four-three-work {
     grid-template-columns: minmax(420px, 0.66fr) minmax(320px, 0.34fr);
     column-gap: clamp(36px, 5vw, 88px);
     align-items: center;
@@ -1528,6 +1553,11 @@
   .overlay.wide-work .overlay-stage {
     width: min(100%, 1040px);
     aspect-ratio: 16 / 9;
+    justify-self: end;
+  }
+  .overlay.four-three-work .overlay-stage {
+    width: min(100%, 760px);
+    aspect-ratio: 4 / 3;
     justify-self: end;
   }
   .overlay-poster {
@@ -1567,7 +1597,8 @@
     filter: blur(0);
     transform: translateY(-50%);
   }
-  .overlay.wide-work .overlay-meta {
+  .overlay.wide-work .overlay-meta,
+  .overlay.four-three-work .overlay-meta {
     position: relative;
     left: auto;
     top: auto;
@@ -1583,7 +1614,11 @@
   .overlay.active.wide-work .overlay-meta {
     transform: translateY(0);
   }
-  .overlay.wide-work .overlay-meta p {
+  .overlay.active.four-three-work .overlay-meta {
+    transform: translateY(0);
+  }
+  .overlay.wide-work .overlay-meta p,
+  .overlay.four-three-work .overlay-meta p {
     grid-column: auto;
     grid-row: auto;
     max-width: none;
@@ -1591,7 +1626,8 @@
   }
   @media (max-width: 1024px) {
     .overlay,
-    .overlay.wide-work {
+    .overlay.wide-work,
+    .overlay.four-three-work {
       display: flex;
       flex-direction: column;
       padding: 72px 20px 96px;
@@ -1625,7 +1661,12 @@
       width: min(88vw, 720px);
       justify-self: center;
     }
-    .overlay.wide-work .overlay-meta {
+    .overlay.four-three-work .overlay-stage {
+      width: min(88vw, 560px);
+      justify-self: center;
+    }
+    .overlay.wide-work .overlay-meta,
+    .overlay.four-three-work .overlay-meta {
       position: relative;
       left: auto; right: auto; top: auto; bottom: auto;
       display: block;
@@ -1634,7 +1675,8 @@
       max-height: none;
     }
     .overlay-meta p,
-    .overlay.wide-work .overlay-meta p {
+    .overlay.wide-work .overlay-meta p,
+    .overlay.four-three-work .overlay-meta p {
       max-height: none;
       overflow: visible;
       padding-right: 0;
@@ -1643,6 +1685,9 @@
       transform: translateY(0);
     }
     .overlay.active.wide-work .overlay-meta {
+      transform: translateY(0);
+    }
+    .overlay.active.four-three-work .overlay-meta {
       transform: translateY(0);
     }
   }
@@ -1771,7 +1816,8 @@
     max-width: 42ch;
   }
 
-  .overlay.wide-work .overlay-meta p {
+  .overlay.wide-work .overlay-meta p,
+  .overlay.four-three-work .overlay-meta p {
     max-height: min(44vh, 420px);
   }
 
@@ -2231,7 +2277,7 @@
   </div>
 </div>
 
-<script src="content/works.js"></script>
+<script src="content/works.js?v=20260629-works9e"></script>
 <script>
 /* ────────────────────────────────────────────────
    Data — loaded from content/works.js.
@@ -2365,8 +2411,8 @@ function workContext(work) {
 
 function workBody(work) {
   return currentLang === "ko"
-    ? (work.desc || work.descEn || work.fullDesc || work.fullDescEn || "")
-    : (work.descEn || work.desc || work.fullDescEn || work.fullDesc || "");
+    ? (work.fullDesc || work.desc || work.fullDescEn || work.descEn || "")
+    : (work.fullDescEn || work.descEn || work.fullDesc || work.desc || "");
 }
 
 const fallbackWorks = [
@@ -2446,6 +2492,12 @@ const works = (Array.isArray(window.JAEHONG_WORKS) && window.JAEHONG_WORKS.lengt
   : fallbackWorks
 ).map(normalizeWork);
 
+function workLayoutClass(work) {
+  if (work.layout === "wide") return "wide";
+  if (work.layout === "four-three") return "four-three";
+  return "";
+}
+
 // Keep the scroll tunnel breathable as the archive grows.
 const tunnelRoot = document.getElementById("tunnel");
 if (tunnelRoot) {
@@ -2472,7 +2524,7 @@ function roomT(i) {
 
 // Frames
 camera.innerHTML = works.map((w, i) => `
-  <div class="tunnel-frame ${w.layout === "wide" ? "wide" : ""}" data-frame="${i}" data-enter-label="${ui("works.clickEnter")}" style="--zbase: ${-i * Z_SPACING}px">
+  <div class="tunnel-frame ${workLayoutClass(w)}" data-frame="${i}" data-enter-label="${ui("works.clickEnter")}" style="--zbase: ${-i * Z_SPACING}px">
     <div class="frame-card">
       <div class="poster" style="background-image:${w.poster}"></div>
       <div class="frame-overlay"></div>
@@ -2487,6 +2539,9 @@ camera.innerHTML = works.map((w, i) => `
 notes.innerHTML = works.map((w, i) => {
   const contextEn = [w.award, w.contextEn].filter(Boolean).join("\n");
   const contextKo = [w.award, w.context].filter(Boolean).join("\n");
+  const descEn = w.descEn || w.desc || "";
+  const descKo = w.desc || "";
+  const hasDescription = Boolean(descEn || descKo);
   return `
     <article class="tunnel-note" data-note="${i}">
       <div class="note-inner">
@@ -2496,10 +2551,10 @@ notes.innerHTML = works.map((w, i) => {
           <span class="lang-en">${contextEn}</span>
           <span class="lang-ko">${contextKo}</span>
         </div>` : ""}
-        <div class="note-copy">
-          <p class="lang-en">${w.descEn || w.desc}</p>
-          <p class="kr lang-ko">${w.desc}</p>
-        </div>
+        ${hasDescription ? `<div class="note-copy">
+          ${descEn ? `<p class="lang-en">${descEn}</p>` : ""}
+          ${descKo ? `<p class="kr lang-ko">${descKo}</p>` : ""}
+        </div>` : ""}
         <div class="specs">
           <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>${w.aspect}</b></span>
           <span><span data-i18n="spec.run">${ui("spec.run")}</span> <b>${w.duration}</b></span>
@@ -2564,7 +2619,7 @@ function warmVideo(i) {
   if (!work || !work.video || warmedVideos.has(i)) return;
 
   const video = document.createElement("video");
-  video.preload = "auto";
+  video.preload = "metadata";
   video.muted = true;
   video.playsInline = true;
   video.src = work.video;
@@ -3605,12 +3660,14 @@ if (langToggle) {
 
 function setPosterVideo(layer, work, audible) {
   if (!layer) return;
+  const posterSrc = work.videoPoster || String(work.poster || "").replace(/^url\(["']?/, "").replace(/["']?\)$/, "");
   if (!work.video) {
     try { layer.pause(); } catch (e) {}
     layer.removeAttribute("src");
+    layer.src = "";
     layer.load();
-    layer.poster = work.videoPoster;
-    layer.style.backgroundImage = `url(${work.videoPoster})`;
+    layer.poster = posterSrc;
+    layer.style.backgroundImage = posterSrc ? `url(${posterSrc})` : "";
     layer.loop = false;
     setVideoAudible(layer, false);
     return;
@@ -3621,7 +3678,7 @@ function setPosterVideo(layer, work, audible) {
     layer.load();
   }
   layer.style.backgroundImage = "";
-  layer.poster = work.videoPoster;
+  layer.poster = posterSrc;
   layer.loop = true;
   setVideoAudible(layer, audible);
   layer.playsInline = true;
@@ -3634,10 +3691,13 @@ function setPosterVideo(layer, work, audible) {
 function paintMeta(i) {
   const w = works[i];
   overlay.classList.toggle("wide-work", w.layout === "wide");
+  overlay.classList.toggle("four-three-work", w.layout === "four-three");
   ovNum.textContent = "N° " + w.idx;
   ovTitle.textContent = w.title;
   ovContext.textContent = [w.award, workContext(w)].filter(Boolean).join("\n");
-  ovDesc.textContent = workBody(w);
+  const bodyText = workBody(w);
+  ovDesc.textContent = bodyText;
+  ovDesc.hidden = !bodyText;
   ovCount.textContent = String(i+1).padStart(2,"0") + " / " + String(works.length).padStart(2,"0");
   if (ovExternal) {
     ovExternal.hidden = !w.externalUrl;
@@ -3645,8 +3705,11 @@ function paintMeta(i) {
     ovExternal.textContent = ui("overlay.external");
   }
   if (ovSound) {
-    ovSound.hidden = !w.video;
-    if (!w.video) ovSoundOn = false;
+    const hasPlayableVideo = Boolean(w.video);
+    ovSound.hidden = !hasPlayableVideo;
+    ovSound.style.display = hasPlayableVideo ? "" : "none";
+    if (!hasPlayableVideo) ovSoundOn = false;
+    ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
   }
 }
 
@@ -3732,6 +3795,7 @@ ovExit.addEventListener("click", closeOverlay);
 ovPrev.addEventListener("click", () => transition(-1));
 ovNext.addEventListener("click", () => transition( 1));
 ovSound.addEventListener("click", () => {
+  if (!works[ovIndex]?.video) return;
   ovSoundOn = !ovSoundOn;
   ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
   if (ovSoundOn) {
