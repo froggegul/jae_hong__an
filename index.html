@@ -681,8 +681,9 @@
 
   .depth-meter {
     position: absolute;
-    left: clamp(20px, 5vw, 64px); top: 50%;
-    transform: translateY(-50%);
+    left: clamp(20px, 5vw, 64px);
+    top: clamp(112px, 13vh, 152px);
+    bottom: clamp(72px, 10vh, 108px);
     display: flex; flex-direction: column; gap: 8px;
     font-family: var(--font-mono); font-size: 10px;
     letter-spacing: 0.16em; text-transform: uppercase;
@@ -693,7 +694,7 @@
   @media (max-width: 1024px) { .depth-meter { display: none; } }
   .depth-meter .num { color: var(--ink); font-size: 14px; letter-spacing: 0.04em; }
   .depth-meter .ladder {
-    width: 1px; height: 36vh;
+    width: 1px; height: clamp(96px, 15vh, 168px);
     background: var(--ink-08);
     position: relative;
     margin: 8px 0;
@@ -703,12 +704,28 @@
     height: 1px; background: var(--ink);
     top: 0; transition: top 200ms var(--ease);
   }
+  .depth-meter .archive-label {
+    margin-top: clamp(10px, 2vh, 20px);
+  }
   .depth-meter .archive {
+    --archive-y: 0px;
     display: flex; flex-direction: column; gap: 6px;
     margin-top: 4px;
+    max-height: max(172px, min(56vh, 520px, calc(100vh - 330px)));
+    overflow: hidden;
+    padding-right: 6px;
+  }
+  .depth-meter .archive-track {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transform: translateY(var(--archive-y));
+    transition: transform 520ms var(--ease);
+    will-change: transform;
   }
   .depth-meter .archive .thumb {
     width: 28px; height: 50px;
+    flex: 0 0 50px;
     border: 1px solid var(--line);
     background: #0A0A0A;
     background-size: cover; background-position: center;
@@ -719,6 +736,14 @@
   }
   .depth-meter .archive .thumb.passed { border-color: var(--ink-30); }
   .depth-meter .archive .thumb.current { border-color: var(--ink); }
+  @media (max-height: 760px) and (min-width: 1025px) {
+    .depth-meter {
+      top: 104px;
+      bottom: 72px;
+    }
+    .depth-meter .ladder { height: clamp(72px, 12vh, 112px); }
+    .depth-meter .archive { max-height: max(150px, min(46vh, calc(100vh - 300px))); }
+  }
 
   .approach-label {
     position: absolute;
@@ -2113,7 +2138,7 @@
             <span data-i18n="works.depth">Depth</span>
             <span class="num" id="depth-num">−2800m</span>
             <div class="ladder"><span id="ladder-mark"></span></div>
-            <span style="margin-top: 12px;" data-i18n="works.archive">Archive</span>
+            <span class="archive-label" data-i18n="works.archive">Archive</span>
             <div class="archive" id="archive"></div>
           </div>
 
@@ -2648,13 +2673,18 @@ notes.innerHTML = works.map((w, i) => {
 }).join("");
 
 // Archive thumbs
-archive.innerHTML = works.map((w, i) => `
-  <div class="thumb" data-thumb="${i}" style="background-image:${w.poster}" title="N° ${w.idx} — ${w.title}"></div>
-`).join("");
+archive.innerHTML = `
+  <div class="archive-track">
+    ${works.map((w, i) => `
+      <div class="thumb" data-thumb="${i}" style="background-image:${w.poster}" title="N° ${w.idx} — ${w.title}"></div>
+    `).join("")}
+  </div>
+`;
 
 const tunnelFrames = Array.from(camera.querySelectorAll(".tunnel-frame"));
 const tunnelNotes  = Array.from(notes.querySelectorAll(".tunnel-note"));
 const archiveThumbs = Array.from(archive.querySelectorAll(".thumb"));
+const archiveTrack = archive.querySelector(".archive-track");
 const approachEl = document.getElementById("approach");
 const depthNumEl = document.getElementById("depth-num");
 const ladderMark = document.getElementById("ladder-mark");
@@ -2686,6 +2716,24 @@ function clamp(value, min, max) {
 function smoothstep(edge0, edge1, value) {
   const t = clamp((value - edge0) / Math.max(0.0001, edge1 - edge0), 0, 1);
   return t * t * (3 - 2 * t);
+}
+
+function updateArchiveWindow(bestIdx) {
+  if (!archive || !archiveTrack || !archiveThumbs.length) return;
+
+  const firstThumb = archiveThumbs[0];
+  const thumbHeight = firstThumb.offsetHeight || 50;
+  const trackStyles = getComputedStyle(archiveTrack);
+  const gap = parseFloat(trackStyles.rowGap || trackStyles.gap) || 6;
+  const step = thumbHeight + gap;
+  const windowHeight = archive.clientHeight || step * archiveThumbs.length;
+  const visibleCount = Math.max(1, Math.min(archiveThumbs.length, Math.floor((windowHeight + gap) / step)));
+  const anchorSlot = Math.min(2, Math.max(0, Math.floor((visibleCount - 1) * 0.42)));
+  const maxOffset = Math.max(0, archiveThumbs.length - visibleCount);
+  const offset = clamp(bestIdx - anchorSlot, 0, maxOffset);
+
+  archive.style.setProperty("--archive-y", `${(-offset * step).toFixed(1)}px`);
+  archive.dataset.windowStart = String(offset);
 }
 
 function resetCaptionScroll(el, target = 0) {
@@ -2898,6 +2946,7 @@ function updateTunnel() {
   }
 
   updateApproachCollision(bestIdx);
+  updateArchiveWindow(bestIdx);
 
   // depth meter readout — distance still ahead until the last room
   const depth = Math.round(-(TUNNEL_DEPTH - camZ));
