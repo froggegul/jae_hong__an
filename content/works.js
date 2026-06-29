@@ -83,8 +83,8 @@ window.JAEHONG_WORKS = [
   {
     idx: "05",
     title: "What is Real? What is Human?",
-    desc: "",
-    descEn: "",
+    desc: "찰리 채플린이 1940년에 발표한 영화 〈위대한 독재자〉를, 특히 마지막 연설을 중심으로 현재의 기술문명 안에서 다시 호출한 작업이다. 채플린이 제작, 각본, 감독, 주연을 맡은 이 반파시즘 풍자 영화가 전쟁과 독재의 시대에 인간성과 자유를 호소했다면, 이 작품은 그 텍스트가 오늘날에도 여전히 유효한지를 묻는다.\n\n작품 속 발화는 온전한 인간이 아니라 기계화된 인간의 얼굴과 목소리를 통해 전달된다. 인간성에 대한 오래된 문장이 비인간적 기술의 표면을 통과할 때, 연설은 단순한 인용이 아니라 현대 문명의 역설을 드러내는 장면이 된다. 무엇이 인간을 인간답게 하는지, 그리고 그 질문을 이제 누가 말하고 있는지를 다시 묻는다.",
+    descEn: "This work reinterprets Charlie Chaplin’s 1940 film The Great Dictator, especially its final speech, within the conditions of contemporary technological civilization. Written, directed, produced, and performed by Chaplin, the anti-fascist satire once appealed to humanity and freedom in an age of war and dictatorship. This work asks how much of that text still remains valid today.\n\nThe speech is delivered not through an intact human body, but through the face and voice of a mechanized human figure. As an old text about humanity passes through the surface of nonhuman technology, it becomes less a quotation than a paradox of the present. The work asks what makes a human human, and who is now speaking that question.",
     year: "2025.12",
     medium: "AI Generated · Single-channel Video",
     duration: "0′29″",
@@ -93,8 +93,8 @@ window.JAEHONG_WORKS = [
     contextEn: "Online streaming\nNo fixed screening period",
     caption: "Online streaming · single-channel video",
     frameCaption: "Online streaming",
-    fullDesc: "What is Real? What is Human?\nJaehong An, 2025\nAI Generated · Single-channel Video\n1080×1920 px\n온라인 스트리밍\n정해진 상영 기간 없음",
-    fullDescEn: "What is Real? What is Human?\nJaehong An, 2025\nAI Generated · Single-channel Video\n1080×1920 px\nOnline streaming\nNo fixed screening period",
+    fullDesc: "What is Real? What is Human?\nJaehong An, 2025\nAI Generated · Single-channel Video\n1080×1920 px\n온라인 스트리밍\n정해진 상영 기간 없음\n\n찰리 채플린이 1940년에 발표한 영화 〈위대한 독재자〉를, 특히 마지막 연설을 중심으로 현재의 기술문명 안에서 다시 호출한 작업이다. 채플린이 제작, 각본, 감독, 주연을 맡은 이 반파시즘 풍자 영화가 전쟁과 독재의 시대에 인간성과 자유를 호소했다면, 이 작품은 그 텍스트가 오늘날에도 여전히 유효한지를 묻는다.\n\n작품 속 발화는 온전한 인간이 아니라 기계화된 인간의 얼굴과 목소리를 통해 전달된다. 인간성에 대한 오래된 문장이 비인간적 기술의 표면을 통과할 때, 연설은 단순한 인용이 아니라 현대 문명의 역설을 드러내는 장면이 된다. 무엇이 인간을 인간답게 하는지, 그리고 그 질문을 이제 누가 말하고 있는지를 다시 묻는다.",
+    fullDescEn: "What is Real? What is Human?\nJaehong An, 2025\nAI Generated · Single-channel Video\n1080×1920 px\nOnline streaming\nNo fixed screening period\n\nThis work reinterprets Charlie Chaplin’s 1940 film The Great Dictator, especially its final speech, within the conditions of contemporary technological civilization. Written, directed, produced, and performed by Chaplin, the anti-fascist satire once appealed to humanity and freedom in an age of war and dictatorship. This work asks how much of that text still remains valid today.\n\nThe speech is delivered not through an intact human body, but through the face and voice of a mechanized human figure. As an old text about humanity passes through the surface of nonhuman technology, it becomes less a quotation than a paradox of the present. The work asks what makes a human human, and who is now speaking that question.",
     video: "media/web/work-02-web.mp4",
     poster: "assets/posters/work-02.jpg"
   },
