@@ -120,8 +120,8 @@ window.JAEHONG_WORKS = [
   {
     idx: "07",
     title: "The Breath Keepers",
-    desc: "",
-    descEn: "",
+    desc: "도시의 사고로 시력을 잃고 버려진 한 아이가 폐기된 몸과 부서진 기계들이 쌓인 구역에서 거의 앞을 보지 못하는 여성 샤먼에게 발견된다. 아이는 산 정상의 고립된 집으로 옮겨져 눈이 아닌 감각으로 살아가는 법을 배운다.\n\n그들의 공동체는 불행을 지우려 하지 않는다. 대신 고통을 품은 채 무너지지 않고 서는 법을 익히며, 남은 숨과 기억, 비밀을 다음 세대에 넘긴다. 세계가 기계를 믿는 시대에도 길을 잃은 몇몇 사람들은 여전히 먼 도시를 떠나 숨이 턱 끝까지 차오르는 산길을 오른다.",
+    descEn: "After an accident in the city, a child loses sight and is abandoned in a waste zone where ruined bodies and broken machines are piled together. There, a nearly blind woman shaman finds the child and takes them to an isolated house on a mountaintop, teaching them how to live through senses other than sight.\n\nThis community does not try to erase misfortune. Instead, it learns how to stand without breaking while carrying pain, passing breath, memory, and secrets to the next generation. In a world that now places its faith in machines, a few of the lost still leave the distant city behind and climb the steep path toward that house.",
     year: "2025.11",
     medium: "AI Generated · Single-channel Video",
     duration: "2′34″",
@@ -130,8 +130,8 @@ window.JAEHONG_WORKS = [
     contextEn: "Online streaming\nNo fixed screening period",
     caption: "Online streaming · single-channel video",
     frameCaption: "Online streaming",
-    fullDesc: "The Breath Keepers\nJaehong An, 2025\nAI Generated · Single-channel Video\n2160×3840 px\n온라인 스트리밍\n정해진 상영 기간 없음",
-    fullDescEn: "The Breath Keepers\nJaehong An, 2025\nAI Generated · Single-channel Video\n2160×3840 px\nOnline streaming\nNo fixed screening period",
+    fullDesc: "The Breath Keepers\nJaehong An, 2025\nAI Generated · Single-channel Video\n2160×3840 px\n온라인 스트리밍\n정해진 상영 기간 없음\n\n도시의 사고로 시력을 잃고 버려진 한 아이가 폐기된 몸과 부서진 기계들이 쌓인 구역에서 거의 앞을 보지 못하는 여성 샤먼에게 발견된다. 아이는 산 정상의 고립된 집으로 옮겨져 눈이 아닌 감각으로 살아가는 법을 배운다.\n\n그들의 공동체는 불행을 지우려 하지 않는다. 대신 고통을 품은 채 무너지지 않고 서는 법을 익히며, 남은 숨과 기억, 비밀을 다음 세대에 넘긴다. 세계가 기계를 믿는 시대에도 길을 잃은 몇몇 사람들은 여전히 먼 도시를 떠나 숨이 턱 끝까지 차오르는 산길을 오른다.",
+    fullDescEn: "The Breath Keepers\nJaehong An, 2025\nAI Generated · Single-channel Video\n2160×3840 px\nOnline streaming\nNo fixed screening period\n\nAfter an accident in the city, a child loses sight and is abandoned in a waste zone where ruined bodies and broken machines are piled together. There, a nearly blind woman shaman finds the child and takes them to an isolated house on a mountaintop, teaching them how to live through senses other than sight.\n\nThis community does not try to erase misfortune. Instead, it learns how to stand without breaking while carrying pain, passing breath, memory, and secrets to the next generation. In a world that now places its faith in machines, a few of the lost still leave the distant city behind and climb the steep path toward that house.",
     video: "media/web/work-07-breath-keepers-web.mp4",
     poster: "assets/posters/work-07-breath-keepers.jpg"
   },
