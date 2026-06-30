@@ -1816,6 +1816,7 @@
     max-height: min(48vh, 390px);
     margin-top: 0;
     padding: 2px 14px 14px 0;
+    white-space: normal;
     -webkit-mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 18px), transparent 100%);
     mask-image: linear-gradient(to bottom, #000 0, #000 calc(100% - 18px), transparent 100%);
   }
@@ -1826,6 +1827,7 @@
     font-weight: inherit;
     color: inherit;
     margin: 0 0 0.72em;
+    white-space: pre-line;
   }
 
   .tunnel-note p.kr {
@@ -2659,14 +2661,8 @@ notes.innerHTML = works.map((w, i) => {
       <div class="note-inner">
         <div class="num"><span>N° ${w.idx}</span><span>${w.year}</span><span>${w.medium}</span></div>
         <h3>${w.title}</h3>
-        ${contextEn || contextKo ? `<div class="note-context">
-          <span class="lang-en">${contextEn}</span>
-          <span class="lang-ko">${contextKo}</span>
-        </div>` : ""}
-        ${hasDescription ? `<div class="note-copy">
-          ${descEn ? `<p class="lang-en">${descEn}</p>` : ""}
-          ${descKo ? `<p class="kr lang-ko">${descKo}</p>` : ""}
-        </div>` : ""}
+        ${contextEn || contextKo ? `<div class="note-context"><span class="lang-en">${contextEn}</span><span class="lang-ko">${contextKo}</span></div>` : ""}
+        ${hasDescription ? `<div class="note-copy">${descEn ? `<p class="lang-en">${descEn}</p>` : ""}${descKo ? `<p class="kr lang-ko">${descKo}</p>` : ""}</div>` : ""}
         <div class="specs">
           <span><span data-i18n="spec.aspect">${ui("spec.aspect")}</span> <b>${w.aspect}</b></span>
           <span><span data-i18n="spec.run">${ui("spec.run")}</span> <b>${w.duration}</b></span>
