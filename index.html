@@ -977,6 +977,11 @@
     transition: border-color 240ms var(--ease), background 240ms var(--ease);
   }
   .open-fs:hover { border-color: var(--ink); background: rgba(255,255,255,0.04); }
+  body:not([data-active-section="works"]) .open-fs {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
 
   /* ── Statement (7 scenes) ──────────────────────────────── */
   .statement-stage {
@@ -1309,6 +1314,10 @@
     transition: border-color var(--dur-fast) var(--ease);
   }
   .scene-block.active { border-left-color: var(--ink); }
+  .scene-block.active p {
+    color: var(--ink);
+    font-weight: 380;
+  }
   .scene-block:not(.active) p { color: var(--ink-70); }
   .scene-block:not(.active) p.kr { color: var(--ink-62); }
   .scene-block:first-child { padding-top: 0; }
@@ -1844,7 +1853,7 @@
   }
 
   .tunnel-note .note-context {
-    margin-bottom: 22px;
+    margin-bottom: 24px;
   }
 
   .overlay-meta .overlay-context:empty {
@@ -2103,7 +2112,37 @@
   .reveal.in { opacity: 1; transform: translateY(0); }
 
   @media (prefers-reduced-motion: reduce) {
-    .section, .reveal { transition: none !important; opacity: 1 !important; transform: none !important; filter: none !important; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
+    .section,
+    .reveal,
+    .tunnel-frame,
+    .tunnel-frame .frame-card,
+    .stage-frame .scene,
+    .belief-lens .word,
+    .overlay,
+    .overlay-stage,
+    .overlay-poster,
+    .overlay-meta,
+    .overlay-controls,
+    .overlay-playback,
+    .overlay-nav {
+      transition: none !important;
+    }
+    .section,
+    .reveal {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    .approach-aura,
+    .scroll-nudge .nudge-track::after,
+    .scroll-nudge .nudge-chev {
+      display: none !important;
+    }
   }
 </style>
 </head>
@@ -2407,7 +2446,7 @@
 </audio>
 
 <!-- Fullscreen overlay -->
-<div class="overlay" id="overlay" aria-hidden="true">
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="ov-title" aria-hidden="true" tabindex="-1">
   <div class="overlay-stage" id="overlay-stage">
     <video class="overlay-poster active" id="poster-a" autoplay muted loop playsinline preload="metadata"></video>
     <video class="overlay-poster" id="poster-b" autoplay muted loop playsinline preload="metadata"></video>
@@ -2419,7 +2458,7 @@
     <p id="ov-desc"></p>
   </div>
   <div class="overlay-controls">
-    <button id="ov-sound" type="button">Sound On</button>
+    <button id="ov-sound" type="button" aria-pressed="false">Sound On</button>
     <a id="ov-external" class="overlay-link" href="#" target="_blank" rel="noreferrer" hidden>Watch on Runway →</a>
     <button id="ov-exit" type="button" data-i18n="overlay.close">Close</button>
   </div>
@@ -2498,6 +2537,12 @@ const I18N = {
     "overlay.next": "Next →",
     "overlay.play": "Play",
     "overlay.pause": "Pause",
+    "aria.language": "Switch language",
+    "aria.mainSound": "Toggle ambient sound",
+    "aria.videoSound": "Toggle video sound",
+    "aria.back10": "Back 10 seconds",
+    "aria.forward10": "Forward 10 seconds",
+    "aria.timeline": "Video timeline",
     "clock.city": "Seoul"
   },
   ko: {
@@ -2554,12 +2599,19 @@ const I18N = {
     "overlay.next": "다음 →",
     "overlay.play": "재생",
     "overlay.pause": "일시정지",
+    "aria.language": "언어 전환",
+    "aria.mainSound": "배경 사운드 전환",
+    "aria.videoSound": "영상 사운드 전환",
+    "aria.back10": "10초 뒤로",
+    "aria.forward10": "10초 앞으로",
+    "aria.timeline": "영상 재생 위치",
     "clock.city": "서울"
   }
 };
 
 const savedLang = localStorage.getItem("jaehong-lang");
 let currentLang = savedLang === "ko" || savedLang === "en" ? savedLang : "en";
+const reducedMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 document.documentElement.dataset.lang = currentLang;
 document.documentElement.lang = currentLang;
 
@@ -2985,6 +3037,7 @@ function updateTunnel() {
       const isCurrent = i === bestIdx;
       n.classList.toggle("in", isCurrent);
       n.setAttribute("aria-hidden", isCurrent ? "false" : "true");
+      n.toggleAttribute("inert", !isCurrent);
     });
     const activeCopy = tunnelNotes[bestIdx]?.querySelector(".note-copy");
     if (activeCopy) {
@@ -3004,6 +3057,7 @@ function updateTunnel() {
       f.classList.toggle("focus", isCurrent);
       f.tabIndex = isCurrent ? 0 : -1;
       f.setAttribute("aria-hidden", isCurrent ? "false" : "true");
+      f.toggleAttribute("inert", !isCurrent);
       if (isCurrent) f.setAttribute("aria-current", "true");
       else f.removeAttribute("aria-current");
     });
@@ -3030,7 +3084,7 @@ archiveThumbs.forEach((th, i) => {
     const total = tunnel.offsetHeight - window.innerHeight;
     const docTop = tunnel.getBoundingClientRect().top + window.scrollY;
     const targetY = docTop + roomT(i) * total;
-    window.scrollTo({ top: targetY, behavior: "smooth" });
+    window.scrollTo({ top: targetY, behavior: reducedMotionQuery.matches ? "auto" : "smooth" });
   });
 });
 
@@ -3192,7 +3246,9 @@ function beginAutoAdvance(target, spacing) {
   autoStartT = performance.now();
   autoStartY = window.scrollY;
   const distanceRatio = Math.abs(target - autoStartY) / Math.max(1, spacing);
-  autoDuration = AUTO_BASE_DUR * clamp(distanceRatio, 0.64, 1);
+  autoDuration = reducedMotionQuery.matches
+    ? 160
+    : AUTO_BASE_DUR * clamp(distanceRatio, 0.64, 1);
   tunnelStage?.style.setProperty("--transition-progress", "0");
   tunnelStage?.classList.add("room-transition");
   tunnelStage?.setAttribute("aria-busy", "true");
@@ -3218,8 +3274,9 @@ function smoothScrollTo(targetY, duration) {
   const startY = window.scrollY;
   const delta = targetY - startY;
   const startT = performance.now();
+  const effectiveDuration = reducedMotionQuery.matches ? 1 : duration;
   function tick(now) {
-    const e = (now - startT) / duration;
+    const e = (now - startT) / effectiveDuration;
     if (e >= 1) {
       window.scrollTo(0, targetY);
       isProgrammaticScroll = false;
@@ -3662,16 +3719,21 @@ const subEl   = document.getElementById("belief-sub");
 const progEl  = document.getElementById("belief-progress");
 const scenes  = Array.from(document.querySelectorAll(".scene-frame .scene, .stage-frame .scene"));
 const blocks  = Array.from(document.querySelectorAll(".scene-block"));
-let activeScene = 0;
+let activeScene = -1;
 
 function sceneText(i) {
-  return SCENES[i]?.[currentLang] || SCENES[i]?.en || ["", ""];
+  const scene = SCENES[i] || SCENES[0];
+  return scene?.[currentLang] || scene?.en || ["", ""];
 }
 
 function setScene(i) {
   if (i === activeScene) return;
   activeScene = i;
-  scenes.forEach(s => s.classList.toggle("active", +s.dataset.scene === i));
+  scenes.forEach(s => {
+    const isActive = +s.dataset.scene === i;
+    s.classList.toggle("active", isActive);
+    s.setAttribute("aria-hidden", isActive ? "false" : "true");
+  });
   blocks.forEach(b => b.classList.toggle("active", +b.dataset.block === i));
   // belief word flip
   wordEl.classList.add("flip");
@@ -3757,6 +3819,26 @@ let ovBusy = false;
 let ovSoundOn = false;
 let overlayPageScrollY = 0;
 let playbackSyncQueued = false;
+let overlayReturnFocus = null;
+const overlayBackground = [
+  document.querySelector("header.top"),
+  document.querySelector("main"),
+  document.getElementById("main-sound")
+].filter(Boolean);
+
+function setOverlayBackgroundInert(isInert) {
+  overlayBackground.forEach(el => el.toggleAttribute("inert", isInert));
+}
+
+function overlayFocusableElements() {
+  return Array.from(overlay.querySelectorAll("button, a[href], input:not([disabled])"))
+    .filter(el => {
+      if (el.hidden || el.getAttribute("aria-hidden") === "true") return false;
+      const style = getComputedStyle(el);
+      const rect = el.getBoundingClientRect();
+      return style.display !== "none" && style.visibility !== "hidden" && rect.width > 0 && rect.height > 0;
+    });
+}
 
 function resetOverlayScroll() {
   overlay.scrollTop = 0;
@@ -3968,7 +4050,13 @@ function applyLanguage() {
 
   const mainLabel = mainSoundBtn?.querySelector(".ms-label");
   if (mainLabel) mainLabel.textContent = mainSoundOn ? ui("sound.on") : ui("sound.off");
+  langToggle?.setAttribute("aria-label", ui("aria.language"));
+  mainSoundBtn?.setAttribute("aria-label", ui("aria.mainSound"));
   ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
+  ovSound.setAttribute("aria-label", ui("aria.videoSound"));
+  ovBack.setAttribute("aria-label", ui("aria.back10"));
+  ovForward.setAttribute("aria-label", ui("aria.forward10"));
+  ovSeek.setAttribute("aria-label", ui("aria.timeline"));
   if (ovExternal) ovExternal.textContent = ui("overlay.external");
   requestPlaybackSync();
 
@@ -4043,15 +4131,20 @@ function paintMeta(i) {
     ovSound.style.display = hasPlayableVideo ? "" : "none";
     if (!hasPlayableVideo) ovSoundOn = false;
     ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
+    ovSound.setAttribute("aria-pressed", ovSoundOn ? "true" : "false");
   }
   requestPlaybackSync();
 }
 
 function openOverlay(i) {
+  overlayReturnFocus = document.activeElement instanceof HTMLElement && document.activeElement !== document.body
+    ? document.activeElement
+    : tunnelFrames[i] || null;
   ovIndex = i;
   ovActive = "a";
   ovSoundOn = false;
   ovSound.textContent = ui("overlay.soundOn");
+  ovSound.setAttribute("aria-pressed", "false");
   setPosterVideo(posterA, works[i], false);
   try { posterA.currentTime = 0; } catch (e) {}
   try { posterB.pause(); } catch (e) {}
@@ -4070,23 +4163,33 @@ function openOverlay(i) {
   overlay.classList.add("active");
   overlay.setAttribute("aria-hidden", "false");
   document.body.classList.add("in-overlay");
+  setOverlayBackgroundInert(true);
   lockPageScroll();
+  requestAnimationFrame(() => overlay.focus({ preventScroll: true }));
   if (mainSoundOn && mainArmed) startMainAmbient();
   requestPlaybackSync();
 }
 function closeOverlay() {
+  if (!overlay.classList.contains("active")) return;
+  const restoreFocus = overlayReturnFocus;
+  overlayReturnFocus = null;
   overlay.classList.remove("active");
   overlay.setAttribute("aria-hidden", "true");
   document.body.classList.remove("in-overlay");
+  setOverlayBackgroundInert(false);
   unlockPageScroll();
   stopAmbient();
   [posterA, posterB].forEach(video => { try { video.pause(); } catch (e) {} });
   if (ovPlayback) ovPlayback.hidden = true;
   ovSoundOn = false;
   ovSound.textContent = ui("overlay.soundOn");
+  ovSound.setAttribute("aria-pressed", "false");
   if (mainSoundOn && mainArmed) {
     setTimeout(() => startMainAmbient(), 260);
   }
+  requestAnimationFrame(() => {
+    if (restoreFocus?.isConnected) restoreFocus.focus({ preventScroll: true });
+  });
 }
 function transition(dir) {
   if (ovBusy) return;
@@ -4125,20 +4228,21 @@ function transition(dir) {
     try { cur.pause(); } catch (e) {}
     ovBusy = false;
     requestPlaybackSync();
-  }, 720);
+  }, reducedMotionQuery.matches ? 0 : 720);
 }
 
 // (tunnel uses Enter button + archive thumbs; old works-list handler removed)
 ovExit.addEventListener("click", closeOverlay);
 ovPrev.addEventListener("click", () => transition(-1));
 ovNext.addEventListener("click", () => transition( 1));
-ovPlay.addEventListener("click", () => {
+function toggleActivePlayback() {
   const video = activePoster();
   if (!works[ovIndex]?.video || !video) return;
   if (video.paused) video.play().catch(() => {});
   else video.pause();
   requestPlaybackSync();
-});
+}
+ovPlay.addEventListener("click", toggleActivePlayback);
 ovBack.addEventListener("click", () => seekActiveVideo(-10));
 ovForward.addEventListener("click", () => seekActiveVideo(10));
 ovSeek.addEventListener("input", () => {
@@ -4159,6 +4263,7 @@ ovSound.addEventListener("click", () => {
   if (!works[ovIndex]?.video) return;
   ovSoundOn = !ovSoundOn;
   ovSound.textContent = ovSoundOn ? ui("overlay.soundOff") : ui("overlay.soundOn");
+  ovSound.setAttribute("aria-pressed", ovSoundOn ? "true" : "false");
   if (ovSoundOn) {
     startAmbient();
   } else {
@@ -4169,9 +4274,43 @@ ovSound.addEventListener("click", () => {
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeOverlay(); });
 window.addEventListener("keydown", (e) => {
   if (!overlay.classList.contains("active")) return;
-  if (e.key === "Escape") closeOverlay();
-  if (e.key === "ArrowRight") transition( 1);
-  if (e.key === "ArrowLeft")  transition(-1);
+  if (e.key === "Escape") {
+    e.preventDefault();
+    closeOverlay();
+    return;
+  }
+
+  if (e.key === "Tab") {
+    const focusable = overlayFocusableElements();
+    if (!focusable.length) {
+      e.preventDefault();
+      overlay.focus({ preventScroll: true });
+      return;
+    }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+    if (e.shiftKey && (active === overlay || active === first || !overlay.contains(active))) {
+      e.preventDefault();
+      last.focus({ preventScroll: true });
+    } else if (!e.shiftKey && (active === overlay || active === last || !overlay.contains(active))) {
+      e.preventDefault();
+      first.focus({ preventScroll: true });
+    }
+    return;
+  }
+
+  const interactiveTarget = e.target.closest?.("button, a, input");
+  if (!interactiveTarget && e.key === "ArrowRight") {
+    e.preventDefault();
+    transition(1);
+  } else if (!interactiveTarget && e.key === "ArrowLeft") {
+    e.preventDefault();
+    transition(-1);
+  } else if (!interactiveTarget && (e.key === " " || e.code === "Space")) {
+    e.preventDefault();
+    toggleActivePlayback();
+  }
 });
 
 applyLanguage();
