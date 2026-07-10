@@ -783,8 +783,16 @@
     height: 1px; background: var(--ink);
     top: 0; transition: top 200ms var(--ease);
   }
-  .depth-meter .archive-label {
+  .depth-meter .archive-head {
     margin-top: clamp(10px, 2vh, 20px);
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    white-space: nowrap;
+  }
+  .depth-meter .archive-count {
+    color: var(--ink-44);
+    letter-spacing: 0.08em;
   }
   .depth-meter .archive {
     --archive-y: 0px;
@@ -803,8 +811,8 @@
     will-change: transform;
   }
   .depth-meter .archive .thumb {
-    width: 28px; height: 50px;
-    flex: 0 0 50px;
+    width: 34px; height: 60px;
+    flex: 0 0 60px;
     display: block;
     appearance: none;
     padding: 0;
@@ -2443,8 +2451,11 @@
             <span data-i18n="works.depth">Depth</span>
             <span class="num" id="depth-num">−2800m</span>
             <div class="ladder"><span id="ladder-mark"></span></div>
-            <span class="archive-label" data-i18n="works.archive">Archive</span>
-            <div class="archive" id="archive"></div>
+            <div class="archive-head">
+              <span class="archive-label" id="archive-label" data-i18n="works.archive">Archive</span>
+              <span class="archive-count" id="archive-count" aria-hidden="true">01 / 09</span>
+            </div>
+            <div class="archive" id="archive" role="navigation" aria-labelledby="archive-label"></div>
           </div>
 
           <div class="tunnel-notes" id="notes">
@@ -2930,6 +2941,8 @@ if (tunnelRoot) {
 const camera  = document.getElementById("camera");
 const notes   = document.getElementById("notes");
 const archive = document.getElementById("archive");
+const archiveCountEl = document.getElementById("archive-count");
+const openCurrentButton = document.getElementById("tunnel-fs");
 
 // each room sits at z = -i * spacing
 const Z_SPACING = 1800;
@@ -3028,6 +3041,18 @@ function clamp(value, min, max) {
 function smoothstep(edge0, edge1, value) {
   const t = clamp((value - edge0) / Math.max(0.0001, edge1 - edge0), 0, 1);
   return t * t * (3 - 2 * t);
+}
+
+function syncWorkNavigationLabels(index) {
+  const work = works[index];
+  if (!work) return;
+  if (archiveCountEl) {
+    archiveCountEl.textContent = `${String(index + 1).padStart(2, "0")} / ${String(works.length).padStart(2, "0")}`;
+  }
+  if (openCurrentButton) {
+    const action = ui("works.enter").replace(/\s*→\s*$/, "").trim();
+    openCurrentButton.setAttribute("aria-label", `${action}: ${work.title}`);
+  }
 }
 
 function updateArchiveWindow(bestIdx) {
@@ -3271,6 +3296,7 @@ function updateTunnel() {
       resetCaptionScroll(activeCopy, 0);
     }
     setApproachLabel("now", works[bestIdx].idx);
+    syncWorkNavigationLabels(bestIdx);
     approachEl.classList.add("now");
     archiveThumbs.forEach((th, i) => {
       th.classList.toggle("current", i === bestIdx);
@@ -3313,22 +3339,44 @@ function updateTunnel() {
   ladderMark.style.top = (t * 100).toFixed(1) + "%";
 }
 
-// click archive thumb → scroll to that room
+function scrollToWork(index) {
+  if (!works[index]) return;
+  scheduleVideoWarm(index, true);
+  const stops = tunnelStops();
+  const target = stops[index];
+  if (!Number.isFinite(target)) return;
+  const spacing = (stops[stops.length - 1] - stops[0]) / Math.max(1, stops.length - 1);
+
+  cancelAuto();
+  if (scrollAnim) cancelAnimationFrame(scrollAnim);
+  scrollAnim = null;
+  isProgrammaticScroll = false;
+  autoAnchorIdx = index;
+  wheelGestureLocked = true;
+  scheduleWheelRelease();
+  beginAutoAdvance(target, spacing, 1.8);
+}
+
+// The archive is one tab stop; arrow keys then move one work at a time.
 archiveThumbs.forEach((th, i) => {
   th.addEventListener("pointerenter", () => scheduleVideoWarm(i, true));
   th.addEventListener("focus", () => scheduleVideoWarm(i, true));
-  th.addEventListener("click", () => {
-    scheduleVideoWarm(i, true);
-    const tunnel = document.getElementById("tunnel");
-    const total = tunnel.offsetHeight - window.innerHeight;
-    const docTop = tunnel.getBoundingClientRect().top + window.scrollY;
-    const targetY = docTop + roomT(i) * total;
-    window.scrollTo({ top: targetY, behavior: reducedMotionQuery.matches ? "auto" : "smooth" });
+  th.addEventListener("click", () => scrollToWork(i));
+  th.addEventListener("keydown", (e) => {
+    let target = null;
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") target = Math.min(works.length - 1, i + 1);
+    if (e.key === "ArrowUp" || e.key === "ArrowLeft") target = Math.max(0, i - 1);
+    if (e.key === "Home") target = 0;
+    if (e.key === "End") target = works.length - 1;
+    if (target == null || target === i) return;
+    e.preventDefault();
+    archiveThumbs[target].focus({ preventScroll: true });
+    scrollToWork(target);
   });
 });
 
 // open fullscreen for current room
-document.getElementById("tunnel-fs").addEventListener("click", () => {
+openCurrentButton.addEventListener("click", () => {
   if (currentRoom >= 0) openOverlay(currentRoom);
 });
 
@@ -3484,14 +3532,14 @@ function cancelAuto() {
   tunnelStage?.removeAttribute("aria-busy");
 }
 
-function beginAutoAdvance(target, spacing) {
+function beginAutoAdvance(target, spacing, durationCap = 1) {
   autoTarget = target;
   autoStartT = performance.now();
   autoStartY = window.scrollY;
   const distanceRatio = Math.abs(target - autoStartY) / Math.max(1, spacing);
   autoDuration = reducedMotionQuery.matches
     ? 160
-    : AUTO_BASE_DUR * clamp(distanceRatio, 0.64, 1);
+    : AUTO_BASE_DUR * clamp(distanceRatio, 0.64, durationCap);
   tunnelStage?.style.setProperty("--transition-progress", "0");
   tunnelStage?.classList.add("room-transition");
   tunnelStage?.setAttribute("aria-busy", "true");
@@ -4313,6 +4361,7 @@ function applyLanguage() {
   } else {
     setApproachLabel("approach", works[0].idx);
   }
+  syncWorkNavigationLabels(Math.max(0, currentRoom));
 
   const mainLabel = mainSoundBtn?.querySelector(".ms-label");
   if (mainLabel) mainLabel.textContent = mainSoundOn ? ui("sound.on") : ui("sound.off");
