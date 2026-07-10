@@ -472,7 +472,6 @@
     aspect-ratio: 9 / 16;
     margin-left: calc(min(46vh, 380px) / -2);
     margin-top: calc(min(46vh, 380px) * 16 / 9 / -2);
-    will-change: transform, opacity;
     transition: opacity 320ms var(--ease);
     pointer-events: none; /* far frames not clickable */
   }
@@ -501,7 +500,10 @@
       margin-top: calc(min(40vw, 500px) * 3 / 4 / -2);
     }
   }
-  .tunnel-frame.focus { pointer-events: auto; }
+  .tunnel-frame.focus {
+    pointer-events: auto;
+    will-change: transform, opacity;
+  }
   .tunnel-frame.focus .frame-card {
     transition: transform 220ms var(--ease), border-color 280ms var(--ease), box-shadow 280ms var(--ease);
   }
@@ -649,10 +651,10 @@
       --note-push: 0px;
     }
     .tunnel-note .note-inner {
-      background: linear-gradient(to bottom, rgba(5,5,5,0.76), rgba(5,5,5,0.92));
+      background: linear-gradient(to bottom, rgba(5,5,5,0.94), rgba(5,5,5,0.99));
       border-top: 1px solid var(--line);
       padding: 18px 0 12px;
-      backdrop-filter: blur(10px);
+      backdrop-filter: none;
     }
     .tunnel-note .num {
       display: none;
@@ -2080,7 +2082,11 @@
       margin-bottom: 9px;
     }
 
-    .tunnel-note .note-context,
+    .tunnel-note .note-context {
+      margin-bottom: 24px;
+      line-height: 1.58;
+    }
+
     .overlay-meta .overlay-context {
       margin-bottom: 10px;
       line-height: 1.58;
@@ -2658,7 +2664,7 @@
   </div>
 </div>
 
-<script src="content/works.js?v=20260629-works9m"></script>
+<script src="content/works.js?v=20260710-perf1"></script>
 <script>
 /* ────────────────────────────────────────────────
    Data — loaded from content/works.js.
@@ -2980,6 +2986,9 @@ const approachAura = document.getElementById("approach-aura");
 let userHasScrolled = false;
 
 let currentRoom = -1;
+let interactiveRoom = -1;
+let interactiveCaptionReady = null;
+let lastReadyWarmIndex = -1;
 const warmedVideos = new Map();
 const captionScrollStates = new WeakMap();
 
@@ -3058,11 +3067,19 @@ function trimWarmedVideos(center) {
   });
 }
 
-function scheduleVideoWarm(center, urgent = false) {
+function scheduleVideoWarm(center, urgent = false, includeAdjacent = false) {
   const run = () => {
+    const activeReadingIntent =
+      document.body.dataset.activeSection === "works" &&
+      currentRoom === center &&
+      tunnelStage?.classList.contains("caption-ready");
+    if (!urgent && !overlay?.classList.contains("active") && !activeReadingIntent) return;
+
     warmVideo(center);
-    warmVideo(center + 1);
-    warmVideo(center - 1);
+    if (includeAdjacent) {
+      warmVideo(center + 1);
+      warmVideo(center - 1);
+    }
     trimWarmedVideos(center);
   };
 
@@ -3202,6 +3219,12 @@ function updateTunnel() {
   const activeRelZ = frameMetrics[bestIdx]?.relZ ?? Infinity;
   const captionReady = Math.abs(activeRelZ) <= Z_SPACING * 0.26;
   tunnelStage.classList.toggle("caption-ready", captionReady);
+  if (captionReady && lastReadyWarmIndex !== bestIdx) {
+    lastReadyWarmIndex = bestIdx;
+    scheduleVideoWarm(bestIdx);
+  } else if (!captionReady) {
+    lastReadyWarmIndex = -1;
+  }
 
   updateNoteAvoidance(bestIdx, frameMetrics);
 
@@ -3226,8 +3249,6 @@ function updateTunnel() {
     tunnelNotes.forEach((n, i) => {
       const isCurrent = i === bestIdx;
       n.classList.toggle("in", isCurrent);
-      n.setAttribute("aria-hidden", isCurrent ? "false" : "true");
-      n.toggleAttribute("inert", !isCurrent);
     });
     const activeCopy = tunnelNotes[bestIdx]?.querySelector(".note-copy");
     if (activeCopy) {
@@ -3245,29 +3266,29 @@ function updateTunnel() {
     tunnelFrames.forEach((f, i) => {
       const isCurrent = i === bestIdx;
       f.classList.toggle("focus", isCurrent);
-      f.tabIndex = isCurrent ? 0 : -1;
-      f.setAttribute("aria-hidden", isCurrent ? "false" : "true");
-      f.toggleAttribute("inert", !isCurrent);
       if (isCurrent) f.setAttribute("aria-current", "true");
       else f.removeAttribute("aria-current");
     });
-    scheduleVideoWarm(bestIdx);
+    updateArchiveWindow(bestIdx);
   }
 
-  tunnelNotes.forEach((n, i) => {
-    const isReadable = i === bestIdx && captionReady;
-    n.setAttribute("aria-hidden", isReadable ? "false" : "true");
-    n.toggleAttribute("inert", !isReadable);
-  });
-  tunnelFrames.forEach((f, i) => {
-    const isEnterable = i === bestIdx && captionReady;
-    f.tabIndex = isEnterable ? 0 : -1;
-    f.setAttribute("aria-hidden", isEnterable ? "false" : "true");
-    f.toggleAttribute("inert", !isEnterable);
-  });
+  if (bestIdx !== interactiveRoom || captionReady !== interactiveCaptionReady) {
+    interactiveRoom = bestIdx;
+    interactiveCaptionReady = captionReady;
+    tunnelNotes.forEach((n, i) => {
+      const isReadable = i === bestIdx && captionReady;
+      n.setAttribute("aria-hidden", isReadable ? "false" : "true");
+      n.toggleAttribute("inert", !isReadable);
+    });
+    tunnelFrames.forEach((f, i) => {
+      const isEnterable = i === bestIdx && captionReady;
+      f.tabIndex = isEnterable ? 0 : -1;
+      f.setAttribute("aria-hidden", isEnterable ? "false" : "true");
+      f.toggleAttribute("inert", !isEnterable);
+    });
+  }
 
   updateApproachCollision(bestIdx);
-  updateArchiveWindow(bestIdx);
 
   // depth meter readout — distance still ahead until the last room
   const depth = Math.round(-(TUNNEL_DEPTH - camZ));
@@ -3364,7 +3385,10 @@ function requestTunnelUpdate() {
 }
 
 window.addEventListener("scroll", requestTunnelUpdate, { passive: true });
-window.addEventListener("resize", updateTunnel);
+window.addEventListener("resize", () => {
+  updateTunnel();
+  updateArchiveWindow(Math.max(0, currentRoom));
+});
 updateTunnel();
 
 // Mark that the user has actually started scrolling — once true, the nudge
@@ -4385,6 +4409,7 @@ function openOverlay(i) {
   resetOverlayScroll();
   overlay.classList.add("active");
   overlay.setAttribute("aria-hidden", "false");
+  scheduleVideoWarm(i, false, true);
   document.body.classList.add("in-overlay");
   setOverlayBackgroundInert(true);
   lockPageScroll();
@@ -4442,6 +4467,7 @@ function transition(dir) {
   ovActive = nextActive;
   paintMeta(next);
   resetOverlayScroll();
+  scheduleVideoWarm(next, false, true);
   if (ovSoundOn && works[next].video) {
     startAmbient(nxt);
   } else if (mainSoundOn && mainArmed) {
