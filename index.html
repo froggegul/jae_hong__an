@@ -69,6 +69,7 @@
     --pad-x:    clamp(20px, 4vw, 56px);
     --max-w:    1280px;
     --gutter:   clamp(20px, 5vw, 64px);
+    --section-anchor-offset: 80px;
 
     --caption-label-size: 10px;
     --caption-label-line: 1.68;
@@ -192,6 +193,7 @@
   .lang-toggle span.active { color: var(--ink); }
   .lang-toggle:hover span { color: var(--ink-70); }
   @media (max-width: 720px) {
+    :root { --section-anchor-offset: 104px; }
     header.top {
       padding: calc(12px + env(safe-area-inset-top)) 0 10px;
       background: linear-gradient(to bottom, rgba(5,5,5,0.96), rgba(5,5,5,0.78) 78%, transparent);
@@ -238,6 +240,12 @@
       text-align: right;
     }
   }
+  @media (max-width: 360px) {
+    nav.menu {
+      gap: 10px;
+      font-size: 10px;
+    }
+  }
   html[data-lang="en"] .lang-ko,
   html[data-lang="ko"] .lang-en { display: none !important; }
   p, li, nav, footer, .caption {
@@ -281,6 +289,12 @@
       filter  var(--dur-mid) var(--ease),
       transform var(--dur-mid) var(--ease);
     will-change: opacity, filter, transform;
+  }
+  #works,
+  #statement,
+  #bio,
+  #contact {
+    scroll-margin-top: var(--section-anchor-offset);
   }
   .section.recede {
     opacity: 0.55;
@@ -379,6 +393,18 @@
     margin: 16px 0 0;
     max-width: 22ch;
     font-weight: 900;
+  }
+  @media (max-width: 720px) {
+    .section-head {
+      grid-template-columns: 1fr;
+      gap: 7px;
+    }
+    .section-head .num[style*="text-align:right"] {
+      text-align: left !important;
+    }
+    .section-head h2 {
+      margin-top: 10px;
+    }
   }
   .works-intro {
     padding-top: clamp(56px, 8vh, 96px);
@@ -760,8 +786,8 @@
   .approach-label {
     position: absolute;
     top: clamp(96px, 14vh, 132px);
-    left: clamp(20px, 5vw, 64px);
-    transform: translateY(var(--approach-shift-y, 0px));
+    left: 50%;
+    transform: translate(-50%, var(--approach-shift-y, 0px));
     display: flex;
     gap: 10px;
     align-items: baseline;
@@ -769,7 +795,7 @@
     letter-spacing: 0.22em; text-transform: uppercase;
     color: var(--ink-62);
     transition: color 240ms var(--ease);
-    text-align: left;
+    text-align: center;
   }
   .approach-label .approach-number { color: var(--ink); }
   .approach-label.now { color: var(--ink); }
@@ -2549,8 +2575,8 @@ function workContext(work) {
 
 function workBody(work) {
   return currentLang === "ko"
-    ? (work.fullDesc || work.desc || work.fullDescEn || work.descEn || "")
-    : (work.fullDescEn || work.descEn || work.fullDesc || work.desc || "");
+    ? (work.desc || work.fullDesc || work.descEn || work.fullDescEn || "")
+    : (work.descEn || work.fullDescEn || work.desc || work.fullDesc || "");
 }
 
 const fallbackWorks = [
@@ -3112,6 +3138,8 @@ const WHEEL_RELEASE_MS = 220;
 let cooldownFeedbackTimer = null;
 let wheelReleaseTimer = null;
 let wheelGestureLocked = false;
+let wheelCaptionLocked = false;
+let wheelCaptionTarget = null;
 
 function tunnelStops() {
   const tunnel = document.getElementById("tunnel");
@@ -3179,6 +3207,8 @@ function scheduleWheelRelease() {
       return;
     }
     wheelGestureLocked = false;
+    wheelCaptionLocked = false;
+    wheelCaptionTarget = null;
     tunnelStage?.classList.remove("scroll-buffered");
   }, WHEEL_RELEASE_MS);
 }
@@ -3560,6 +3590,17 @@ function routeCaptionWheel(e) {
     return true;
   }
 
+  // Once a wheel burst starts inside a caption, keep the whole burst there.
+  // This prevents the final momentum ticks from nudging the page or advancing
+  // a room before the user lifts their fingers and starts a new gesture.
+  if (wheelCaptionLocked) {
+    e.preventDefault();
+    if (canScrollElement(wheelCaptionTarget, e.deltaY)) {
+      softScrollElement(wheelCaptionTarget, e.deltaY);
+    }
+    return true;
+  }
+
   const copy = activeCaptionCopyForWheel(e);
   if (!canScrollElement(copy, e.deltaY)) return false;
 
@@ -3568,6 +3609,8 @@ function routeCaptionWheel(e) {
   // the cursor is over the video. At the text edge, the tunnel takes over.
   e.preventDefault();
   cancelAuto();
+  wheelCaptionLocked = true;
+  wheelCaptionTarget = copy;
   softScrollElement(copy, e.deltaY);
   return true;
 }
