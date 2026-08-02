@@ -4,6 +4,27 @@
 window.JAEHONG_WORKS = [
   {
     idx: "01",
+    title: "MSC: CRM 90",
+    desc: "기억이 삭제된 채 90년의 냉동형을 선고받은 한 인물이 2167년 해동과 재활을 앞두고 자신의 삶을 되짚는다. 미래의 형벌 시스템과 노년 여성의 증언이 교차하는 가운데, 작품은 기억이 지워진 뒤에도 한 사람의 삶과 관계가 남을 수 있는지 묻는다. 형벌과 돌봄, 기억의 소유권을 둘러싼 이야기를 통해 한 사람을 다시 사회로 돌려보낸다는 말의 의미를 되짚는다.",
+    descEn: "A woman sentenced to ninety years in cryonic confinement with her memory erased looks back on her life before her scheduled thawing and rehabilitation in 2167. As her testimony intersects with the apparatus of a future penal system, the work asks whether a person's life and relationships can remain after memory has been removed. It considers punishment, care, the ownership of memory, and what it means to return someone to society.",
+    fullDesc: "MSC: CRM 90\nJaehong An, 2026\nAI Generated · Single-channel Video\n16:9\nUNCOMMON OPEN CALL\n언커먼 갤러리\n2026.07.02 - 2026.07.16\n\n기억이 삭제된 채 90년의 냉동형을 선고받은 한 인물이 2167년 해동과 재활을 앞두고 자신의 삶을 되짚는다. 미래의 형벌 시스템과 노년 여성의 증언이 교차하는 가운데, 작품은 기억이 지워진 뒤에도 한 사람의 삶과 관계가 남을 수 있는지 묻는다. 형벌과 돌봄, 기억의 소유권을 둘러싼 이야기를 통해 한 사람을 다시 사회로 돌려보낸다는 말의 의미를 되짚는다.",
+    fullDescEn: "MSC: CRM 90\nJaehong An, 2026\nAI Generated · Single-channel Video\n16:9\nUNCOMMON OPEN CALL\nUncommon Gallery\nJuly 2-16, 2026\n\nA woman sentenced to ninety years in cryonic confinement with her memory erased looks back on her life before her scheduled thawing and rehabilitation in 2167. As her testimony intersects with the apparatus of a future penal system, the work asks whether a person's life and relationships can remain after memory has been removed. It considers punishment, care, the ownership of memory, and what it means to return someone to society.",
+    year: "2026.07",
+    medium: "AI Generated · Single-channel Video",
+    duration: "9′26″",
+    aspect: "16:9",
+    layout: "wide",
+    context: "UNCOMMON OPEN CALL\n언커먼 갤러리\n2026.07.02 - 2026.07.16",
+    contextEn: "UNCOMMON OPEN CALL\nUncommon Gallery\nJuly 2-16, 2026",
+    caption: "UNCOMMON OPEN CALL · Uncommon Gallery, 2026",
+    frameCaption: "UNCOMMON OPEN CALL",
+    poster: "assets/posters/work-msc-crm-90.jpg",
+    externalUrl: "https://youtu.be/iT_cagP-TFw",
+    externalLabel: "Watch on YouTube →",
+    externalLabelKo: "YouTube에서 보기 →"
+  },
+  {
+    idx: "02",
     title: "SaRangHae - The Last Message Before the End of Civilization",
     desc: "〈SaRangHae - The Last Message Before the End of Civilization〉은 한국어 ‘사랑해’를 인류 문명의 끝자락에서 남겨지는 마지막 메시지로 상상한 대형 디지털 미디어 작품이다. 작가는 2024년, 앞으로 세계에 좋지 않은 일들이 벌어질 것 같다는 불길한 예감을 느꼈고, 뉴욕 타임스퀘어라는 거대한 공적 공간에서 어떤 말을 외쳐야 할지 고민했다. 그 끝에 선택한 말은 구호도 경고도 선언도 아닌, 가장 사적이고 연약한 말인 ‘사랑해’였다.\n\n생성형 AI로 구현된 디지털 아바타는 화면 속에서 ‘사랑해’라고 말하지만, 대형 전광판이라는 상영 환경 속에서 그 목소리는 실제 현장에 들리지 않는다. 원본 영상에는 사운드가 존재하지만, 타임스퀘어의 군중과 광고, 도시의 소음 속에서 이 발화는 무음의 외침이 된다. 작가가 현장에서 작품을 아카이빙했을 때, 사람들은 그 영상을 거의 바라보지 않았다. 그 장면은 작품의 외부 조건이 아니라 작품의 일부가 된다. 사랑은 외쳐지지만 들리지 않고, 존재는 말하지만 세계는 지나쳐 간다.\n\n작품 속 미래적 장면들은 외계 행성 탐사, 초연결 네트워크, 지속가능한 연구 시설, 우주여행의 이미지로 구성되어 있다. 그러나 이 미래의 풍경은 낙관적 전망이라기보다, 전쟁과 혐오, 환경 파괴, 증오가 확산되는 현실과 충돌하며 불안한 대비를 이룬다. 2026년 현재 더욱 첨예해진 국제적 갈등 속에서, 2024년에 던져진 ‘사랑해’라는 말은 뒤늦게 도착한 경고처럼 보인다. 이 작품은 사랑이 세상을 구할 수 있다고 쉽게 말하지 않는다. 오히려 사랑마저 들리지 않게 된 세계에서, 우리가 무엇을 잃어가고 있는지를 묻는다.",
     descEn: "SaRangHae - The Last Message Before the End of Civilization is a large-scale digital media work that imagines the Korean phrase ‘사랑해’ or ‘I love you’ as the final message left at the edge of civilization.\n\nCreated in 2024, the work began with a quiet sense of foreboding. The artist felt that something dark was gathering in the world, that conflicts, hatred, and violence might soon intensify beyond familiar boundaries. Faced with the question of what kind of cry should be sent into the public heart of New York, he chose neither a warning nor a slogan, but the most intimate and fragile phrase: ‘I love you.’\n\nIn the work, an AI-generated digital avatar repeatedly speaks the word ‘SaRangHae.’ The original video contains sound, yet the conditions of its presentation on a large LED screen in Times Square made the voice inaudible in the actual site. The figure speaks, but the voice does not reach the crowd. Love is uttered, yet it disappears into the noise of the city, the flow of advertisements, and the indifference of passersby.\n\nWhen the artist documented the work in Times Square, he observed that almost no one stopped to look at the image. This scene became inseparable from the work itself. The piece was no longer only about the delivery of a message, but about a being calling out love into a world that no longer listens. Its silence, distance, and failure to arrive became part of its meaning.\n\nThe futuristic scenes within the work, including alien exploration, hyper-connected networks, sustainable research facilities, and space travel, appear at first as visions of progress. Yet they are placed against the growing realities of war, ecological collapse, social hostility, and collective exhaustion. Seen from 2026, the word chosen in 2024 now carries a more urgent resonance. What once appeared as a simple declaration of love begins to read as a delayed warning, a fragile signal sent before the storm became visible.\n\nThe work does not claim that love can easily save the world. Instead, it asks what happens when even love can no longer be heard. In a civilization saturated with images, noise, and conflict, SaRangHae becomes a silent cry, a final attempt to speak the one word that might still matter before everything collapses.",
@@ -22,7 +43,7 @@ window.JAEHONG_WORKS = [
     poster: "assets/posters/work-00-web.jpg"
   },
   {
-    idx: "02",
+    idx: "03",
     title: "A HUNDRED POSSIBILITIES & VENECITE",
     desc: "생성형 인공지능으로 만들어진 사실적인 가상 인물들을 휴먼 스케일의 LED 화면으로 광화문광장에 세운 디지털 아트 설치 작업이다. 가까운 미래에서 온 듯한 인물들은 각자의 서사를 품은 채 현실 공간에 놓이고, 디지털 세계와 인간 세계 사이의 경계를 조용히 흐린다.\n\n현장에는 생성형 AI를 활용한 여러 이미지들이 빠른 움직임과 강한 시각 효과를 만들어내고 있었다. 그 사이에서 이 작업은 오히려 정적인 구성과 절제된 움직임으로 관람자의 시선을 붙잡았다. 거의 멈춰 있는 듯한 인물들은 낯선 존재감을 만들었고, 어린이 관람객들이 작품 앞에 오래 머물며 집중하는 장면도 목격되었다.\n\n과거와 현재, 미래가 겹쳐 있는 광화문광장에서 작업은 인공지능 기술과 예술이 만들어내는 새로운 현실감, 그리고 인간과 비인간 존재가 함께 놓일 미래의 풍경을 바라본다.",
     descEn: "A digital art installation that presented realistic virtual figures generated with AI on human-scale LED screens in Gwanghwamun Square. These figures seem to belong to a near future, yet they enter a public urban space with their own latent narratives, quietly blurring the boundary between the digital world and the human one.\n\nAmid other generative AI works that emphasized rapid movement and intense visual effects, this piece held attention through stillness and restrained motion. The nearly motionless figures created a strange presence, and children at the site were seen lingering in front of the work, looking closely.\n\nSet in Gwanghwamun Square, where past, present, and future overlap, the work considers a new sense of reality shaped by AI and art, and imagines a future landscape in which human and non-human presences coexist.",
@@ -30,7 +51,7 @@ window.JAEHONG_WORKS = [
     fullDescEn: "A HUNDRED POSSIBILITIES & VENECITE\nJaehong An, 2023\nAI Generated · Single-channel Video\n960×1920 px / 1m × 2m vertical LED screen\n2023 SEOULIGHT GWANGHWAMUN\nYukjo Madang, Gwanghwamun Square, Seoul\nDecember 22, 2023 - January 21, 2024\n\nA digital art installation that presented realistic virtual figures generated with AI on human-scale LED screens in Gwanghwamun Square. These figures seem to belong to a near future, yet they enter a public urban space with their own latent narratives, quietly blurring the boundary between the digital world and the human one.\n\nAmid other generative AI works that emphasized rapid movement and intense visual effects, this piece held attention through stillness and restrained motion. The nearly motionless figures created a strange presence, and children at the site were seen lingering in front of the work, looking closely.\n\nSet in Gwanghwamun Square, where past, present, and future overlap, the work considers a new sense of reality shaped by AI and art, and imagines a future landscape in which human and non-human presences coexist.",
     year: "2023.12",
     medium: "AI Generated · Single-channel Video",
-    duration: "1′40″",
+    duration: "0′53″",
     aspect: "960×1920 px / 1m×2m",
     context: "2023 서울라이트 광화문\n광화문광장 육조마당\n2023.12.22 - 2024.01.21",
     contextEn: "2023 SEOULIGHT GWANGHWAMUN\nYukjo Madang, Gwanghwamun Square, Seoul\nDecember 22, 2023 - January 21, 2024",
@@ -40,29 +61,33 @@ window.JAEHONG_WORKS = [
     poster: "assets/posters/work-seoulight-2023.jpg"
   },
   {
-    idx: "03",
+    idx: "04",
     title: "Elevate",
     desc: "이 작품은 외모 지상주의가 만연한 현대 사회에서 끝없이 완벽함을 추구하다 결국 자아를 잃고 파멸로 향하는 한 여성의 모습을 상징적으로 담고 있습니다. 불안한 표정으로 고급 성형 클리닉으로 향하는 엘리베이터에 오르는 여성. 수술 후 아름다워진 자신의 얼굴을 보며 잠시나마 만족하지만, 미디어 속에 끊임없이 등장하는 더욱 아름다운 얼굴들에 다시 열등감에 빠지게 됩니다. 완벽한 아름다움을 좇으며 반복해서 엘리베이터를 오르내릴수록, 그녀의 얼굴은 점점 더 왜곡되고 변형됩니다. 위로만 움직이는 엘리베이터와 달리, 그녀의 최종 목적지는 결국 자아가 소멸되는 자기 파괴의 순간입니다. 이 작품은 뉴욕에 본사를 둔 영상 생성 인공지능 기업 ‘Runway’가 주최한 단편 영화 공모전(Runway Gen:48 Aleph Edition)에서 2025년 9월 4일 관객상(People’s Choice Honoree)을 수상하며 예술성과 사회적 메시지 모두를 인정받았습니다. 특히 영화 제작 전 과정이 공모전 참가 조건인 48시간 이내에 모두 완성되었다는 점에서 생성형 인공지능의 강력한 가능성과 그 위력을 상징적으로 보여줍니다.",
     descEn: "A woman with a nervous expression steps into an elevator, ascending to an upscale cosmetic clinic. After payment, paperwork, and surgery, she stands before the elevator mirror. Her reflection reveals a smoother, more beautiful face than before. She descends with satisfaction and steps outside, only to be confronted by media screens displaying faces even more attractive than her newly acquired beauty. Within seconds, her newfound satisfaction transforms into another standard, another inadequacy. With each repeated journey up and down the elevator, her appearance grows increasingly distorted. Unlike the elevator that only moves upward, her ultimate destination is self-destruction, where even her very self disappears.",
-    fullDescEn: "Elevate\nJaehong An & Haeyun Shin, 2025\nAI Generated · Single-channel Video\n4096×2304 px\nRunway GEN:48 ALEPH EDITION · People's Choice Honoree\nOnline streaming\nAugust 11-23, 2025\n\nA woman with a nervous expression steps into an elevator, ascending to an upscale cosmetic clinic. After payment, paperwork, and surgery, she stands before the elevator mirror. Her reflection reveals a smoother, more beautiful face than before. She descends with satisfaction and steps outside, only to be confronted by media screens displaying faces even more attractive than her newly acquired beauty. Within seconds, her newfound satisfaction transforms into another standard, another inadequacy. With each repeated journey up and down the elevator, her appearance grows increasingly distorted. Unlike the elevator that only moves upward, her ultimate destination is self-destruction, where even her very self disappears.",
+    fullDescEn: "Elevate\nJaehong An & Haeyun Shin, 2025\nAI Generated · Single-channel Video\n4096×2304 px\nRunway GEN:48 ALEPH EDITION · People's Choice Honoree\nRunway Gen:48 Aleph Edition\nAugust 23-25, 2025\n\nA woman with a nervous expression steps into an elevator, ascending to an upscale cosmetic clinic. After payment, paperwork, and surgery, she stands before the elevator mirror. Her reflection reveals a smoother, more beautiful face than before. She descends with satisfaction and steps outside, only to be confronted by media screens displaying faces even more attractive than her newly acquired beauty. Within seconds, her newfound satisfaction transforms into another standard, another inadequacy. With each repeated journey up and down the elevator, her appearance grows increasingly distorted. Unlike the elevator that only moves upward, her ultimate destination is self-destruction, where even her very self disappears.",
     year: "2025.08",
     medium: "AI Generated · Single-channel Video",
     duration: "3′11″",
     aspect: "4096×2304 px",
     layout: "wide",
-    context: "온라인 스트리밍\n2025.08.11 - 2025.08.23",
-    contextEn: "Online streaming\nAugust 11-23, 2025",
+    context: "Runway Gen:48 Aleph Edition\n2025.08.23 - 2025.08.25",
+    contextEn: "Runway Gen:48 Aleph Edition\nAugust 23-25, 2025",
     caption: "Runway GEN:48 ALEPH EDITION · People's Choice Honoree",
     frameCaption: "Runway GEN:48 ALEPH EDITION",
     award: "Runway GEN:48 ALEPH EDITION · People's Choice Honoree",
     authors: "Jaehong An & Haeyun Shin",
+    credit: "공동 제작 · 안재홍 · 신해윤",
+    creditEn: "Co-created by Jaehong An & Haeyun Shin",
     poster: "assets/posters/work-04.webp",
     externalUrl: "https://runwayml.com/gen48?film=elevate",
+    externalLabel: "Watch on Runway →",
+    externalLabelKo: "Runway에서 보기 →",
     youtubeId: "bnU5NJ90peU",
-    fullDesc: "Elevate\nJaehong An & Haeyun Shin, 2025\nAI Generated · Single-channel Video\n4096×2304 px\nRunway GEN:48 ALEPH EDITION · People's Choice Honoree\n온라인 스트리밍\n2025.08.11 - 2025.08.23\n\n이 작품은 외모 지상주의가 만연한 현대 사회에서 끝없이 완벽함을 추구하다 결국 자아를 잃고 파멸로 향하는 한 여성의 모습을 상징적으로 담고 있습니다. 불안한 표정으로 고급 성형 클리닉으로 향하는 엘리베이터에 오르는 여성. 수술 후 아름다워진 자신의 얼굴을 보며 잠시나마 만족하지만, 미디어 속에 끊임없이 등장하는 더욱 아름다운 얼굴들에 다시 열등감에 빠지게 됩니다. 완벽한 아름다움을 좇으며 반복해서 엘리베이터를 오르내릴수록, 그녀의 얼굴은 점점 더 왜곡되고 변형됩니다. 위로만 움직이는 엘리베이터와 달리, 그녀의 최종 목적지는 결국 자아가 소멸되는 자기 파괴의 순간입니다. 이 작품은 뉴욕에 본사를 둔 영상 생성 인공지능 기업 ‘Runway’가 주최한 단편 영화 공모전(Runway Gen:48 Aleph Edition)에서 2025년 9월 4일 관객상(People’s Choice Honoree)을 수상하며 예술성과 사회적 메시지 모두를 인정받았습니다. 특히 영화 제작 전 과정이 공모전 참가 조건인 48시간 이내에 모두 완성되었다는 점에서 생성형 인공지능의 강력한 가능성과 그 위력을 상징적으로 보여줍니다."
+    fullDesc: "Elevate\nJaehong An & Haeyun Shin, 2025\nAI Generated · Single-channel Video\n4096×2304 px\nRunway GEN:48 ALEPH EDITION · People's Choice Honoree\nRunway Gen:48 Aleph Edition\n2025.08.23 - 2025.08.25\n\n이 작품은 외모 지상주의가 만연한 현대 사회에서 끝없이 완벽함을 추구하다 결국 자아를 잃고 파멸로 향하는 한 여성의 모습을 상징적으로 담고 있습니다. 불안한 표정으로 고급 성형 클리닉으로 향하는 엘리베이터에 오르는 여성. 수술 후 아름다워진 자신의 얼굴을 보며 잠시나마 만족하지만, 미디어 속에 끊임없이 등장하는 더욱 아름다운 얼굴들에 다시 열등감에 빠지게 됩니다. 완벽한 아름다움을 좇으며 반복해서 엘리베이터를 오르내릴수록, 그녀의 얼굴은 점점 더 왜곡되고 변형됩니다. 위로만 움직이는 엘리베이터와 달리, 그녀의 최종 목적지는 결국 자아가 소멸되는 자기 파괴의 순간입니다. 이 작품은 뉴욕에 본사를 둔 영상 생성 인공지능 기업 ‘Runway’가 주최한 단편 영화 공모전(Runway Gen:48 Aleph Edition)에서 2025년 9월 4일 관객상(People’s Choice Honoree)을 수상하며 예술성과 사회적 메시지 모두를 인정받았습니다. 특히 영화 제작 전 과정이 공모전 참가 조건인 48시간 이내에 모두 완성되었다는 점에서 생성형 인공지능의 강력한 가능성과 그 위력을 상징적으로 보여줍니다."
   },
   {
-    idx: "04",
+    idx: "05",
     title: "The Return of Love",
     desc: "2030년, 인류가 기술적 특이점을 넘어 질병과 빈곤, 심지어 죽음까지 극복한 풍요로운 세상 속에서 사랑과 인간성의 가치를 되찾기 위해 거리로 나선 한 젊은 활동가의 이야기를 담고 있습니다. 모든 것이 완벽해 보이는 이 세계의 화려한 네온 불빛 아래, 그녀는 사람들에게 강렬한 눈빛으로 호소합니다. 그녀는 \"2030년, 우리는 기술적 특이점을 넘어 AI와 함께 질병과 빈곤을 없애고 죽음마저 극복했습니다. 하지만 이 완벽함의 이면에는 불편한 진실이 있습니다. 죽음의 부재는 영원한 불평등을 낳았고, 유한한 삶이 주던 소중함은 사라졌습니다. 인간성의 심장과 영혼이라 할 수 있는 사랑마저 우리에게서 멀어졌습니다\"라고 말하며, \"사라진 사랑을 되찾기 위한 간절한 외침\"으로서 저항한다고 선언합니다. 이 작품은 기술의 풍요 속에서도 잃어서는 안 될 인간의 본질적 가치—사랑, 연대, 공감의 회복을 외치는 한 활동가의 열정적인 메시지를 시적으로 담아내고 있습니다.",
     descEn: "Set in 2030, this story follows a young activist taking to the streets to reclaim the values of love and humanity in a world of abundance, where humanity has surpassed the technological singularity, overcoming disease, poverty, and even death. Beneath the glittering neon lights of this seemingly perfect world, she passionately appeals to the crowd:\n\"In 2030, we've crossed the technological singularity, eliminating disease and poverty alongside AI, and even conquering death itself. Yet, behind this perfection lies an uncomfortable truth. The absence of death has led to eternal inequality, stripping away the preciousness once found in our finite existence. Even love, the heart and soul of humanity, has become distant.\"\nShe declares her activism as a desperate plea to recover the lost essence of love. Poetically, the work conveys a powerful message about preserving the fundamental human values—love, solidarity, and empathy—that must never be sacrificed, even amidst technological abundance.",
@@ -81,7 +106,7 @@ window.JAEHONG_WORKS = [
     layout: "four-three"
   },
   {
-    idx: "05",
+    idx: "06",
     title: "What is Real? What is Human?",
     desc: "1940년에 개봉된 찰리 채플린의 영화 〈위대한 독재자〉를, 특히 마지막 연설을 중심으로 현재의 기술문명의 흐름 안에서 다시 소환한 작업이다. 채플린이 제작, 각본, 감독, 주연을 맡은 이 반파시즘 풍자 영화가 전쟁과 파시즘의 시대에 인간성과 자유의 회복을 호소했다면, 이 작품은 그 텍스트가 오늘날에도 여전히 유효한지를 묻는다.\n\n작품 속 스피치는 온전한 인간이 아니라 기계화된 인간의 얼굴과 목소리를 통해 전달된다. 인간성에 대한 오래된 문장이 비인간적 기술의 표면을 통과할 때, 메시지는 단순한 인용이 아니라 현대 문명의 역설을 드러내는 장면이 된다. 무엇이 인간을 인간답게 하는지, 왜 우리는 아직도 기계를 모방하려 하는지, 그리고 그 질문을 누가 말하고 있는지를 확인시킨다.",
     descEn: "This work recalls Charlie Chaplin’s 1940 film The Great Dictator, especially its final speech, within the current flow of technological civilization. Written, directed, produced, and performed by Chaplin, the anti-fascist satire appealed for the recovery of humanity and freedom in an age of war and fascism. This work asks whether that text still remains valid today.\n\nThe speech is delivered not through an intact human body, but through the face and voice of a mechanized human figure. When an old sentence about humanity passes through the surface of nonhuman technology, the message becomes less a quotation than a scene that exposes the paradox of modern civilization. It asks what makes a human human, why we still try to imitate machines, and who is now speaking that question.",
@@ -99,7 +124,7 @@ window.JAEHONG_WORKS = [
     poster: "assets/posters/work-02.jpg"
   },
   {
-    idx: "06",
+    idx: "07",
     title: "Circuits of Grace",
     desc: "무뇌증으로 대뇌 없이 태어났지만, 첨단 기술로 만들어진 기계 뇌와 인공지능 소프트웨어 덕분에 걷고, 말하고, 생각하고, 감정을 느낄 수 있게 된 한 여성 수도자의 특별한 삶과 내면의 고백을 담고 있습니다. 그녀는 어린 시절 따돌림을 당했고, 뛰어난 성적에도 일자리를 얻을 수 없었습니다. 존재의 의미를 깊이 고민한 끝에, 그녀는 이 특별한 삶을 축복으로 받아들이고 수도자가 되어 자신과 비슷한 어려움을 겪는 아이들을 돕는 삶을 택했습니다. 그녀는 조용한 성당에서 \"애초에 살아 있을 수 없는 몸으로 태어난 제가 이렇게 살아있다는 건 축복 아닐까요?\"라고 고백하며, 아이들이 각자의 특별한 삶의 길을 걸어갈 때 주님의 은총이 함께하기를 기도합니다. 이 작품은 고통과 축복, 기술과 신앙이 만나는 곳에서 피어난 한 존재의 아름답고 고결한 선택을 섬세하게 그려내고 있습니다.",
     descEn: "This story portrays the extraordinary life and inner reflections of a female monk who was born without a brain due to anencephaly, yet can now walk, speak, think, and feel emotions thanks to an advanced mechanical brain and artificial intelligence software. Throughout her childhood, she endured bullying and faced job discrimination despite her exceptional abilities. After deeply pondering the meaning of her existence, she ultimately chose to view her unique life as a blessing, dedicating herself as a monk to supporting children facing similar struggles.\nIn a quiet cathedral, she confesses:\n\"Isn't it a blessing that I, born with a body that should never have survived, am alive today?\"\nShe prays that divine grace accompanies every child navigating their own extraordinary paths. This work delicately captures the beautiful and noble choices of a soul blossoming at the intersection of pain and blessing, technology and faith.",
@@ -118,7 +143,7 @@ window.JAEHONG_WORKS = [
     layout: "four-three"
   },
   {
-    idx: "07",
+    idx: "08",
     title: "The Breath Keepers",
     desc: "태어날 때부터 눈이 보이지 않았던 것은 아니다. 우연히 일어난 단 한 번의 사고 이후, 아무것도 볼 수가 없었다. 지금의 시대에는 새로운 아이를 만드는 일이 너무 쉬워졌고, 고장난 아이는 쉽게 버려진다. 나는 부서진 기계들이 쌓여 있는 폐기물 구역으로 보내졌다. 그곳에서 나처럼 거의 앞을 볼 수 없던 한 여성 무속인이 나를 발견했다. 그녀는 나를 산 정상의 움막으로 데려갔고, 시각이 아닌 감각으로 살아가는 법을 가르쳐주었다.\n\n그녀의 집단은 불행을 지우려 하지 않는다. 대신 고통을 품은 채 무너지지 않고 서는 훈련을 평생 이어나간다. 무속인들은 남은 숨결과 기억, 생존의 비밀을 어린 아이들에게 넘겨준 뒤, 비워진 몸으로 조용히 죽음을 맞이한다. 그녀는 떠나기 전, 자신을 이을 무속인으로 나를 지명했다. 모두가 기계에 의존해 살아가지만, 길을 잃은 몇몇 사람들은 가끔 거대한 도시를 뒤로하고 이 산 정상의 집을 향해 길고 가파른 길을 오른다. 숨이 목 끝까지 차올라 거세게 울릴 때까지.",
     descEn: "I was not born blind. After a single accident that happened by chance, I could no longer see anything. In this age, making new children has become far too easy, and a faulty child is easily thrown away. I was sent to a waste zone piled with broken machines. There, a woman shaman who could barely see, like me, found me. She took me to a hut on the mountaintop and taught me how to live through senses other than sight.\n\nHer group does not try to erase misfortune. Instead, they spend their lives training to stand without breaking while carrying pain. Shamans hand over their remaining breath, memories, and secrets of survival to children, then quietly greet death in emptied bodies. Before she left, she named me as the shaman who would follow after her. Everyone lives depending on machines, but a few of the lost sometimes leave the enormous city behind and climb the long, steep path toward this house on the mountaintop, until breath rises to their throats and pounds fiercely.",
@@ -136,7 +161,7 @@ window.JAEHONG_WORKS = [
     poster: "assets/posters/work-07-breath-keepers.jpg"
   },
   {
-    idx: "08",
+    idx: "09",
     title: "Moebius",
     desc: "기억을 잃고 낯선 공간에서 깨어난 인물이 자신의 정체성을 찾아가는 과정에서 겪는 내면적 붕괴와 끝없는 자기혐오의 반복을 그려낸 작품입니다. 배우 신해윤이 1인 2역을 맡아 서로 얽힌 자아의 혼란을 깊이 있게 표현합니다. 기억이 선명해질수록 혼란은 더욱 깊어지고, 자기 존재에 대한 의심과 강렬한 자기혐오만 증폭됩니다. 작가는 이 작품을 통해 기술 발전이 급속도로 이루어지는 시대일수록 더욱 불안정해지는 인간의 내면과, 이를 끊임없이 붕괴시키고 파괴하는 가장 근본적인 힘을 바로 '자기혐오'로 지목합니다. 죄책감에서 비롯된 자기혐오가 결국 인간의 자아를 끝없는 고통과 파괴의 고리 속에 묶어두는 원동력임을 강렬하게 보여줍니다.",
     descEn: "This work depicts the psychological collapse and relentless cycles of self-loathing experienced by a character who awakens in an unfamiliar environment without any memories, struggling to uncover their true identity. Actress Shin Haeyoon portrays dual roles, powerfully expressing intertwined selves and deepening confusion. As fragmented memories gradually resurface, the character’s internal turmoil intensifies, fueling doubts about their very existence and amplifying an intense self-hatred. Through this narrative, the artist highlights how rapid technological advancement exacerbates human inner instability, identifying self-loathing as the fundamental force continuously dismantling and destroying one’s identity. Ultimately, the piece vividly illustrates how guilt-driven self-hatred traps individuals in an endless cycle of suffering and self-destruction.",
@@ -149,13 +174,16 @@ window.JAEHONG_WORKS = [
     contextEn: "We Were Here, Jaehong An solo exhibition\nFormer Eungam Industrial Workshop, 17 Eungam-ro 12-gil, Eunpyeong-gu, Seoul\nOctober 21 - November 2, 2025",
     caption: "We Were Here · projection",
     frameCaption: "We Were Here",
+    authors: "Jaehong An & Haeyun Shin",
+    credit: "공동 제작 · 안재홍 · 신해윤",
+    creditEn: "Co-created by Jaehong An & Haeyun Shin",
     video: "media/web/work-08-moebius-web.mp4",
     poster: "assets/posters/work-08-moebius-web.jpg",
     fullDesc: "Moebius\nJaehong An & Haeyun Shin, 2024\nAI Generated · Single-channel Video\n1360×752 px / Real Projection 1.8m × 1.4m\nWe Were Here (안재홍 독립전시)\n서울특별시 은평구 응암로 12길 17, 구 응암공업사\n2025.10.21 - 2025.11.02\n\n기억을 잃고 낯선 공간에서 깨어난 인물이 자신의 정체성을 찾아가는 과정에서 겪는 내면적 붕괴와 끝없는 자기혐오의 반복을 그려낸 작품입니다. 배우 신해윤이 1인 2역을 맡아 서로 얽힌 자아의 혼란을 깊이 있게 표현합니다. 기억이 선명해질수록 혼란은 더욱 깊어지고, 자기 존재에 대한 의심과 강렬한 자기혐오만 증폭됩니다. 작가는 이 작품을 통해 기술 발전이 급속도로 이루어지는 시대일수록 더욱 불안정해지는 인간의 내면과, 이를 끊임없이 붕괴시키고 파괴하는 가장 근본적인 힘을 바로 '자기혐오'로 지목합니다. 죄책감에서 비롯된 자기혐오가 결국 인간의 자아를 끝없는 고통과 파괴의 고리 속에 묶어두는 원동력임을 강렬하게 보여줍니다.",
     fullDescEn: "Moebius\nJaehong An & Haeyun Shin, 2024\nAI Generated · Single-channel Video\n1360×752 px / Real Projection 1.8m × 1.4m\nWe Were Here, Jaehong An solo exhibition\nFormer Eungam Industrial Workshop, 17 Eungam-ro 12-gil, Eunpyeong-gu, Seoul\nOctober 21 - November 2, 2025\n\nThis work depicts the psychological collapse and relentless cycles of self-loathing experienced by a character who awakens in an unfamiliar environment without any memories, struggling to uncover their true identity. Actress Shin Haeyoon portrays dual roles, powerfully expressing intertwined selves and deepening confusion. As fragmented memories gradually resurface, the character’s internal turmoil intensifies, fueling doubts about their very existence and amplifying an intense self-hatred. Through this narrative, the artist highlights how rapid technological advancement exacerbates human inner instability, identifying self-loathing as the fundamental force continuously dismantling and destroying one’s identity. Ultimately, the piece vividly illustrates how guilt-driven self-hatred traps individuals in an endless cycle of suffering and self-destruction."
   },
   {
-    idx: "09",
+    idx: "10",
     title: "We Were Here",
     desc: "작가와 인공지능이 나눈 깊은 대화를 바탕으로 제작된 영화로, 인간이 망각과 반지성주의, 전쟁을 방치하며 어리석음을 지속했을 때 마주하게 될 디스토피아적 미래를 시적으로 그려낸 작품입니다. 인간이 모두 사라지고 오직 기억만 남은 세상. 폐허가 된 문명 속에서 홀로 남겨진 감정 기록 인공지능은 \"기억해 줘. 우리는 여기에 있었어.\"라는 인간의 흔적을 반복적으로 재생합니다. 이해 없이 반복되는 기억들은 점차 의식(儀式)이 되고, 믿음이 되고, 마침내는 하나의 실재(實在)가 됩니다. 그리고 마지막엔 기다림이 됩니다. 'We Were Here'는 사라짐과 존재, 기억과 망각, 사랑과 상실을 기계의 독백을 통해 깊이 탐구합니다. 인간의 현명한 가치들은 오히려 기계에게 영원히 남겨지고, 인간은 자신들의 어리석음으로 인해 소멸해 버린 미래의 풍경을 통해, 우리가 놓쳐선 안 될 가치를 섬세하게 환기합니다.",
     descEn: "This film, created from profound dialogues between the artist and artificial intelligence, poetically illustrates a dystopian future humanity might face if it continues neglecting memory, embracing anti-intellectualism, and perpetuating conflict. In a world devoid of humans, where only memories remain, an emotion-recording AI left amidst ruined civilizations endlessly replays humanity's last traces, whispering: \"Remember us. We were here.\" These repetitively replayed memories, devoid of understanding, gradually transform into rituals, beliefs, and ultimately, into reality itself—culminating finally into a perpetual state of waiting. Through the machine’s solitary monologue, We Were Here deeply explores themes of disappearance and existence, memory and oblivion, love and loss. It poignantly suggests a future in which humanity’s most profound values remain eternal only within machines, while humans themselves vanish due to their folly. In doing so, the film delicately urges us to cherish the wisdom and virtues that we must never abandon.",
