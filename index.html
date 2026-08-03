@@ -3619,6 +3619,7 @@ const AUTO_BASE_DUR = 1100;
 const FIRST_EXIT_THRESHOLD = 0.045;
 const ARRIVAL_COOLDOWN_MS = 520;
 const WHEEL_RELEASE_MS = 220;
+const WHEEL_NEW_GESTURE_MS = 96;
 let cooldownFeedbackTimer = null;
 let wheelReleaseTimer = null;
 let wheelGestureLocked = false;
@@ -3781,8 +3782,18 @@ function scheduleSnap() {
   }, 320);
 }
 
-function startRoomStep(direction) {
-  if (autoTarget != null || isProgrammaticScroll || wheelGestureLocked) return false;
+function startRoomStep(direction, { fromTouch = false } = {}) {
+  if (autoTarget != null || isProgrammaticScroll) return false;
+  if (wheelGestureLocked && !fromTouch) return false;
+  if (fromTouch && wheelGestureLocked) {
+    // Touch gestures have no wheel momentum tail. Once the previous room has
+    // arrived, a fresh swipe should not inherit the trackpad's release lock.
+    if (wheelReleaseTimer) clearTimeout(wheelReleaseTimer);
+    wheelReleaseTimer = null;
+    wheelGestureLocked = false;
+    wheelCaptionLocked = false;
+    wheelCaptionTarget = null;
+  }
   const tunnel = document.getElementById("tunnel");
   const r = tunnel.getBoundingClientRect();
   const inRange = r.top < window.innerHeight * 0.4 && r.bottom > window.innerHeight * 0.6;
@@ -3892,9 +3903,20 @@ window.addEventListener("scroll", () => {
 }, { passive: true });
 
 window.addEventListener("wheel", (e) => {
-  lastWheelTs = performance.now();
   if (Math.abs(e.deltaY) <= 4) return;
+  const wheelNow = performance.now();
+  const wheelGap = lastWheelTs ? wheelNow - lastWheelTs : Infinity;
+  const isFreshWheelGesture = wheelGap > WHEEL_NEW_GESTURE_MS;
+  lastWheelTs = wheelNow;
   scrollDir = e.deltaY > 0 ? 1 : -1;
+
+  // A new trackpad gesture must not inherit the caption lock from the prior
+  // gesture. Continuous momentum ticks stay inside the 96 ms window.
+  if (isFreshWheelGesture && autoTarget == null && !isProgrammaticScroll) {
+    wheelGestureLocked = false;
+    wheelCaptionLocked = false;
+    wheelCaptionTarget = null;
+  }
   scheduleWheelRelease();
 
   if (autoTarget != null || wheelGestureLocked) {
@@ -3948,6 +3970,7 @@ window.addEventListener("touchmove", (e) => {
 
     // The caption has reached its edge. Keep the current gesture alive and
     // hand it to the room navigator after a short, deliberate continuation.
+    settleCaptionAtEdge(touchRoute.copy, deltaY);
     touchRoute.mode = "caption-edge";
     touchRoute.edgeStartY = touchRoute.lastY;
     touchRoute.edgeDirection = Math.sign(deltaY);
@@ -3971,7 +3994,7 @@ window.addEventListener("touchmove", (e) => {
     }
 
     const edgeTravel = Math.abs(touchRoute.edgeStartY - y);
-    if (edgeTravel >= TOUCH_CAPTION_EDGE_HANDOFF && startRoomStep(direction)) {
+    if (edgeTravel >= TOUCH_CAPTION_EDGE_HANDOFF && startRoomStep(direction, { fromTouch: true })) {
       touchRoute.mode = "transition";
     }
     touchRoute.lastY = y;
@@ -3985,16 +4008,38 @@ window.addEventListener("touchmove", (e) => {
   if (touchRoute.mode === "page") return;
 
   const copy = activeCaptionCopyForWheel(e);
-  if (canScrollElement(copy, deltaY)) {
+  if (copy) {
     e.preventDefault();
-    touchRoute.mode = "caption";
+    if (canScrollElement(copy, deltaY)) {
+      touchRoute.mode = "caption";
+      touchRoute.copy = copy;
+      softScrollElement(copy, deltaY);
+      touchRoute.lastY = y;
+      return;
+    }
+
+    // Stay on the work-navigation route at the caption edge. Falling through
+    // to native page scrolling here makes the room snap back and feels frozen.
+    const direction = Math.sign(deltaY);
+    settleCaptionAtEdge(copy, direction);
+    touchRoute.mode = "caption-edge";
     touchRoute.copy = copy;
-    softScrollElement(copy, deltaY);
+    touchRoute.edgeStartY = touchRoute.startY;
+    touchRoute.edgeDirection = direction;
+    if (
+      Math.abs(totalDelta) >= TOUCH_CAPTION_EDGE_HANDOFF &&
+      startRoomStep(direction, { fromTouch: true })
+    ) {
+      touchRoute.mode = "transition";
+    }
     touchRoute.lastY = y;
     return;
   }
 
-  if (Math.abs(totalDelta) >= 18 && startRoomStep(totalDelta > 0 ? 1 : -1)) {
+  if (
+    Math.abs(totalDelta) >= 18 &&
+    startRoomStep(totalDelta > 0 ? 1 : -1, { fromTouch: true })
+  ) {
     e.preventDefault();
     touchRoute.mode = "transition";
     touchRoute.lastY = y;
@@ -4031,12 +4076,29 @@ window.addEventListener("scroll", () => {
   idleTimer = setTimeout(() => { scrollDir = 0; }, 900);
 }, { passive: true });
 
+const CAPTION_EDGE_EPSILON = 10;
+
 function canScrollElement(el, deltaY) {
   if (!el || Math.abs(deltaY) < 1) return false;
   const maxScroll = el.scrollHeight - el.clientHeight;
   if (maxScroll <= 2) return false;
-  if (deltaY > 0) return el.scrollTop < maxScroll - 2;
-  return el.scrollTop > 2;
+  const state = captionScrollStates.get(el);
+  const target = Number.isFinite(state?.target) ? state.target : el.scrollTop;
+  const projected = deltaY > 0
+    ? Math.max(el.scrollTop, target)
+    : Math.min(el.scrollTop, target);
+  if (deltaY > 0) return projected < maxScroll - CAPTION_EDGE_EPSILON;
+  return projected > CAPTION_EDGE_EPSILON;
+}
+
+function settleCaptionAtEdge(el, direction) {
+  if (!el) return;
+  const maxScroll = Math.max(0, el.scrollHeight - el.clientHeight);
+  const edge = direction > 0 ? maxScroll : 0;
+  const state = captionScrollStates.get(el);
+  if (state?.raf) cancelAnimationFrame(state.raf);
+  el.scrollTop = edge;
+  captionScrollStates.set(el, { target: edge, raf: 0, dir: Math.sign(direction) });
 }
 
 function softScrollElement(el, deltaY) {
@@ -4139,7 +4201,10 @@ function routeCaptionWheel(e) {
   }
 
   const copy = activeCaptionCopyForWheel(e);
-  if (!canScrollElement(copy, e.deltaY)) return false;
+  if (!canScrollElement(copy, e.deltaY)) {
+    if (copy) settleCaptionAtEdge(copy, e.deltaY);
+    return false;
+  }
 
   // In the works tunnel, reading comes first. While the active caption can
   // still move in the gesture direction, route scroll into the text even if
