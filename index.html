@@ -17,22 +17,11 @@
   </svg>
 </template>
 
-<style>
-  @font-face {
-    font-family: "Pretendard Variable";
-    src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/PretendardVariable.woff2") format("woff2-variations");
-    font-weight: 45 920;
-    font-style: normal;
-    font-display: swap;
-  }
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" crossorigin />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.1/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css" crossorigin />
 
-  @font-face {
-    font-family: "Wanted Sans Variable";
-    src: url("https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@main/fonts/webfonts/variable/woff2/WantedSansVariable.woff2") format("woff2-variations");
-    font-weight: 100 900;
-    font-style: normal;
-    font-display: swap;
-  }
+<style>
 
   /* ── Tokens (refined) ───────────────────────────────────────────
      No cyan glow. Depth comes only from blur + opacity + scale. */
@@ -52,8 +41,8 @@
     --line-soft: rgba(242, 240, 236, 0.06);
 
     --font-en:      "Inter Tight", "Inter", sans-serif;
-    --font-ko-head: "Inter Tight", "Wanted Sans Variable", "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
-    --font-ko-body: "Inter", "Pretendard Variable", "Apple SD Gothic Neo", sans-serif;
+    --font-ko-head: "Inter Tight", "Wanted Sans Variable", "Wanted Sans", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", sans-serif;
+    --font-ko-body: "Inter", "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", sans-serif;
     --font-display: var(--font-ko-head);
     --font-body:    var(--font-ko-body);
     --font-mono:    "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
@@ -2846,7 +2835,7 @@ const I18N = {
     "bio.bioTitle": "Biography",
     "bio.bioText": "Jaehong An is a media artist working across moving image, XR, generative AI, and public media environments. He studies Art & Technology in the doctoral program at Sogang University, with an M.Des. from Hongik University IDAS and a B.A. from Handong Global University.",
     "bio.projectsTitle": "Exhibitions & Projects",
-    "bio.projectsText": `<ul><li>Presented <em>MSC: CRM 90</em> at <em>UNCOMMON OPEN CALL</em>, Uncommon Gallery, July 2–16, 2026.</li><li>Organized and presented <em>WE WERE HERE</em> as an independent exhibition, 2025.</li><li><em>Light Visions</em>, Times Square, New York, 2024.</li><li>Presented <em>A HUNDRED POSSIBILITIES & VENECITE</em> at 2023 SEOULIGHT GWANGHWAMUN.</li><li><em>Here WE ARE</em>, early AI vs Human exhibition project, 2023.</li><li>Runway Gen:48 Aleph Edition, People's Choice Honoree.</li></ul>`,
+    "bio.projectsText": `<ul><li>Presented <em>MSC: CRM 90</em> at <em>UNCOMMON OPEN CALL</em>, Uncommon Gallery, July 2–16, 2026.</li><li>Organized and presented <em>WE WERE HERE</em> as an independent exhibition, 2025.</li><li><em>Elevate</em> (co-created with Haeyun Shin), Runway Gen:48 Aleph Edition, People's Choice Honoree, 2025.</li><li>Presented <em>SaRangHae - The Last Message Before the End of Civilization</em> in <em>Light Visions</em>, Times Square, New York, 2024.</li><li>Presented <em>A HUNDRED POSSIBILITIES & VENECITE</em> at 2023 SEOULIGHT GWANGHWAMUN.</li><li>Conceived and organized the independent exhibition <em>Here WE ARE</em>, and presented work in it, 2023.</li></ul>`,
     "bio.publicTitle": "Publications · Press",
     "bio.publicText": `<div class="publication-groups">
       <section class="publication-group">
@@ -2927,7 +2916,7 @@ const I18N = {
     "bio.bioTitle": "약력",
     "bio.bioText": "안재홍은 영상, XR, 생성형 AI, 공공 미디어 환경을 오가며 현실과 허구, 이미지와 믿음의 관계를 다루는 <span class=\"nowrap\">미디어 아티스트다.</span> 현재 서강대학교 Art & Technology 박사과정에 <span class=\"nowrap\">재학 중이다.</span> 홍익대학교 IDAS에서 디지털미디어디자인 <span class=\"nowrap\">석사(M.Des.)를,</span> 한동대학교에서 <span class=\"nowrap\">공연영상 학사(B.A.)를</span> 마쳤다.",
     "bio.projectsTitle": "전시 및 프로젝트",
-    "bio.projectsText": `<ul><li>2026 언커먼 갤러리 <em>《UNCOMMON OPEN CALL》</em>에서 <em>〈MSC: CRM 90〉</em> 상영(7.2–7.16).</li><li>2025 독립전시 <em>WE WERE HERE</em> 기획·개최.</li><li>2024 뉴욕 타임스퀘어 <em>Light Visions</em> 아나몰픽 영상 전시.</li><li>2023 서울라이트 광화문 참여, <em>A HUNDRED POSSIBILITIES & VENECITE</em>.</li><li>2023 국내 초기 AI vs 인간 전시 프로젝트 <em>Here WE ARE</em> 기획 및 참여.</li><li>Runway Gen:48 Aleph Edition People's Choice Honoree 수상.</li></ul>`,
+    "bio.projectsText": `<ul><li>2026 언커먼 갤러리 <em>《UNCOMMON OPEN CALL》</em>에서 <em>〈MSC: CRM 90〉</em> 상영(7.2–7.16).</li><li>2025 독립전시 <em>WE WERE HERE</em> 기획·개최.</li><li>2025 <em>〈Elevate〉</em>(신해윤 공동 제작), Runway Gen:48 Aleph Edition People's Choice Honoree 선정.</li><li>2024 뉴욕 타임스퀘어 <em>Light Visions</em>에서 <em>〈SaRangHae - The Last Message Before the End of Civilization〉</em> 상영.</li><li>2023 서울라이트 광화문 참여, <em>〈A HUNDRED POSSIBILITIES & VENECITE〉</em> 전시.</li><li>2023 독립전시 <em>Here WE ARE</em> 기획·개최 및 작품 전시.</li></ul>`,
     "bio.publicTitle": "출판 · 언론",
     "bio.publicText": `<div class="publication-groups">
       <section class="publication-group">
@@ -3926,13 +3915,21 @@ window.addEventListener("wheel", (e) => {
   scheduleSnap();
 }, { passive: false });
 let touchRoute = null;
+const TOUCH_CAPTION_EDGE_HANDOFF = 14;
 window.addEventListener("touchstart", (e) => {
   if (overlay?.classList.contains("active") || e.touches.length !== 1 || shouldBypassCaptionPriority(e)) {
     touchRoute = null;
     return;
   }
   const y = e.touches[0].clientY;
-  touchRoute = { startY: y, lastY: y, mode: "pending", copy: null };
+  touchRoute = {
+    startY: y,
+    lastY: y,
+    edgeStartY: y,
+    edgeDirection: 0,
+    mode: "pending",
+    copy: null
+  };
 }, { passive: true });
 window.addEventListener("touchmove", (e) => {
   if (!touchRoute || e.touches.length !== 1) return;
@@ -3943,7 +3940,40 @@ window.addEventListener("touchmove", (e) => {
 
   if (touchRoute.mode === "caption") {
     e.preventDefault();
-    if (canScrollElement(touchRoute.copy, deltaY)) softScrollElement(touchRoute.copy, deltaY);
+    if (canScrollElement(touchRoute.copy, deltaY)) {
+      softScrollElement(touchRoute.copy, deltaY);
+      touchRoute.lastY = y;
+      return;
+    }
+
+    // The caption has reached its edge. Keep the current gesture alive and
+    // hand it to the room navigator after a short, deliberate continuation.
+    touchRoute.mode = "caption-edge";
+    touchRoute.edgeStartY = touchRoute.lastY;
+    touchRoute.edgeDirection = Math.sign(deltaY);
+    touchRoute.lastY = y;
+    return;
+  }
+  if (touchRoute.mode === "caption-edge") {
+    e.preventDefault();
+    const direction = Math.sign(deltaY);
+
+    // Reversing direction should immediately return control to the caption.
+    if (direction !== touchRoute.edgeDirection) {
+      touchRoute.edgeDirection = direction;
+      touchRoute.edgeStartY = y;
+      if (canScrollElement(touchRoute.copy, deltaY)) {
+        touchRoute.mode = "caption";
+        softScrollElement(touchRoute.copy, deltaY);
+      }
+      touchRoute.lastY = y;
+      return;
+    }
+
+    const edgeTravel = Math.abs(touchRoute.edgeStartY - y);
+    if (edgeTravel >= TOUCH_CAPTION_EDGE_HANDOFF && startRoomStep(direction)) {
+      touchRoute.mode = "transition";
+    }
     touchRoute.lastY = y;
     return;
   }
@@ -3976,6 +4006,9 @@ window.addEventListener("touchmove", (e) => {
 }, { passive: false });
 window.addEventListener("touchend", () => {
   if (touchRoute?.mode === "pending" || touchRoute?.mode === "page") scheduleSnap();
+  touchRoute = null;
+}, { passive: true });
+window.addEventListener("touchcancel", () => {
   touchRoute = null;
 }, { passive: true });
 window.addEventListener("keydown", (e) => {
